@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login y Registro - Marcas Col</title>
+	<link rel="stylesheet" href="/estilos/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+	<!-- LOGIN PROPIETARIOS (solo código) -->
+	<div class="container" id="login-container">
+		<div class="form-title">Acceso propietarios</div>
+		<div class="error-message" id="login-error"></div>
+		<form id="owner-login-form">
+			<div class="input-group">
+				<label for="owner-code">Código de acceso</label>
+				<input type="password" id="owner-code" name="code" placeholder="Ingresa el código que te dimos" required>
+			</div>
+			<button type="submit" class="btn">Entrar</button>
+		</form>
+		<p class="form-help" style="margin-top:8px;">Si no tienes el código, comunícate con quien te entregó la página.</p>
+	</div>
+
+	<!-- ADMINISTRACIÓN -->
+	<div class="container" id="admin-dyn-container" style="margin-top:32px; display:none;">
+		
+		<!-- AGREGAR MENSAJE -->
+		<div class="form-title">Añadir Mensaje</div>
+		<p class="form-help">Este mensaje se mostrará en la parte superior de la página como anuncio o aviso general.</p>
+		<form id="mensaje-form">
+			<div class="input-group">
+				<label for="mensaje-texto">Mensaje</label>
+				<textarea id="mensaje-texto" rows="3" required></textarea>
+			</div>
+			<button type="submit" class="btn">Guardar Mensaje</button>
+			<div class="error-message" id="mensaje-error"></div>
+			<div class="success-message" id="mensaje-success" style="display:none;"></div>
+		</form>
+		<hr>
+
+		<!-- AGREGAR MARCA -->
+		<div class="form-title">Agregar Marca</div>
+		<form id="formulario-marca">
+			<div class="input-group">
+				<label for="marca-nombre">Nombre de la marca</label>
+				<input type="text" id="marca-nombre" required>
+			</div>
+			<div class="input-group">
+				<label for="marca-imagen">Imagen (opcional, sube desde tu dispositivo)</label>
+				<input type="file" id="marca-imagen" accept="image/*">
+			</div>
+			<button type="submit" class="btn">Agregar Marca</button>
+			<div class="error-message" id="marca-error"></div>
+		</form>
+		<hr>
+
+		<!-- AGREGAR SECCIÓN -->
+		<div class="form-title">Agregar Sección</div>
+		<form id="seccion-form">
+			<div class="input-group">
+				<label for="seccion-nombre">Nombre de la sección</label>
+				<input type="text" id="seccion-nombre" required>
+			</div>
+			<button type="submit" class="btn">Agregar Sección</button>
+			<div class="error-message" id="seccion-error"></div>
+		</form>
+		<hr>
+
+		<!-- AGREGAR BANNER -->
+		<div class="form-title">Agregar Banner</div>
+		<p class="form-help">Un <b>banner</b> es una imagen grande y llamativa que aparece en la parte superior del catálogo, ideal para promociones, productos destacados o mensajes importantes.</p>
+		<form id="formulario-banner">
+			<div class="input-group">
+				<label for="banner-titulo">Título</label>
+				<input type="text" id="banner-titulo" required>
+			</div>
+			<div class="input-group">
+				<label for="banner-descripcion">Descripción</label>
+				<input type="text" id="banner-descripcion">
+			</div>
+			<div class="input-group">
+				<label for="banner-marca">Marca</label>
+				<input type="text" id="banner-marca">
+			</div>
+			<div class="input-group">
+				<label for="banner-imagen">Imagen (sube desde tu dispositivo)</label>
+				<input type="file" id="banner-imagen" accept="image/*" required>
+			</div>
+			<div class="input-group">
+				<label for="banner-boton-texto">Texto Botón</label>
+				<input type="text" id="banner-boton-texto">
+			</div>
+			<div class="input-group">
+				<label for="banner-boton-url">URL Botón</label>
+				<input type="text" id="banner-boton-url">
+			</div>
+			<button type="submit" class="btn">Agregar Banner</button>
+			<div class="error-message" id="banner-error"></div>
+		</form>
+		<hr>
+
+		<!-- AGREGAR PRODUCTO -->
+		<div class="form-title">Agregar Producto</div>
+		<div class="error-message" id="product-error"></div>
+		<form id="product-form" enctype="multipart/form-data">
+			<div class="input-group">
+				<label for="product-titulo">Título</label>
+				<input type="text" id="product-titulo" name="titulo" required>
+			</div>
+			<div class="input-group">
+				<label for="product-descripcion">Descripción</label>
+				<input type="text" id="product-descripcion" name="descripcion" required>
+			</div>
+			<div class="input-group">
+				<label for="product-seccion">Sección</label>
+				<select id="product-seccion" name="seccion" required>
+					<option value="">Selecciona una sección</option>
+				</select>
+			</div>
+			<div class="input-group">
+				<label for="product-marca">Marca</label>
+				<select id="product-marca" name="marca" required>
+					<option value="">Selecciona una marca</option>
+				</select>
+			</div>
+			<div class="input-group">
+				<label for="product-precio">Precio</label>
+				<input type="number" id="product-precio" name="precio" min="0" step="0.01" required>
+			</div>
+			<div class="input-group">
+				<label for="product-imagen">Imagen</label>
+				<input type="file" id="product-imagen" name="imagen" accept="image/*" required>
+			</div>
+			<button type="submit" class="btn">Guardar</button>
+		</form>
+	</div>
+
+	
+	<!-- CONTROLES ADMIN: botones para mostrar productos y banners publicados -->
+	<div class="admin-controls" id="admin-controls" style="display:none; max-width:900px; margin:18px auto; gap:12px;">
+	<button id="btn-show-products" class="btn small">Productos publicados</button>
+	<button id="btn-show-banners" class="btn small">Banners publicados</button>
+	<button id="btn-refresh-lists" class="btn small">Refrescar listas</button>
+	<button id="btn-logout" class="btn small" style="margin-left:auto; background:#c0392b;">Cerrar sesión</button>
+	</div>
+
+	<!-- Contenedores para listas -->
+	<div id="products-list"></div>
+	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
+
+	<script src="script.js"></script>
+</body>
+</html>

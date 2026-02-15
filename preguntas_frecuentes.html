@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preguntas Frecuentes - Marcas Col</title>
+  <link rel="stylesheet" href="/estilos/fondo.css">
+  <style>
+    .legal-container { max-width: 1000px; margin: 28px auto; padding: 20px; }
+    .legal-hero { background: linear-gradient(90deg,var(--color-2),var(--color-5)); padding: 28px; border-radius: 12px; color: #123; margin-bottom: 18px; }
+    .faq-item { background:#fff; border-radius:10px; padding:16px; margin-bottom:12px; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+    .faq-question { font-weight:700; color:var(--color-3); cursor:pointer; }
+    .faq-answer { margin-top:10px; color:#444; display:none; }
+    .faq-item.open .faq-answer { display:block; }
+    .back-link { display:inline-block; margin-bottom:12px; color:var(--color-acento); text-decoration:none; }
+  </style>
+</head>
+<body>
+  <header style="padding:16px 20px; display:flex; align-items:center; gap:12px;">
+    <a href="index.html"><img src="imagenes/logo.jpg" alt="logo" style="height:48px;border-radius:12px"></a>
+    <h1 style="font-size:1.2rem;color:var(--color-3);margin:0">Preguntas Frecuentes</h1>
+  </header>
+  <main class="legal-container">
+    <a class="back-link" href="index.html">← Volver al Catálogo</a>
+    <div class="legal-hero">
+      <h2 style="margin:0;color:var(--color-3)">¿Cómo podemos ayudarte?</h2>
+      <p style="margin-top:8px;color:#333;">Respuestas rápidas a las preguntas más comunes sobre compras, envíos y devoluciones.</p>
+    </div>
+
+    <section id="faq-list">
+      <div class="faq-item">
+        <div class="faq-question">¿Cuánto tarda el envío?</div>
+        <div class="faq-answer">Los envíos suelen tardar entre 2 y 5 días hábiles según la ciudad de destino. Para promociones y productos especiales el plazo puede variar.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">¿Cómo puedo devolver un producto?</div>
+        <div class="faq-answer">Puedes solicitar una devolución dentro de los 7 días posteriores a la recepción. Contacta a <b>contacto@marcascol.com</b> con tu número de pedido para iniciar el proceso.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">¿Aceptan cambios en tienda?</div>
+        <div class="faq-answer">Actualmente manejamos cambios y devoluciones a través de nuestra logística. Revisa las condiciones en la sección de 'Términos y Condiciones'.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">¿Puedo pagar contra entrega?</div>
+        <div class="faq-answer">Sí, el pago contra entrega está disponible en zonas seleccionadas y sujeto a un cargo adicional.</div>
+      </div>
+    </section>
+  </main>
+  <footer class="catalogo-footer">
+  <div class="footer-content">
+    <div class="footer-col">
+      <img src="imagenes/logo.jpg" alt="Logo Marcas Col" class="logo">
+      <p>Tu tienda de confianza en marcas exclusivas.</p>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/marcas.coll/"><img src="imagenes/facebook.png" alt="Facebook"></a>
+        <a href="https://www.instagram.com/marcas.col/?hl=es"><img src="imagenes/instagram.jpg" alt="Instagram"></a>
+        <a href="https://www.tiktok.com/@marcas.col?_t=ZS-8zzwawF5Mwc&_r=1"><img src="imagenes/tiktok.png" alt="TikTok"></a>
+        <a href="https://www.threads.com/@marcas.col?xmt=AQF0JsMs-NGcde6Zu-eC_zE1h3rb62Z1-dY-QNx"><img src="imagenes/x.png" alt="TikTok"></a>
+
+      </div>
+    </div>
+    <div class="footer-col">
+      <h3>Contacto</h3>
+      <p>📍 Dirección: Cra 19#22-69 Barrio Córdoba</p>
+      <p>📧 contacto@marcascol.com</p>
+      <p>📞 +57 314 4352536</p>
+    </div>
+    <div class="footer-col">
+      <h3>Enlaces de interés</h3>
+      <ul>
+        <li><a href="acerca.html">Acerca de Nosotros</a></li>
+        <li><a href="preguntas_frecuentes.html">Preguntas Frecuentes</a></li>
+        <li><a href="politica_privacidad.html">Política de Privacidad</a></li>
+        <li><a href="terminos_condiciones.html">Términos y Condiciones</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Marcas Col. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+  <script>
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-question').addEventListener('click', () => {
+        item.classList.toggle('open');
+      });
+    });
+  </script>
+</body>
+</html>

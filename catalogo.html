@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Catálogo - Marcas Col</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="/estilos/catalogo.css">
+    </head>
+    <body>
+      <!-- MENSAJE SUPERIOR -->
+<div id="mensaje-superior" class="mensaje-superior">
+   
+</div>
+
+        <!-- Banner superior -->
+<header class="catalogo-header">
+  <div class="catalogo-header-content">
+    
+    <!-- Zona izquierda: Logo -->
+    <div class="header-left">
+      <a href="index.html"><img src="imagenes/logo.jpg" alt="Marcas Col" class="logo"></a>
+    </div>
+
+    <!-- Zona centro: Barra búsqueda -->
+    <div class="catalogo-search-bar">
+      <input type="text" id="search-input" placeholder="¿Qué estás buscando hoy?">
+      <span class="icon-search"></span>
+    </div>
+
+    <!-- Zona derecha: Iconos -->
+    <div class="header-right">
+      <span class="icon-user"></span>
+
+      <!-- Carrito de compras -->
+      <div class="cart-container">
+        <button id="btn-carrito" class="icon-cart" aria-label="carrito de compras"></button>
+        <span id="cart-count" class="cart-count">(0)</span>
+      </div>
+    </div>
+
+
+    </div>
+
+  </div>
+        <button id="menu-toggle" class="menu-toggle" aria-label="Menú">
+          ☰
+        </button>
+        <div id="nav-overlay" class="nav-overlay"></div>
+</header>
+
+            <nav class="catalogo-nav" id="catalogo-nav">
+                <ul id="catalogo-secciones">
+                    <!-- Secciones dinámicas generadas por JS -->
+                </ul>
+            </nav>
+        <main>
+            <!-- Slider/banner principal -->
+            <section class="catalogo-slider" id="catalogo-slider">
+                <!-- Slides dinámicos generados por JS -->
+            </section>
+            <section id="catalogo-list" class="catalogo-list"></section>
+            <!-- Carrito -->
+            <div class="carrito-overlay" id="carrito-overlay" style="display:none;">
+                <div class="carrito-modal">
+                    <button class="carrito-cerrar" id="cerrar-carrito" title="Cerrar">&times;</button>
+                    <div class="carrito-header">Cesta</div>
+                    <div id="carrito-productos"></div>
+                    <div class="carrito-resumen" id="carrito-resumen"></div>
+                    <div class="carrito-btns">
+                        <button class="carrito-btn" id="continuar-compra" disabled>Continuar</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Marcas destacadas -->
+            <section class="catalogo-marcas" id="catalogo-marcas">
+                <!-- Marcas dinámicas generadas por JS -->
+            </section>
+        </main>
+<footer class="catalogo-footer">
+  <div class="footer-content">
+    <!-- Columna 1 -->
+    <div class="footer-col">
+      <img src="imagenes/logo.jpg" alt="Logo Marcas Col" class="logo">
+      <p>Tu tienda de confianza en marcas exclusivas.</p>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/marcas.coll/"><img src="imagenes/facebook.png" alt="Facebook"></a>
+        <a href="https://www.instagram.com/marcas.col/?hl=es"><img src="imagenes/instagram.jpg" alt="Instagram"></a>
+        <a href="https://www.tiktok.com/@marcas.col?_t=ZS-8zzwawF5Mwc&_r=1"><img src="imagenes/tiktok.png" alt="TikTok"></a>
+        <a href="https://www.threads.com/@marcas.col?xmt=AQF0JsMs-NGcde6Zu-eC_zE1h3rb62Z1-dY-QNx"><img src="imagenes/x.png" alt="TikTok"></a>
+
+      </div>
+    </div>
+    <!-- Columna 2 -->
+    <div class="footer-col">
+      <h3>Contacto</h3>
+      <p>📍 Dirección: Cra 19#22-69 Barrio Córdoba</p>
+      <p>📧 contacto@marcascol.com</p>
+      <p>📞 +57 314 4352536</p>
+    </div>
+    <!-- Columna 3 -->
+    <div class="footer-col">
+      <h3>Enlaces de interés</h3>
+      <ul>
+        <li><a href="acerca.html">Acerca de Nosotros</a></li>
+        <li><a href="preguntas_frecuentes.html">Preguntas Frecuentes</a></li>
+        <li><a href="politica_privacidad.html">Política de Privacidad</a></li>
+        <li><a href="terminos_condiciones.html">Términos y Condiciones</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Marcas Col. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<!-- Botón flotante de WhatsApp -->
+<a href="https://wa.me/573144352536" 
+   class="whatsapp-float" 
+   target="_blank" 
+   aria-label="WhatsApp">
+   <img src="imagenes/whatsapp.png" alt="WhatsApp">
+</a>
+
+        <script>
+          // Definir API_BASE automáticamente: usa el mismo origen donde está la web.
+          // Si tu backend está en otro dominio, reemplaza por la URL pública del backend.
+          window.API_BASE = window.location.origin;
+        </script>
+        <script src="catalogo.js"></script>
+    </body>
+</html>
