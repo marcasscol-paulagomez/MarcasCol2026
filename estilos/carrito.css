@@ -1,0 +1,378 @@
+/* ================================
+   FUENTES
+   ================================ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ================================
+   PALETA DE COLORES
+   ================================ */
+:root {
+  --color-1: #89FFFF; /* Celeste brillante */
+  --color-2: #A0C5FD; /* Azul suave */
+  --color-3: #9390FF; /* Azul-violeta */
+  --color-4: #B5A8FF; /* Lila */
+  --color-5: #E3C5FF; /* Lila claro */
+
+  /* Colores adicionales de apoyo */
+  --color-texto: #2d2d6d;
+  --color-acento: #0074d9;
+  --color-fondo: #ffffff;
+}
+
+
+/* === ESTILO GENERAL === */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, var(--color-2), var(--color-5));
+    color: #333;
+}
+
+header {
+    background: white;
+    color: var(--color-3);
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* ===== HEADER ===== */
+.catalogo-header {
+  background: var(--color-5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding-bottom: 0.5rem;
+}
+
+.catalogo-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 16px 0 16px;
+}
+
+.icon-cart {
+  width: 28px;
+  height: 28px;
+  background: url('imagenes/carrito.png') no-repeat center/contain;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+main {
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* === LISTA DE PRODUCTOS === */
+.carrito-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+}
+
+.carrito-item img {
+    width: 120px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.carrito-info {
+    flex: 1;
+}
+
+.carrito-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    color: #222;
+}
+
+.carrito-info p {
+    margin: 5px 0;
+    font-size: 0.95rem;
+}
+
+/* === TOTAL === */
+#carrito-total {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-align: right;
+}
+
+#carrito-total h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #222;
+}
+
+/* === BOTONES === */
+button {
+    background: var(--color-2);
+    font-weight: bold;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: var(--color-4);
+}
+
+.btn-eliminar {
+    background: var(--color-2);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 15px;
+    align-self: center;
+    transition: background 0.3s;
+}
+
+.btn-eliminar:hover {
+    background: #cc0000;
+}
+
+/* === FOOTER === */
+.catalogo-footer {
+  background: linear-gradient(135deg, var(--color-2), var(--color-5));
+  padding: 40px 20px 20px 20px;
+  color: var(--color-texto);
+  font-family: 'Poppins', Arial, sans-serif;
+}
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.footer-col {
+  flex: 1 1 260px;
+}
+.footer-col h3 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: var(--color-acento);
+}
+
+.logo {
+  height: 48px;
+  border-radius: 20px;
+}
+
+.footer-col p, 
+.footer-col li {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  color: #333;
+}
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+}
+.footer-col ul li a {
+  color: var(--color-texto);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-col ul li a:hover {
+  color: var(--color-acento);
+}
+.footer-socials {
+  display: flex;
+  gap: 14px;
+  margin-top: 10px;
+}
+.footer-socials img {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.2s;
+}
+.footer-socials img:hover {
+  transform: scale(1.1);
+}
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 16px;
+  border-top: 1px solid #ccc;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* === BOTÓN WHATSAPP === */
+.whatsapp-float {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 999;
+  transition: transform 0.2s;
+}
+.whatsapp-float img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  background: #1ebe5d;
+}
+
+#cart-count {
+  font-size: 14px;
+  color: #333;
+  margin-top: 4px;
+}
+
+/* === TITULO DEL CARRITO EN HEADER === */
+.cart-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-3);
+  font-family: 'Poppins', Arial, sans-serif;
+}
+
+.cart-icon {
+  width: 66px;
+  height: 66px;
+  object-fit: contain;
+  display: block;
+}
+
+/* === FORMULARIO CHECKOUT === */
+#checkout {
+  margin-top: 30px;
+}
+
+#checkout h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--color-3);
+  text-align: center;
+}
+
+#checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#checkout-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: var(--color-texto);
+  font-size: 0.95rem;
+}
+
+#checkout-form input,
+#checkout-form select {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: 'Poppins', Arial, sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#checkout-form input:focus,
+#checkout-form select:focus {
+  border-color: var(--color-3);
+  box-shadow: 0 0 4px rgba(147, 144, 255, 0.4);
+}
+
+#checkout-form button {
+  margin-top: 20px;
+  background: var(--color-2);
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#checkout-form button:hover {
+  background: var(--color-3);
+}
+
+/* === Estilo general del input de cantidad === */
+.carrito-item .cantidad {
+  width: 70px;
+  padding: 6px;
+  margin-top: 6px;
+  margin-left: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+/* Efecto al enfocar */
+.carrito-item .cantidad:focus {
+  border-color: #6a5acd; /* morado suave */
+  outline: none;
+  box-shadow: 0 0 4px rgba(106, 90, 205, 0.4);
+}
+
+/* Estilo para la etiqueta Cantidad */
+.carrito-item label {
+  display: inline-block;
+  margin-top: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Alinear mejor la sección de info */
+.carrito-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.carrito-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+  color: var(--color-3);
+}

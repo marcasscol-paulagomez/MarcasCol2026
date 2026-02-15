@@ -1,0 +1,269 @@
+/* ================================
+   FUENTES
+   ================================ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ================================
+   PALETA DE COLORES
+   ================================ */
+:root {
+  --color-1: #89FFFF; /* Celeste brillante */
+  --color-2: #A0C5FD; /* Azul suave */
+  --color-3: #9390FF; /* Azul-violeta */
+  --color-4: #B5A8FF; /* Lila */
+  --color-5: #E3C5FF; /* Lila claro */
+
+  /* Colores adicionales de apoyo */
+  --color-texto: #2d2d6d;
+  --color-acento: #0074d9;
+  --color-fondo: #ffffff;
+}
+
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  height: 100%;
+}
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--color-texto);
+  background: linear-gradient(135deg, var(--color-2), var(--color-5));
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.catalogo-header {
+  background: var(--color-5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding-bottom: 0.5rem;
+}
+.catalogo-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 16px 0 16px;
+}
+.logo {
+  height: 48px;
+  border-radius: 20px;
+}
+.catalogo-nav ul {
+  display: flex;
+  list-style: none;
+  gap: 24px;
+}
+.catalogo-nav a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-texto);
+  transition: color 0.2s, background 0.2s;
+  padding: 6px 12px;
+  border-radius: 14px;
+}
+
+
+/* ===== SECCIÓN ACERCA ===== */
+main {
+  flex: 1;
+}
+.acerca-section {
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 40px 24px;
+  background: var(--color-fondo);
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(45,45,109,0.08);
+  text-align: center;
+}
+.acerca-section h1 {
+  font-size: 2.4rem;
+  margin-bottom: 18px;
+  color: var(--color-3);
+}
+.acerca-section p {
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+  color: var(--color-3);
+}
+.acerca-section img {
+  margin-top: 28px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+  transition: transform 0.3s;
+}
+.acerca-section img:hover {
+  transform: scale(1.02);
+}
+
+/* ===== MISIÓN, VISIÓN Y VALORES ===== */
+.mvv-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin: 50px auto;
+  max-width: 1100px;
+  padding: 0 20px;
+}
+.mvv-card {
+  background: var(--color-fondo);
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  padding: 28px 20px;
+  text-align: center;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.mvv-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+.mvv-card h2 {
+  font-size: 1.6rem;
+  color: var(--color-3);
+  margin-bottom: 14px;
+}
+.mvv-card p {
+  font-size: 1rem;
+  color: var(--color-4);
+}
+
+/* ================================
+   FOOTER
+   ================================ */
+.catalogo-footer {
+  background: linear-gradient(135deg, var(--color-2), var(--color-5));
+  padding: 40px 20px 20px 20px; color: var(--color-texto);
+  font-family: 'Poppins', Arial, sans-serif;
+}
+.footer-content {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+}
+.footer-col { flex: 1 1 260px; }
+.footer-col h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--color-acento); }
+.footer-col p, .footer-col li { font-size: 0.95rem; margin-bottom: 6px; color: #333; }
+.footer-col ul { list-style: none; padding: 0; }
+.footer-col ul li a { color: var(--color-texto); text-decoration: none; transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--color-acento); }
+.footer-socials { display: flex; gap: 14px; margin-top: 10px; }
+.footer-socials img { width: 28px; height: 28px; transition: transform 0.2s; }
+.footer-socials img:hover { transform: scale(1.1); }
+.footer-bottom {
+  text-align: center; margin-top: 30px; padding-top: 16px;
+  border-top: 1px solid #ccc; font-size: 0.9rem; color: #555;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .catalogo-header-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .acerca-section {
+    margin: 24px auto;
+    padding: 24px 16px;
+  }
+  .acerca-section h1 {
+    font-size: 2rem;
+  }
+}
+
+/* ================================
+   BOTÓN WHATSAPP
+   ================================ */
+.whatsapp-float {
+  position: fixed; bottom: 18px; right: 18px;
+  width: 70px; height: 70px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25); z-index: 999;
+  transition: transform 0.2s;
+}
+.whatsapp-float img { width: 100%; height: 100%; object-fit: cover; }
+.whatsapp-float:hover { transform: scale(1.1); background: #1ebe5d; }
+
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+/* Ajustes específicos para móviles pequeños */
+@media (max-width: 600px) {
+  .catalogo-header-content {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    align-items: center;
+  }
+
+  .logo {
+    height: 40px;
+  }
+
+  .catalogo-nav ul {
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .catalogo-nav a {
+    padding: 8px 10px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
+  .acerca-section {
+    margin: 16px auto;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .acerca-section h1 {
+    font-size: 1.6rem;
+  }
+
+  .acerca-section p {
+    font-size: 1rem;
+  }
+
+  .acerca-section img {
+    margin-top: 20px;
+  }
+
+  .mvv-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 24px auto;
+    padding: 0 12px;
+  }
+
+  .mvv-card {
+    padding: 20px;
+  }
+
+  .whatsapp-float {
+    width: 58px;
+    height: 58px;
+    bottom: 14px;
+    right: 14px;
+  }
+
+  .footer-content {
+    padding: 0 12px;
+  }
+}
