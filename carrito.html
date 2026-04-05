@@ -8,7 +8,7 @@
     <style>
         .hidden { display: none !important; }
         .carrito-item {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f0f0f0;
             padding: 15px 0;
             display: flex;
             align-items: center;
@@ -27,14 +27,10 @@
         
         #wompi-container {
             text-align: center;
-            background: #fdfdfd;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 20px 0;
             margin-top: 20px;
-            border: 1px solid #eee;
         }
 
-        /* Botón de Pago Negro Marcas Col */
         #btn-pagar-real {
             background-color: #000;
             color: #fff;
@@ -46,7 +42,7 @@
             width: 100%;
             font-size: 1.1rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         #btn-pagar-real:hover {
             background-color: #333;
@@ -56,16 +52,16 @@
         input {
             padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 6px;
+            border-radius: 8px;
             width: 100%;
             box-sizing: border-box;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         label {
             font-weight: bold;
-            margin-top: 10px;
             display: block;
             font-size: 0.9rem;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -88,35 +84,27 @@
         <div id="carrito-total" style="margin-top: 20px; text-align: right; border-top: 2px solid #f0f0f0; padding-top: 15px;"></div>
         
         <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 10px;">
-            <button id="continuar" style="background-color: #28a745; color: white; padding: 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 8px; font-size: 1rem;">
+            <button id="continuar" style="background-color: #28a745; color: white; padding: 16px; border: none; cursor: pointer; font-weight: bold; border-radius: 10px; font-size: 1rem;">
                 CONTINUAR CON EL ENVÍO
-            </button>
-            <button onclick="window.location.href='index.html'" style="padding: 10px; cursor: pointer; border: none; background: none; color: #666; text-decoration: underline;">
-                Volver a la tienda
             </button>
         </div>
     </section>
 
     <section id="checkout" class="hidden" style="margin-top: 20px; background: #fff; padding: 25px; border-radius: 15px; border: 1px solid #eee;">
-        <h2 style="text-align: center; margin-top: 0;">Datos de Entrega</h2>
+        <h2 style="text-align: center; margin-bottom: 20px;">Datos de Entrega</h2>
         <form id="checkout-form" onsubmit="return false;">
             <label>Nombre Completo</label>
             <input type="text" id="nombre" placeholder="Ej: Paula Gómez" required>
-            
             <label>Cédula o NIT</label>
             <input type="text" id="identificacion" required>
-            
             <label>Ciudad</label>
-            <input type="text" id="ciudad" placeholder="Ej: Bogotá" required>
-            
-            <label>Dirección Exacta</label>
-            <input type="text" id="direccion" placeholder="Calle, número, apto" required>
-            
+            <input type="text" id="ciudad" required>
+            <label>Dirección Completa</label>
+            <input type="text" id="direccion" required>
             <label>Barrio</label>
             <input type="text" id="barrio" required>
-            
             <label>Teléfono Celular</label>
-            <input type="text" id="telefono" placeholder="Ej: 3001234567" required>
+            <input type="text" id="telefono" required>
 
             <div id="wompi-container">
                 </div>
