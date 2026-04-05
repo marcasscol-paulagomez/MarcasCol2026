@@ -9,42 +9,49 @@ function renderCarrito() {
     if (!list) return;
 
     if (carrito.length === 0) {
-        list.innerHTML = "<p style='text-align:center; padding:20px;'>Tu carrito está vacío.</p>";
+        list.innerHTML = "<p style='text-align:center; padding:30px; color:#888;'>Tu carrito está vacío.</p>";
         if (totalEl) totalEl.innerHTML = "";
+        document.getElementById("continuar").style.display = "none";
         return;
     }
 
     let total = 0;
-    list.innerHTML = carrito.map((p, i) => {
+    list.innerHTML = carrito.map((p) => {
         const precioNum = parseFloat(p.precio) || 0;
         const subtotal = precioNum * (p.cantidad || 1);
         total += subtotal;
         return `
-            <div class="carrito-item" style="display:flex; align-items:center; gap:10px; border-bottom:1px solid #eee; padding:10px;">
-                <img src="${p.imagen}" style="width:50px; border-radius:5px;">
-                <div style="flex-grow:1;">
-                    <h4 style="margin:0; font-size:0.9rem;">${p.titulo}</h4>
-                    <p style="margin:0; color:#28a745; font-size:0.8rem;">$${precioNum.toLocaleString()}</p>
+            <div class="carrito-item">
+                <img src="${p.imagen}" alt="${p.titulo}">
+                <div class="carrito-info">
+                    <h4>${p.titulo}</h4>
+                    <p>$${precioNum.toLocaleString()}</p>
+                    <small style="color:#666">Cant: ${p.cantidad || 1}</small>
                 </div>
+                <div style="font-weight:bold;">$${subtotal.toLocaleString()}</div>
             </div>`;
     }).join("");
-    totalEl.innerHTML = `<h3 style="text-align:right;">Total: $${total.toLocaleString()}</h3>`;
+
+    totalEl.innerHTML = `<span style="font-size:1.2rem; color:#666;">Total:</span> 
+                         <strong style="font-size:1.5rem; margin-left:10px;">$${total.toLocaleString()}</strong>`;
 }
 
-// ESTA FUNCIÓN ES LA QUE SOLUCIONA TODO
-function irAPagarWompi() {
+// FUNCIÓN DE REDIRECCIÓN A PAGO REAL (PRODUCCIÓN)
+function finalizarCompraProduccion() {
     const carrito = getCarrito();
     let total = 0;
     carrito.forEach(p => total += (parseFloat(p.precio) || 0) * (p.cantidad || 1));
 
     const totalCentavos = Math.floor(total * 100);
-    const referencia = "MC-TEST-" + Date.now();
-    const llavePublica = "pub_test_cQrYMdUpn35pBXI9Rr7gJyyM7l0d793c"; // Tu llave de prueba
-
-    // Construimos la URL de pago directo (Sin ventanitas que se bloqueen)
-    const urlWompi = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=COP&amount-in-cents=${totalCentavos}&reference=${referencia}`;
+    const referencia = "MC-ORDER-" + Date.now();
     
-    console.log("Redirigiendo a Wompi...");
+    // TU LLAVE DE PRODUCCIÓN OFICIAL
+    const llavePublica = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
+
+    // URL DE REDIRECCIÓN DIRECTA (Evita bloqueos de pantalla blanca)
+    const urlWompi = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=COP&amount-in-cents=${totalCentavos}&reference=${referencia}&redirect-url=https://www.marcascol-bypaulagomez.com/confirmacion.html`;
+    
+    console.log("Iniciando pago en producción...");
     window.location.href = urlWompi;
 }
 
@@ -56,20 +63,24 @@ document.addEventListener("DOMContentLoaded", () => {
         btnContinuar.onclick = () => {
             const carrito = getCarrito();
             if (carrito.length > 0) {
+                // Cambiar de vista
                 document.getElementById("cart").classList.add("hidden");
                 const checkoutSec = document.getElementById("checkout");
                 checkoutSec.classList.remove("hidden");
                 checkoutSec.style.display = "block";
 
+                // Inyectar el botón de pago de Marcas Col
                 const container = document.getElementById("wompi-container");
-                // Creamos un botón estándar que nos mande a la otra página
                 container.innerHTML = `
-                    <button id="btn-final" style="background:#000; color:#fff; width:100%; padding:18px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:1.1rem;">
+                    <button id="btn-pagar-real">
                         PAGAR AHORA CON WOMPI
                     </button>
                 `;
                 
-                document.getElementById("btn-final").onclick = irAPagarWompi;
+                document.getElementById("btn-pagar-real").onclick = finalizarCompraProduccion;
+                
+                // Desplazar hacia arriba suavemente
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         };
     }
