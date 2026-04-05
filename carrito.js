@@ -20,76 +20,57 @@ function renderCarrito() {
         const subtotal = precioNum * (p.cantidad || 1);
         total += subtotal;
         return `
-            <div style="border-bottom:1px solid #eee; padding:15px; display:flex; align-items:center; gap:15px;">
-                <img src="${p.imagen}" style="width:60px; border-radius:5px;">
+            <div class="carrito-item" style="display:flex; align-items:center; gap:10px; border-bottom:1px solid #eee; padding:10px;">
+                <img src="${p.imagen}" style="width:50px; border-radius:5px;">
                 <div style="flex-grow:1;">
-                    <h4 style="margin:0;">${p.titulo}</h4>
-                    <p style="margin:0; color:#28a745;">$${precioNum.toLocaleString()}</p>
+                    <h4 style="margin:0; font-size:0.9rem;">${p.titulo}</h4>
+                    <p style="margin:0; color:#28a745; font-size:0.8rem;">$${precioNum.toLocaleString()}</p>
                 </div>
-                <span>x${p.cantidad || 1}</span>
             </div>`;
     }).join("");
     totalEl.innerHTML = `<h3 style="text-align:right;">Total: $${total.toLocaleString()}</h3>`;
 }
 
-// === GENERADOR DE FIRMA (PASO A PASO WOMPI) ===
-function generarFirma(referencia, centavos) {
-    // ESTO ES PARA MODO PRUEBA (Llave de integridad de Test)
-    // Si Wompi te pide secreto de integridad en modo TEST, lo pones aquí:
-    const secretoTest = "test_integrity_Z6vIe9mN9pS6Y8kR3vX7pY1wL0kQ9zV4"; 
-    const cadenaOriginal = referencia + centavos + "COP" + secretoTest;
-    
-    const hash = CryptoJS.SHA256(cadenaOriginal);
-    return hash.toString(CryptoJS.enc.Hex);
-}
-
-async function pagarConWompi() {
+// ESTA FUNCIÓN ES LA QUE SOLUCIONA TODO
+function irAPagarWompi() {
     const carrito = getCarrito();
     let total = 0;
     carrito.forEach(p => total += (parseFloat(p.precio) || 0) * (p.cantidad || 1));
 
     const totalCentavos = Math.floor(total * 100);
     const referencia = "MC-TEST-" + Date.now();
+    const llavePublica = "pub_test_cQrYMdUpn35pBXI9Rr7gJyyM7l0d793c"; // Tu llave de prueba
+
+    // Construimos la URL de pago directo (Sin ventanitas que se bloqueen)
+    const urlWompi = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=COP&amount-in-cents=${totalCentavos}&reference=${referencia}`;
     
-    // Generamos la firma de seguridad
-    const firmaIntegridad = generarFirma(referencia, totalCentavos);
-
-    if (typeof WidgetCheckout === 'undefined') {
-        alert("Wompi está cargando...");
-        return;
-    }
-
-    var checkout = new WidgetCheckout({
-        currency: 'COP',
-        amountInCents: totalCentavos,
-        reference: referencia,
-        publicKey: 'pub_test_cQrYMdUpn35pBXI9Rr7gJyyM7l0d793c', // <--- TU LLAVE DE PRUEBA
-        signature: { integrity: firmaIntegridad } // Enviamos la firma para evitar pantalla blanca
-    });
-
-    checkout.open(function ( result ) {
-        var transaction = result.transaction;
-        if (transaction.status === 'APPROVED') {
-            alert("¡PRUEBA EXITOSA! El pago fue simulado correctamente.");
-            localStorage.removeItem(STORAGE_KEY);
-            window.location.href = "index.html";
-        }
-    });
+    console.log("Redirigiendo a Wompi...");
+    window.location.href = urlWompi;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     renderCarrito();
+
     const btnContinuar = document.getElementById("continuar");
     if (btnContinuar) {
         btnContinuar.onclick = () => {
-            document.getElementById("cart").classList.add("hidden");
-            const checkoutSec = document.getElementById("checkout");
-            checkoutSec.classList.remove("hidden");
-            checkoutSec.style.display = "block";
+            const carrito = getCarrito();
+            if (carrito.length > 0) {
+                document.getElementById("cart").classList.add("hidden");
+                const checkoutSec = document.getElementById("checkout");
+                checkoutSec.classList.remove("hidden");
+                checkoutSec.style.display = "block";
 
-            const container = document.getElementById("wompi-container");
-            container.innerHTML = `<button id="btn-pago-real" style="background:#000; color:#fff; width:100%; padding:15px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">REALIZAR PAGO DE PRUEBA</button>`;
-            document.getElementById("btn-pago-real").onclick = pagarConWompi;
+                const container = document.getElementById("wompi-container");
+                // Creamos un botón estándar que nos mande a la otra página
+                container.innerHTML = `
+                    <button id="btn-final" style="background:#000; color:#fff; width:100%; padding:18px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:1.1rem;">
+                        PAGAR AHORA CON WOMPI
+                    </button>
+                `;
+                
+                document.getElementById("btn-final").onclick = irAPagarWompi;
+            }
         };
     }
 });
