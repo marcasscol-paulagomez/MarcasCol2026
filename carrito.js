@@ -11,16 +11,15 @@ function renderCarrito() {
     if (carrito.length === 0) {
         list.innerHTML = "<p>Tu carrito está vacío.</p>";
         if (totalEl) totalEl.innerHTML = "";
-        const btnCont = document.getElementById("continuar");
-        if (btnCont) btnCont.style.display = "none";
         return;
     }
 
     let total = 0;
     list.innerHTML = carrito.map((p, i) => {
-        const subtotal = parseFloat(p.precio) * (p.cantidad || 1);
+        const precioNum = parseFloat(p.precio) || 0;
+        const subtotal = precioNum * (p.cantidad || 1);
         total += subtotal;
-        return `<div style="border-bottom:1px solid #eee; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+        return `<div style="border-bottom:1px solid #eee; padding:10px; display:flex; justify-content:space-between;">
                     <span>${p.titulo} (x${p.cantidad || 1})</span>
                     <span>$${subtotal.toLocaleString()}</span>
                 </div>`;
@@ -28,21 +27,23 @@ function renderCarrito() {
     totalEl.innerHTML = `<h3>Total: $${total.toLocaleString()}</h3>`;
 }
 
-// FUNCIÓN PARA ABRIR EL CHECKOUT DE WOMPI SIN PANTALLA BLANCA
 function pagarConWompi() {
     const carrito = getCarrito();
     let total = 0;
-    carrito.forEach(p => total += parseFloat(p.precio) * (p.cantidad || 1));
+    carrito.forEach(p => total += (parseFloat(p.precio) || 0) * (p.cantidad || 1));
 
-    const totalCentavos = Math.round(total * 100);
+    // REGLA WOMPI: Centavos sin decimales
+    const totalCentavos = Math.floor(total * 100);
+    
+    // REGLA WOMPI: Referencia única para evitar pantalla blanca por duplicidad
     const referencia = "MC-" + Date.now();
 
-    // Verificamos que la librería de Wompi esté cargada
     if (typeof WidgetCheckout === 'undefined') {
-        alert("La pasarela de pago está cargando, por favor intenta en un momento.");
+        alert("Wompi aún está cargando. Espera un segundo.");
         return;
     }
 
+    // Configuración Dinámica según la documentación
     var checkout = new WidgetCheckout({
         currency: 'COP',
         amountInCents: totalCentavos,
@@ -53,9 +54,11 @@ function pagarConWompi() {
     checkout.open(function ( result ) {
         var transaction = result.transaction;
         if (transaction.status === 'APPROVED') {
-            alert("¡Pago aprobado! Muchas gracias por tu compra.");
+            alert("¡Pago aprobado! Gracias por comprar en Marcas Col.");
             localStorage.removeItem(STORAGE_KEY);
             window.location.href = "index.html";
+        } else {
+            alert("La transacción resultó: " + transaction.status);
         }
     });
 }
@@ -68,18 +71,18 @@ document.addEventListener("DOMContentLoaded", () => {
         btnContinuar.onclick = () => {
             const carrito = getCarrito();
             if (carrito.length > 0) {
+                // Navegación
                 document.getElementById("cart").classList.add("hidden");
-                document.getElementById("checkout").classList.remove("hidden");
-                
-                // Creamos un botón de pago real que dispare la función dinámica
+                const checkoutSec = document.getElementById("checkout");
+                checkoutSec.classList.remove("hidden");
+
+                // Generar el botón dinámicamente para que Wompi lo reconozca bien
                 const container = document.getElementById("wompi-container");
-                container.innerHTML = `
-                    <button id="btn-wompi-dinamico" style="background-color: #000; color: #fff; padding: 15px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; width: 100%;">
-                        PAGAR AHORA
-                    </button>
-                `;
+                container.innerHTML = `<button id="btn-wompi-dinamico">PAGAR CON WOMPI</button>`;
                 
                 document.getElementById("btn-wompi-dinamico").onclick = pagarConWompi;
+            } else {
+                alert("El carrito está vacío.");
             }
         };
     }
