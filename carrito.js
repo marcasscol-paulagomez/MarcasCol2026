@@ -1,133 +1,67 @@
-// === Funciones del carrito ===
-function getCarrito() {
-    return JSON.parse(localStorage.getItem("carrito")) || [];
-}
+const STORAGE_KEY = "carrito";
 
-function guardarCarrito(carrito) {
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-}
-
-function eliminarDelCarrito(index) {
-    let carrito = getCarrito();
-    carrito.splice(index, 1);
-    guardarCarrito(carrito);
-    renderCarrito();
-    
-    let nuevoTotal = 0;
-    getCarrito().forEach(p => {
-        nuevoTotal += parseFloat(p.precio) * (p.cantidad || 1);
-    });
-    actualizarMontoWompi(nuevoTotal);
-}
-
-function actualizarTotales() {
-    const carrito = getCarrito();
-    let total = 0;
-
-    document.querySelectorAll(".carrito-item").forEach((item, i) => {
-        const cantidadInput = item.querySelector(".cantidad");
-        if (cantidadInput && carrito[i]) {
-            const cantidad = parseInt(cantidadInput.value);
-            total += carrito[i].precio * cantidad;
-            carrito[i].cantidad = cantidad;
-        }
-    });
-
-    guardarCarrito(carrito);
-
-    const totalEl = document.getElementById("carrito-total");
-    if (totalEl) {
-        totalEl.innerHTML = `<h2>Total a pagar: $${total.toLocaleString()}</h2>`;
-    }
-
-    actualizarMontoWompi(total); 
-}
+function getCarrito() { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
 
 function renderCarrito() {
-    let carrito = getCarrito();
+    const carrito = getCarrito();
     const list = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
-
     if (!list) return;
 
     if (carrito.length === 0) {
         list.innerHTML = "<p>Tu carrito está vacío.</p>";
-        if (totalEl) totalEl.textContent = "";
+        totalEl.innerHTML = "";
+        document.getElementById("continuar").style.display = "none";
         return;
     }
 
     let total = 0;
     list.innerHTML = carrito.map((p, i) => {
-        if (!p.cantidad) p.cantidad = 1;
-        total += parseFloat(p.precio) * p.cantidad;
-        return `
-            <div class="carrito-item" style="border-bottom: 1px solid #eee; padding: 15px 0; display: flex; align-items: center; gap: 15px;">
-                <img src="${p.imagen}" alt="${p.titulo}" style="width: 70px; border-radius: 5px;">
-                <div class="carrito-info" style="flex-grow: 1;">
-                    <h3 style="margin: 0; font-size: 1rem;">${p.titulo}</h3>
-                    <p style="margin: 5px 0;">Precio: $${parseFloat(p.precio).toLocaleString()}</p>
-                    <label>Cant: 
-                        <input type="number" id="cantidad-${i}" class="cantidad" value="${p.cantidad}" min="1" style="width: 45px;">
-                    </label>
-                </div>
-                <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">❌</button>
-            </div>
-        `;
+        const subtotal = parseFloat(p.precio) * (p.cantidad || 1);
+        total += subtotal;
+        return `<div style="border-bottom:1px solid #eee; padding:10px; display:flex; justify-content:space-between;">
+                    <span>${p.titulo} (x${p.cantidad || 1})</span>
+                    <span>$${subtotal.toLocaleString()}</span>
+                </div>`;
     }).join("");
-
-    if (totalEl) {
-        totalEl.innerHTML = `<h2>Total a pagar: $${total.toLocaleString()}</h2>`;
-    }
-
-    actualizarMontoWompi(total);
-
-    document.querySelectorAll(".cantidad").forEach(input => {
-        input.addEventListener("input", actualizarTotales);
-    });
+    totalEl.innerHTML = `Total: $${total.toLocaleString()}`;
 }
 
-function actualizarMontoWompi(total) {
+function inyectarWompi(total) {
+    const container = document.getElementById("wompi-container");
+    if (!container) return;
+
     const totalCentavos = Math.round(total * 100);
-    const scriptWompi = document.getElementById('wompi-button');
+    const referencia = "MC-" + Date.now();
+
+    container.innerHTML = ""; // Limpiar mensaje de carga
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.wompi.co/widget.js";
+    script.setAttribute("data-render", "button");
+    script.setAttribute("data-public-key", "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae");
+    script.setAttribute("data-currency", "COP");
+    script.setAttribute("data-amount-in-cents", totalCentavos.toString());
+    script.setAttribute("data-reference", referencia);
     
-    if (scriptWompi) {
-        scriptWompi.setAttribute('data-amount-in-cents', totalCentavos);
-        const referencia = "MC-" + Math.floor(Date.now() / 1000);
-        scriptWompi.setAttribute('data-reference', referencia);
-        console.log("Wompi sincronizado: $" + total);
-    }
+    container.appendChild(script);
 }
 
-// === Control de Navegación ===
 document.addEventListener("DOMContentLoaded", () => {
     renderCarrito();
 
     const btnContinuar = document.getElementById("continuar");
     if (btnContinuar) {
-        btnContinuar.addEventListener("click", () => {
-            const carritoCheck = getCarrito();
-            
-            if (carritoCheck.length > 0) {
-                // 1. Ocultar sección de carrito
-                document.getElementById("cart").style.display = "none";
+        btnContinuar.onclick = () => {
+            const carrito = getCarrito();
+            if (carrito.length > 0) {
+                document.getElementById("cart").classList.add("hidden");
+                document.getElementById("checkout").classList.remove("hidden");
                 
-                // 2. Mostrar sección de checkout (quitar clase y forzar display)
-                const checkoutSection = document.getElementById("checkout");
-                checkoutSection.classList.remove("hidden");
-                checkoutSection.style.display = "block";
-
-                // 3. Actualizar montos para Wompi
-                actualizarTotales();
-            } else {
-                alert("Primero debes añadir productos al carrito.");
+                let total = 0;
+                carrito.forEach(p => total += parseFloat(p.precio) * (p.cantidad || 1));
+                inyectarWompi(total);
             }
-        });
-    }
-
-    const checkoutForm = document.getElementById("checkout-form");
-    if (checkoutForm) {
-        checkoutForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-        });
+        };
     }
 });
