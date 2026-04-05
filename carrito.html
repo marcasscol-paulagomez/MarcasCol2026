@@ -5,74 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - Marcas Col</title>
     <script src="https://checkout.wompi.co/widget.js"></script>
-    <link rel="stylesheet" href="/estilos/carrito.css">
+    <link rel="stylesheet" href="estilos/carrito.css">
     <style>
         .hidden { display: none !important; }
+        .carrito-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .carrito-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .carrito-info { flex-grow: 1; }
+        .btn-eliminar {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ff4d4d;
+            font-size: 1.2rem;
+        }
         #wompi-container {
             text-align: center;
             background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            min-height: 100px;
+            padding: 25px;
+            border-radius: 12px;
             margin-top: 20px;
+            border: 1px dashed #ddd;
         }
+        /* Estilo del botón de pago final */
         #btn-wompi-dinamico {
             background-color: #000;
             color: #fff;
-            padding: 15px 30px;
-            border-radius: 5px;
+            padding: 18px 30px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             border: none;
             width: 100%;
-            transition: background 0.3s;
+            font-size: 1.1rem;
+            transition: transform 0.2s, background 0.3s;
         }
-        #btn-wompi-dinamico:hover { background-color: #333; }
+        #btn-wompi-dinamico:hover {
+            background-color: #222;
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body>
 <header class="catalogo-header">
   <div class="catalogo-header-content">
     <a href="index.html">
-      <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo">
+      <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo" style="width: 100px;">
     </a>
     <nav class="catalogo-nav">
       <div class="cart-title">
-        <img src="imagenes/carrito.png" alt="Carrito de Compras" class="cart-icon">
-        <span>Carrito de Compras</span>
+        <img src="imagenes/carrito.png" alt="Carrito" class="cart-icon" style="width: 30px;">
+        <span style="font-weight: bold; font-size: 1.2rem;"> Mi Carrito</span>
       </div>
     </nav>
   </div>
 </header>
 
-    <main>
-        <section id="cart">
-            <div id="carrito-list"></div>
-            <div id="carrito-total"></div>
-            <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <button onclick="window.location.href='index.html'" style="padding: 10px 20px; cursor: pointer;">Seguir comprando</button>
-                <button id="continuar" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer; font-weight: bold;">
-                    Finalizar Compra
-                </button>
-            </div>
-        </section>
+<main style="max-width: 800px; margin: 20px auto; padding: 0 15px;">
+    <section id="cart">
+        <div id="carrito-list"></div>
+        <div id="carrito-total" style="margin-top: 20px; border-top: 2px solid #000; padding-top: 10px;"></div>
+        
+        <div style="margin-top: 25px; display: flex; gap: 15px; justify-content: center;">
+            <button onclick="window.location.href='index.html'" style="padding: 12px 20px; cursor: pointer; border: 1px solid #ccc; background: white; border-radius: 5px;">
+                Seguir comprando
+            </button>
+            <button id="continuar" style="background-color: #28a745; color: white; padding: 12px 25px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px;">
+                Finalizar Compra
+            </button>
+        </div>
+    </section>
 
-        <section id="checkout" class="hidden" style="margin-top: 30px;">
-            <hr>
-            <h2>Datos para tu envío</h2>
-            <form id="checkout-form" onsubmit="return false;">
-                <label>Nombre completo: <input type="text" id="nombre" required style="width: 100%; margin-bottom: 10px;"></label>
-                <label>Cédula o NIT: <input type="text" id="identificacion" required style="width: 100%; margin-bottom: 10px;"></label>
-                <label>Ciudad: <input type="text" id="ciudad" required style="width: 100%; margin-bottom: 10px;"></label>
-                <label>Dirección: <input type="text" id="direccion" required style="width: 100%; margin-bottom: 10px;"></label>
-                <label>Barrio: <input type="text" id="barrio" required style="width: 100%; margin-bottom: 10px;"></label>
-                <label>Teléfono: <input type="text" id="telefono" required style="width: 100%; margin-bottom: 20px;"></label>
+    <section id="checkout" class="hidden" style="margin-top: 30px; background: white; padding: 20px; border-radius: 10px; shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h2 style="text-align: center;">Datos para tu envío</h2>
+        <p style="text-align: center; color: #666;"><small>Completa tus datos para habilitar el botón de pago.</small></p>
+        <hr>
+        <form id="checkout-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+            <label>Nombre completo: <input type="text" id="nombre" placeholder="Ej: Paula Gomez" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></label>
+            <label>Cédula o NIT: <input type="text" id="identificacion" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></label>
+            <label>Ciudad: <input type="text" id="ciudad" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></label>
+            <label>Dirección de entrega: <input type="text" id="direccion" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></label>
+            <label>Barrio: <input type="text" id="barrio" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></label>
+            <label>Teléfono Celular: <input type="text" id="telefono" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;"></label>
 
-                <div id="wompi-container">
-                    </div>
-            </form>
-        </section>
-    </main>
-    <script src="carrito.js"></script>
+            <div id="wompi-container">
+                </div>
+        </form>
+    </section>
+</main>
+
+<script src="carrito.js"></script>
 </body>
 </html>
