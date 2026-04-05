@@ -110,6 +110,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnContinuar = document.getElementById("continuar");
     if (btnContinuar) {
         btnContinuar.addEventListener("click", () => {
+            // Esto obliga a la sección a mostrarse eliminando la restricción
+            const checkoutSection = document.getElementById("checkout");
+            checkoutSection.classList.remove("hidden");
+            checkoutSection.style.display = "block";
+
+            document.getElementById("cart").style.display = "none";
+
+            // Re-renderizamos Wompi para que aparezca
+            actualizarTotales();
+            
             const carritoCheck = getCarrito();
             if (carritoCheck.length > 0) {
                 // Ocultar carrito y mostrar formulario/pago
