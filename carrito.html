@@ -1,117 +1,22 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalizar Compra - Marcas Col</title>
-    <link rel="stylesheet" href="estilos/carrito.css">
-    <style>
-        .hidden { display: none !important; }
-        .carrito-item {
-            border-bottom: 1px solid #f0f0f0;
-            padding: 15px 0;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .carrito-item img {
-            width: 70px;
-            height: 70px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #eee;
-        }
-        .carrito-info { flex-grow: 1; }
-        .carrito-info h4 { margin: 0; font-size: 1rem; color: #333; }
-        .carrito-info p { margin: 5px 0; color: #28a745; font-weight: bold; }
-        
-        #wompi-container {
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 20px;
-        }
+/* Botones de cantidad (+ / -) */
+.carrito-info button {
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    font-weight: bold;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        #btn-pagar-real {
-            background-color: #000;
-            color: #fff;
-            padding: 18px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            border: none;
-            width: 100%;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        #btn-pagar-real:hover {
-            background-color: #333;
-            transform: translateY(-2px);
-        }
-        
-        input {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-    </style>
-</head>
-<body>
+.carrito-info button:hover {
+    background: #f0f0f0;
+}
 
-<header class="catalogo-header">
-    <div class="catalogo-header-content">
-        <a href="index.html">
-            <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo" style="width: 110px;">
-        </a>
-        <div class="cart-title">
-            <span style="font-weight: bold; font-size: 1.2rem;">Mi Pedido</span>
-        </div>
-    </div>
-</header>
-
-<main style="max-width: 600px; margin: 20px auto; padding: 0 20px;">
-    <section id="cart">
-        <div id="carrito-list"></div>
-        <div id="carrito-total" style="margin-top: 20px; text-align: right; border-top: 2px solid #f0f0f0; padding-top: 15px;"></div>
-        
-        <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 10px;">
-            <button id="continuar" style="background-color: #28a745; color: white; padding: 16px; border: none; cursor: pointer; font-weight: bold; border-radius: 10px; font-size: 1rem;">
-                CONTINUAR CON EL ENVÍO
-            </button>
-        </div>
-    </section>
-
-    <section id="checkout" class="hidden" style="margin-top: 20px; background: #fff; padding: 25px; border-radius: 15px; border: 1px solid #eee;">
-        <h2 style="text-align: center; margin-bottom: 20px;">Datos de Entrega</h2>
-        <form id="checkout-form" onsubmit="return false;">
-            <label>Nombre Completo</label>
-            <input type="text" id="nombre" placeholder="Ej: Paula Gómez" required>
-            <label>Cédula o NIT</label>
-            <input type="text" id="identificacion" required>
-            <label>Ciudad</label>
-            <input type="text" id="ciudad" required>
-            <label>Dirección Completa</label>
-            <input type="text" id="direccion" required>
-            <label>Barrio</label>
-            <input type="text" id="barrio" required>
-            <label>Teléfono Celular</label>
-            <input type="text" id="telefono" required>
-
-            <div id="wompi-container">
-                </div>
-        </form>
-    </section>
-</main>
-
-<script src="carrito.js"></script>
-</body>
-</html>
+/* Ajuste para el total y vaciar carrito */
+#carrito-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
