@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito de Compras</title>
+    <title>Carrito de Compras - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
 </head>
 <body>
@@ -21,39 +21,46 @@
   </div>
 </header>
 
-
     <main>
-        <!-- Sección carrito -->
         <section id="cart">
             <div id="carrito-list"></div>
             <div id="carrito-total"></div>
-            <button onclick="window.location.href='index.html'">Seguir comprando</button>
-            <button id="continuar" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer;">Finalizar Compra</button>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button onclick="window.location.href='index.html'" style="padding: 10px 20px; cursor: pointer;">Seguir comprando</button>
+                
+                <button id="continuar" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer; font-weight: bold;">
+                    Finalizar Compra
+                </button>
+            </div>
         </section>
 
-        <!-- Sección checkout -->
-        <section id="checkout" class="hidden">
-            <h2>Finalizar compra</h2>
-            <form id="checkout-form">
+        <section id="checkout" class="hidden" style="margin-top: 30px;">
+            <hr>
+            <h2>Datos para tu envío</h2>
+            <p><small>Por favor completa tus datos para habilitar el botón de pago.</small></p>
+            
+            <form id="checkout-form" onsubmit="return false;">
                 <label>Nombre completo:
-                    <input type="text" id="nombre" required>
+                    <input type="text" id="nombre" placeholder="Ej: Paula Gomez" required style="width: 100%; margin-bottom: 10px;">
                 </label>
                  <label>Cédula o NIT:
-                    <input type="text" id="identificación" required>
+                    <input type="text" id="identificación" required style="width: 100%; margin-bottom: 10px;">
                 </label>
                 <label>Ciudad:
-                    <input type="text" id="Ciudad" required>
+                    <input type="text" id="Ciudad" required style="width: 100%; margin-bottom: 10px;">
                 </label>
-                <label>Dirección:
-                    <input type="text" id="direccion" required>
+                <label>Dirección de entrega:
+                    <input type="text" id="direccion" required style="width: 100%; margin-bottom: 10px;">
                 </label>
                 <label>Barrio:
-                    <input type="text" id="barrio" required>
+                    <input type="text" id="barrio" required style="width: 100%; margin-bottom: 10px;">
                 </label>
-                <label>Teléfono:
-                    <input type="text" id="telefono" required>
+                <label>Teléfono Celular:
+                    <input type="text" id="telefono" required style="width: 100%; margin-bottom: 20px;">
                 </label>
-                <div id="wompi-container">
+
+                <div id="wompi-container" style="text-align: center; background: #f9f9f9; padding: 20px; border-radius: 8px;">
                   <script
                     src="https://checkout.wompi.co/widget.js"
                     data-render="button"
@@ -63,14 +70,13 @@
                     data-reference="MarcasCol-Pedido"
                     id="wompi-button">
                   </script>
-                    </div>
+                </div>
             </form>
         </section>
     </main>
 
 <footer class="catalogo-footer">
   <div class="footer-content">
-    <!-- Columna 1 -->
     <div class="footer-col">
       <img src="imagenes/logo.jpg" alt="Logo Marcas Col" class="logo">
       <p>Tu tienda de confianza en marcas exclusivas.</p>
@@ -78,41 +84,24 @@
         <a href="https://www.facebook.com/marcas.coll/"><img src="imagenes/facebook.png" alt="Facebook"></a>
         <a href="https://www.instagram.com/marcas.col/?hl=es"><img src="imagenes/instagram.jpg" alt="Instagram"></a>
         <a href="https://www.tiktok.com/@marcas.col?_t=ZS-8zzwawF5Mwc&_r=1"><img src="imagenes/tiktok.png" alt="TikTok"></a>
-        <a href="https://www.threads.com/@marcas.col?xmt=AQF0JsMs-NGcde6Zu-eC_zE1h3rb62Z1-dY-QNx"><img src="imagenes/x.png" alt="TikTok"></a>
       </div>
     </div>
-    <!-- Columna 2 -->
     <div class="footer-col">
       <h3>Contacto</h3>
       <p>📍 Colombia</p>
       <p>📧 Marcass.col@gmail.com</p>
       <p>📞 +57 314 4352536</p>
     </div>
-    <!-- Columna 3 -->
-    <div class="footer-col">
-      <h3>Enlaces de interés</h3>
-      <ul>
-        <li><a href="acerca.html">Acerca de Nosotros</a></li>
-        <li><a href="#">Preguntas Frecuentes</a></li>
-        <li><a href="#">Política de Privacidad</a></li>
-        <li><a href="#">Términos y Condiciones</a></li>
-      </ul>
-    </div>
   </div>
   <div class="footer-bottom">
-    <p>&copy; 2025 Marcas Col. Todos los derechos reservados.</p>
+    <p>&copy; 2026 Marcas Col. Todos los derechos reservados.</p>
   </div>
 </footer>
 
-<!-- Botón flotante de WhatsApp -->
-<a href="https://wa.me/573144352536" 
-   class="whatsapp-float" 
-   target="_blank" 
-   aria-label="WhatsApp">
+<a href="https://wa.me/573144352536" class="whatsapp-float" target="_blank">
    <img src="imagenes/whatsapp.png" alt="WhatsApp">
 </a>
 
     <script src="carrito.js"></script>
 </body>
-
 </html>
