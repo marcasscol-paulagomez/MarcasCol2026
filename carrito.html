@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - Marcas Col</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://checkout.wompi.co/widget.js"></script>
+    
     <link rel="stylesheet" href="estilos/carrito.css">
     <style>
         .hidden { display: none !important; }
@@ -37,7 +40,7 @@
             margin-top: 20px;
             border: 1px dashed #ddd;
         }
-        /* Estilo del botón de pago final */
+        /* Estilo del botón de pago final dinámico */
         #btn-wompi-dinamico {
             background-color: #000;
             color: #fff;
@@ -57,18 +60,19 @@
     </style>
 </head>
 <body>
+
 <header class="catalogo-header">
-  <div class="catalogo-header-content">
-    <a href="index.html">
-      <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo" style="width: 100px;">
-    </a>
-    <nav class="catalogo-nav">
-      <div class="cart-title">
-        <img src="imagenes/carrito.png" alt="Carrito" class="cart-icon" style="width: 30px;">
-        <span style="font-weight: bold; font-size: 1.2rem;"> Mi Carrito</span>
-      </div>
-    </nav>
-  </div>
+    <div class="catalogo-header-content">
+        <a href="index.html">
+            <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo" style="width: 100px;">
+        </a>
+        <nav class="catalogo-nav">
+            <div class="cart-title">
+                <img src="imagenes/carrito.png" alt="Carrito" class="cart-icon" style="width: 30px;">
+                <span style="font-weight: bold; font-size: 1.2rem;"> Mi Carrito</span>
+            </div>
+        </nav>
+    </div>
 </header>
 
 <main style="max-width: 800px; margin: 20px auto; padding: 0 15px;">
@@ -86,7 +90,7 @@
         </div>
     </section>
 
-    <section id="checkout" class="hidden" style="margin-top: 30px; background: white; padding: 20px; border-radius: 10px; shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <section id="checkout" class="hidden" style="margin-top: 30px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
         <h2 style="text-align: center;">Datos para tu envío</h2>
         <p style="text-align: center; color: #666;"><small>Completa tus datos para habilitar el botón de pago.</small></p>
         <hr>
@@ -99,11 +103,13 @@
             <label>Teléfono Celular: <input type="text" id="telefono" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;"></label>
 
             <div id="wompi-container">
-                </div>
+                <p style="color: #999;">Cargando pasarela de pago...</p>
+            </div>
         </form>
     </section>
 </main>
 
 <script src="carrito.js"></script>
+
 </body>
 </html>
