@@ -6,8 +6,15 @@
     <title>Carrito de Compras - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
     <style>
-        /* Por si acaso tu CSS no tiene la clase hidden, la definimos aquí */
         .hidden { display: none !important; }
+        #wompi-container {
+            text-align: center;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 100px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -41,7 +48,7 @@
         <section id="checkout" class="hidden" style="margin-top: 30px;">
             <hr>
             <h2>Datos para tu envío</h2>
-            <p><small>Por favor completa tus datos para habilitar el botón de pago.</small></p>
+            <p><small>Por favor completa tus datos para proceder al pago.</small></p>
             
             <form id="checkout-form" onsubmit="return false;">
                 <label>Nombre completo:
@@ -63,21 +70,13 @@
                     <input type="text" id="telefono" required style="width: 100%; margin-bottom: 20px;">
                 </label>
 
-                <div id="wompi-container" style="text-align: center; background: #f9f9f9; padding: 20px; border-radius: 8px; min-height: 100px;">
-                  <script
-                    src="https://checkout.wompi.co/widget.js"
-                    data-render="dynamic"
-                    data-public-key="pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae" 
-                    data-currency="COP"
-                    data-amount-in-cents="0" 
-                    data-reference="MarcasCol-Pedido"
-                    id="wompi-button">
-                  </script>
-                </div>
+                <div id="wompi-container">
+                    </div>
             </form>
         </section>
     </main>
 
+    <script src="https://checkout.wompi.co/widget.js"></script>
     <script src="carrito.js"></script>
 </body>
 </html>
