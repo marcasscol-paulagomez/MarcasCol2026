@@ -42,6 +42,8 @@ function renderCarrito() {
         list.innerHTML = "<p>El carrito está vacío.</p>";
         totalEl.textContent = "";
         return;
+        // ... código anterior de renderCarrito ...
+    actualizarMontoWompi(total); 
     }
 
     let total = 0;
@@ -109,5 +111,17 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("checkout").classList.add("hidden");
         document.getElementById("cart").classList.remove("hidden");
         renderCarrito();
+
+        // Función para conectar el total del carrito con Wompi
+        function actualizarMontoWompi(total) {
+         const totalCentavos = Math.round(total * 100);
+          const scriptWompi = document.getElementById('wompi-button');
+    
+        if (scriptWompi) {
+        scriptWompi.setAttribute('data-amount-in-cents', totalCentavos);
+        
+        // Generamos una referencia única basada en la hora actual
+        const referencia = "MC-" + Math.floor(Date.now() / 1000);
+        scriptWompi.setAttribute('data-reference', referencia);
     });
 });
