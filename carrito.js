@@ -12,6 +12,13 @@ function eliminarDelCarrito(index) {
     carrito.splice(index, 1);
     guardarCarrito(carrito);
     renderCarrito();
+    
+    // Actualización inmediata del monto tras eliminar
+    let nuevoTotal = 0;
+    getCarrito().forEach(p => {
+        nuevoTotal += parseFloat(p.precio) * (p.cantidad || 1);
+    });
+    actualizarMontoWompi(nuevoTotal);
 }
 
 function actualizarTotales() {
@@ -34,7 +41,6 @@ function actualizarTotales() {
         totalEl.innerHTML = `<h2>Total a pagar: $${total.toLocaleString()}</h2>`;
     }
 
-    // Actualizamos Wompi cada vez que cambian los totales
     actualizarMontoWompi(total); 
 }
 
@@ -46,7 +52,7 @@ function renderCarrito() {
     if (!list) return;
 
     if (carrito.length === 0) {
-        list.innerHTML = "<p>El carrito está vacío.</p>";
+        list.innerHTML = "<p>Tu carrito está vacío.</p>";
         if (totalEl) totalEl.textContent = "";
         return;
     }
@@ -58,17 +64,16 @@ function renderCarrito() {
         total += parseFloat(p.precio) * p.cantidad;
 
         return `
-            <div class="carrito-item">
-                <img src="${p.imagen}" alt="${p.titulo}">
-                <div class="carrito-info">
-                    <h3>${p.titulo}</h3>
-                    <p><strong>Precio:</strong> $${p.precio}</p>
-                    <p><strong>Marca:</strong> ${p.marca}</p>
-                    <p>${p.descripcion}</p>
-                    <label for="cantidad-${i}">Cantidad:</label>
-                    <input type="number" id="cantidad-${i}" class="cantidad" value="${p.cantidad}" min="1">
+            <div class="carrito-item" style="border-bottom: 1px solid #eee; padding: 15px 0; display: flex; align-items: center; gap: 15px;">
+                <img src="${p.imagen}" alt="${p.titulo}" style="width: 70px; border-radius: 5px;">
+                <div class="carrito-info" style="flex-grow: 1;">
+                    <h3 style="margin: 0; font-size: 1rem;">${p.titulo}</h3>
+                    <p style="margin: 5px 0;">Price: $${parseFloat(p.precio).toLocaleString()}</p>
+                    <label>Cant: 
+                        <input type="number" id="cantidad-${i}" class="cantidad" value="${p.cantidad}" min="1" style="width: 45px;">
+                    </label>
                 </div>
-                <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">❌ Eliminar</button>
+                <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})" style="background: none; border: none; cursor: pointer; color: #ff4d4d; font-size: 1.2rem;">❌</button>
             </div>
         `;
     }).join("");
@@ -77,7 +82,6 @@ function renderCarrito() {
         totalEl.innerHTML = `<h2>Total a pagar: $${total.toLocaleString()}</h2>`;
     }
 
-    // Actualizamos Wompi al cargar el carrito
     actualizarMontoWompi(total);
 
     document.querySelectorAll(".cantidad").forEach(input => {
@@ -85,37 +89,45 @@ function renderCarrito() {
     });
 }
 
-// === Función para conectar con Wompi ===
+// === Función Maestra para Wompi ===
 function actualizarMontoWompi(total) {
     const totalCentavos = Math.round(total * 100);
     const scriptWompi = document.getElementById('wompi-button');
     
     if (scriptWompi) {
         scriptWompi.setAttribute('data-amount-in-cents', totalCentavos);
+        // Referencia única para evitar bloqueos de Wompi
         const referencia = "MC-" + Math.floor(Date.now() / 1000);
         scriptWompi.setAttribute('data-reference', referencia);
-        console.log("Wompi listo para cobrar: " + totalCentavos + " centavos.");
+        console.log("Wompi sincronizado con $" + total);
     }
 }
 
-// === Eventos ===
+// === Control de Navegación y Eventos ===
 document.addEventListener("DOMContentLoaded", () => {
     renderCarrito();
 
     const btnContinuar = document.getElementById("continuar");
     if (btnContinuar) {
         btnContinuar.addEventListener("click", () => {
-            document.getElementById("cart").classList.add("hidden");
-            document.getElementById("checkout").classList.remove("hidden");
+            const carritoCheck = getCarrito();
+            if (carritoCheck.length > 0) {
+                // Ocultar carrito y mostrar formulario/pago
+                document.getElementById("cart").style.display = "none";
+                document.getElementById("checkout").classList.remove("hidden");
+                // Asegurar que el monto sea el correcto al abrir
+                actualizarTotales();
+            } else {
+                alert("Primero debes añadir productos al carrito.");
+            }
         });
     }
 
     const checkoutForm = document.getElementById("checkout-form");
     if (checkoutForm) {
         checkoutForm.addEventListener("submit", (e) => {
-            // No hacemos e.preventDefault() aquí si queremos que Wompi procese, 
-            // pero como el botón de Wompi es independiente, este form es solo para tus datos.
-            console.log("Datos de envío registrados.");
+            e.preventDefault();
+            console.log("Datos de envío listos.");
         });
     }
 });
