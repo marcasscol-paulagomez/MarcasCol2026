@@ -29,6 +29,8 @@ function actualizarTotales() {
 
     const totalEl = document.getElementById("carrito-total");
     totalEl.innerHTML = `<h2>Total a pagar: $${total.toFixed(2)}</h2>`;
+    // === AGREGAR ESTA LÍNEA PARA WOMPI ===
+    actualizarMontoWompi(total); 
 }
 
 function renderCarrito() {
