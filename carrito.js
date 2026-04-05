@@ -9,9 +9,7 @@ function renderCarrito() {
     if (!list) return;
 
     if (carrito.length === 0) {
-        list.innerHTML = "<p style='text-align:center; padding:30px; color:#888;'>Tu carrito está vacío.</p>";
-        if (totalEl) totalEl.innerHTML = "";
-        document.getElementById("continuar").style.display = "none";
+        list.innerHTML = "<p style='text-align:center; padding:30px;'>El carrito está vacío.</p>";
         return;
     }
 
@@ -26,18 +24,17 @@ function renderCarrito() {
                 <div class="carrito-info">
                     <h4>${p.titulo}</h4>
                     <p>$${precioNum.toLocaleString()}</p>
-                    <small style="color:#666">Cant: ${p.cantidad || 1}</small>
+                    <small>Cant: ${p.cantidad || 1}</small>
                 </div>
                 <div style="font-weight:bold;">$${subtotal.toLocaleString()}</div>
             </div>`;
     }).join("");
 
-    totalEl.innerHTML = `<span style="font-size:1.2rem; color:#666;">Total:</span> 
-                         <strong style="font-size:1.5rem; margin-left:10px;">$${total.toLocaleString()}</strong>`;
+    totalEl.innerHTML = `<strong>Total a pagar: $${total.toLocaleString()}</strong>`;
 }
 
-// FUNCIÓN DE REDIRECCIÓN A PAGO REAL (PRODUCCIÓN)
-function finalizarCompraProduccion() {
+// FUNCIÓN DE REDIRECCIÓN A PAGO REAL
+function irAPagarWompi() {
     const carrito = getCarrito();
     let total = 0;
     carrito.forEach(p => total += (parseFloat(p.precio) || 0) * (p.cantidad || 1));
@@ -45,13 +42,13 @@ function finalizarCompraProduccion() {
     const totalCentavos = Math.floor(total * 100);
     const referencia = "MC-ORDER-" + Date.now();
     
-    // TU LLAVE DE PRODUCCIÓN OFICIAL
+    // TU LLAVE DE PRODUCCIÓN
     const llavePublica = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
 
-    // URL DE REDIRECCIÓN DIRECTA (Evita bloqueos de pantalla blanca)
-    const urlWompi = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=COP&amount-in-cents=${totalCentavos}&reference=${referencia}&redirect-url=https://www.marcascol-bypaulagomez.com/confirmacion.html`;
+    // CONSTRUCCIÓN DE URL (Sin firma de integridad para evitar pantalla blanca)
+    const urlWompi = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=COP&amount-in-cents=${totalCentavos}&reference=${referencia}`;
     
-    console.log("Iniciando pago en producción...");
+    console.log("Redirigiendo a Wompi Producción...");
     window.location.href = urlWompi;
 }
 
@@ -61,27 +58,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnContinuar = document.getElementById("continuar");
     if (btnContinuar) {
         btnContinuar.onclick = () => {
-            const carrito = getCarrito();
-            if (carrito.length > 0) {
-                // Cambiar de vista
-                document.getElementById("cart").classList.add("hidden");
-                const checkoutSec = document.getElementById("checkout");
-                checkoutSec.classList.remove("hidden");
-                checkoutSec.style.display = "block";
+            document.getElementById("cart").classList.add("hidden");
+            const checkoutSec = document.getElementById("checkout");
+            checkoutSec.classList.remove("hidden");
+            checkoutSec.style.display = "block";
 
-                // Inyectar el botón de pago de Marcas Col
-                const container = document.getElementById("wompi-container");
-                container.innerHTML = `
-                    <button id="btn-pagar-real">
-                        PAGAR AHORA CON WOMPI
-                    </button>
-                `;
-                
-                document.getElementById("btn-pagar-real").onclick = finalizarCompraProduccion;
-                
-                // Desplazar hacia arriba suavemente
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            const container = document.getElementById("wompi-container");
+            container.innerHTML = `<button id="btn-pagar-real">PAGAR AHORA CON WOMPI</button>`;
+            document.getElementById("btn-pagar-real").onclick = irAPagarWompi;
         };
     }
 });
