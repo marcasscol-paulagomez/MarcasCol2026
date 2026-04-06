@@ -1,22 +1,159 @@
-/* Botones de cantidad (+ / -) */
-.carrito-info button {
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 4px;
-    font-weight: bold;
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Marcas Col</title>
+    <link rel="stylesheet" href="estilos/carrito.css">
+    <style>
+        /* CONFIGURACIÓN GENERAL */
+        .hidden { display: none !important; }
+        
+        .carrito-item {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-.carrito-info button:hover {
-    background: #f0f0f0;
-}
+        .carrito-item img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
 
-/* Ajuste para el total y vaciar carrito */
-#carrito-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .carrito-info { flex-grow: 1; }
+        .carrito-info h4 { margin: 0; font-size: 1rem; color: #333; }
+        .carrito-info p { margin: 5px 0; color: #28a745; font-weight: bold; }
+
+        /* BOTONES DE CANTIDAD (+ / -) */
+        .btn-cantidad {
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            font-weight: bold;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .btn-cantidad:hover {
+            background: #f0f0f0;
+        }
+
+        /* AJUSTE PARA EL TOTAL Y VACIAR CARRITO */
+        #carrito-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            padding-top: 15px;
+        }
+
+        /* SECCIÓN DE WOMPI Y CHECKOUT */
+        #wompi-container {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+
+        #btn-pagar-real {
+            background-color: #000;
+            color: #fff;
+            padding: 18px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        #btn-pagar-real:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+        }
+
+        /* FORMULARIO */
+        input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="catalogo-header">
+    <div class="catalogo-header-content">
+        <a href="index.html">
+            <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo" style="width: 110px;">
+        </a>
+        <div class="cart-title">
+            <span style="font-weight: bold; font-size: 1.2rem;">Mi Pedido</span>
+        </div>
+    </div>
+</header>
+
+<main style="max-width: 600px; margin: 20px auto; padding: 0 20px;">
+    <section id="cart">
+        <div id="carrito-list"></div>
+        <div id="carrito-total"></div>
+        
+        <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 10px;">
+            <button id="continuar" style="background-color: #28a745; color: white; padding: 16px; border: none; cursor: pointer; font-weight: bold; border-radius: 10px; font-size: 1rem;">
+                CONTINUAR CON EL ENVÍO
+            </button>
+            <button onclick="window.location.href='index.html'" style="padding: 10px; border: none; background: transparent; text-decoration: underline; cursor: pointer; color: #666;">
+                Seguir comprando
+            </button>
+        </div>
+    </section>
+
+    <section id="checkout" class="hidden" style="margin-top: 20px; background: #fff; padding: 25px; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <h2 style="text-align: center; margin-bottom: 20px;">Datos de Entrega</h2>
+        <form id="checkout-form" onsubmit="return false;">
+            <label>Nombre Completo</label>
+            <input type="text" id="nombre" placeholder="Ej: Paula Gómez" required>
+            
+            <label>Cédula o NIT</label>
+            <input type="text" id="identificacion" required>
+            
+            <label>Ciudad y Departamento</label>
+            <input type="text" id="ciudad" placeholder="Ej: Bogotá, Cundinamarca" required>
+            
+            <label>Dirección Completa</label>
+            <input type="text" id="direccion" placeholder="Calle, número, apto, barrio" required>
+            
+            <label>Teléfono Celular</label>
+            <input type="text" id="telefono" placeholder="Ej: 3001234567" required>
+
+            <div id="wompi-container">
+                </div>
+        </form>
+    </section>
+</main>
+
+<script src="carrito.js"></script>
+</body>
+</html>
