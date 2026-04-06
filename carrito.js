@@ -100,3 +100,77 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 });
+const STORAGE_KEY = "carrito";
+
+function getCarrito() { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+
+function renderCarrito() {
+    const carrito = getCarrito();
+    const list = document.getElementById("carrito-list");
+    const totalEl = document.getElementById("carrito-total");
+    if (!list) return;
+
+    if (carrito.length === 0) {
+        list.innerHTML = "<p style='text-align:center;'>Carrito vacío</p>";
+        totalEl.innerHTML = "";
+        return;
+    }
+
+    let total = 0;
+    list.innerHTML = carrito.map((p, index) => {
+        const subtotal = p.precio * (p.cantidad || 1);
+        total += subtotal;
+        return `
+            <div class="carrito-item">
+                <img src="${p.imagen}" width="50">
+                <div class="carrito-info">
+                    <h4>${p.titulo}</h4>
+                    <p>$${subtotal.toLocaleString()}</p>
+                </div>
+            </div>`;
+    }).join("");
+
+    totalEl.innerHTML = `<strong>Total: $${total.toLocaleString()}</strong>`;
+}
+
+async function irAPagarWompi() {
+    const carrito = getCarrito();
+    let total = 0;
+    carrito.forEach(p => total += (p.precio * (p.cantidad || 1)));
+    
+    const montoCentavos = Math.floor(total * 100);
+    const referencia = "MC" + Date.now();
+    const moneda = "COP";
+    const llavePublica = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
+
+    try {
+        const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
+        const data = await res.json();
+
+        if (data.firma) {
+            window.location.href = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=${moneda}&amount-in-cents=${montoCentavos}&reference=${referencia}&signature=${data.firma}`;
+        } else {
+            alert("Error de firma");
+        }
+    } catch (e) {
+        alert("Error de conexión");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderCarrito();
+    const btnPagar = document.getElementById("btn-pagar-real");
+    if (btnPagar) btnPagar.onclick = irAPagarWompi;
+    
+    const btnContinuar = document.getElementById("continuar");
+    if (btnContinuar) {
+        btnContinuar.onclick = () => {
+            document.getElementById("cart").classList.add("hidden");
+            const checkout = document.getElementById("checkout");
+            checkout.classList.remove("hidden");
+            checkout.style.display = "block";
+            document.getElementById("wompi-container").innerHTML = '<button id="btn-pagar-real">PAGAR AHORA</button>';
+            document.getElementById("btn-pagar-real").onclick = irAPagarWompi;
+        };
+    }
+});
