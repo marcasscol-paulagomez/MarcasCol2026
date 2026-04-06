@@ -6,7 +6,7 @@ import os
 import hashlib
 
 # ---------------------------------------------------
-# 1. CONFIGURACIÓN E INICIALIZACIÓN (¡ESTO VA PRIMERO!)
+# 1. CONFIGURACIÓN E INICIALIZACIÓN
 # ---------------------------------------------------
 app = Flask(__name__, static_folder='.', static_url_path='')
 
@@ -37,7 +37,8 @@ def generar_firma_wompi(referencia, monto, moneda):
     # Limpieza absoluta para evitar que Wompi rechace la firma
     secret_limpio = WOMPI_SECRET.strip()
     ref_limpia = str(referencia).strip()
-    monto_limpio = str(int(float(monto))) # '8500000.0' -> '8500000'
+    # Convertimos a float y luego a int para asegurar que '8500000.0' pase a '8500000'
+    monto_limpio = str(int(float(monto)))
     moneda_limpia = str(moneda).strip().upper() 
 
     # Cadena estricta: referencia + monto + moneda + secreto
@@ -141,5 +142,7 @@ def home():
 # 6. INICIO DEL SERVIDOR
 # ---------------------------------------------------
 if __name__ == '__main__':
+    # Obtenemos el puerto de Railway o usamos el 8080 por defecto
     port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0',
+    # Ejecución corregida cerrando paréntesis correctamente
+    app.run(host='0.0.0.0', port=port)
