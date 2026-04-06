@@ -4,14 +4,12 @@ function getCarrito() { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || 
 
 function guardarCarrito(carrito) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
-    renderCarrito(); // Redibujar siempre que cambie algo
+    renderCarrito(); 
 }
 
-// NUEVA: Para sumar o restar cantidad
 function cambiarCantidad(index, delta) {
     const carrito = getCarrito();
     carrito[index].cantidad = (carrito[index].cantidad || 1) + delta;
-    
     if (carrito[index].cantidad < 1) {
         eliminarProducto(index);
     } else {
@@ -19,7 +17,6 @@ function cambiarCantidad(index, delta) {
     }
 }
 
-// NUEVA: Eliminar un solo producto
 function eliminarProducto(index) {
     const carrito = getCarrito();
     carrito.splice(index, 1);
@@ -38,12 +35,14 @@ function renderCarrito() {
                 <p>El carrito está vacío.</p>
                 <a href="index.html" style="color:#000; text-decoration:underline;">Volver a la tienda</a>
             </div>`;
-        totalEl.innerHTML = "";
-        document.getElementById("continuar").style.display = "none";
+        if (totalEl) totalEl.innerHTML = "";
+        const btnCont = document.getElementById("continuar");
+        if (btnCont) btnCont.style.display = "none";
         return;
     }
 
-    document.getElementById("continuar").style.display = "block";
+    const btnCont = document.getElementById("continuar");
+    if (btnCont) btnCont.style.display = "block";
 
     let total = 0;
     list.innerHTML = carrito.map((p, index) => {
@@ -57,9 +56,9 @@ function renderCarrito() {
                     <h4>${p.titulo}</h4>
                     <p>$${precioNum.toLocaleString()}</p>
                     <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
-                        <button onclick="cambiarCantidad(${index}, -1)" style="cursor:pointer; width:25px;">-</button>
+                        <button onclick="cambiarCantidad(${index}, -1)" class="btn-cantidad">-</button>
                         <span>${p.cantidad || 1}</span>
-                        <button onclick="cambiarCantidad(${index}, 1)" style="cursor:pointer; width:25px;">+</button>
+                        <button onclick="cambiarCantidad(${index}, 1)" class="btn-cantidad">+</button>
                         <button onclick="eliminarProducto(${index})" style="margin-left:15px; color:red; border:none; background:none; cursor:pointer; font-size:0.8rem;">Eliminar</button>
                     </div>
                 </div>
@@ -69,13 +68,12 @@ function renderCarrito() {
 
     totalEl.innerHTML = `
         <button onclick="if(confirm('¿Vaciar todo el carrito?')) { localStorage.removeItem('${STORAGE_KEY}'); renderCarrito(); }" 
-                style="float:left; background:none; border:none; color:#666; cursor:pointer; text-decoration:underline;">
+                style="background:none; border:none; color:#666; cursor:pointer; text-decoration:underline; font-size:0.8rem;">
             Vaciar Carrito
         </button>
         <strong>Total a pagar: $${total.toLocaleString()}</strong>`;
 }
 
-// FUNCIÓN DE REDIRECCIÓN A PAGO REAL
 function irAPagarWompi() {
     const carrito = getCarrito();
     let total = 0;
