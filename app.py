@@ -3,6 +3,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import sqlite3
 import os
+import hashlib  # Añadido para la firma de Wompi
 
 # ---------------------------------------------------
 # CONFIGURACIÓN BASE
@@ -13,6 +14,8 @@ app.secret_key = os.environ.get('LLAVE_SECRETA', 'supersecretkey')
 CORS(app, supports_credentials=True)
 
 OWNER_CODE = os.environ.get('CODIGO_REGISTRO')
+# Llave de Wompi desde las variables de Railway
+WOMPI_SECRET = os.environ.get('WOMPI_INTEGRITY_SECRET')
 
 DATA_DIR = "/data"
 DB_PATH = os.path.join(DATA_DIR, "database.db")
@@ -20,6 +23,36 @@ UPLOAD_FOLDER = os.path.join(DATA_DIR, "uploads")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+# ---------------------------------------------------
+# UTILIDADES DE SEGURIDAD (WOMPI)
+# ---------------------------------------------------
+def generar_firma_wompi(referencia, monto_en_centavos, moneda):
+    """
+    Genera la firma de integridad requerida por Wompi para asegurar los pagos.
+    """
+    if not WOMPI_SECRET:
+        return None
+    # La cadena debe ser: referencia + monto_en_centavos + moneda + secreto
+    cadena = f"{referencia}{monto_en_centavos}{moneda}{WOMPI_SECRET}"
+    return hashlib.sha256(cadena.encode()).hexdigest()
+
+@app.route('/obtener-firma-wompi', methods=['GET'])
+def api_get_wompi_signature():
+    referencia = request.args.get('referencia')
+    monto = request.args.get('monto') # Debe llegar en centavos (ej: 5000000)
+    moneda = request.args.get('moneda', 'COP')
+
+    if not referencia or not monto:
+        return jsonify({'error': 'Faltan parámetros'}), 400
+
+    firma = generar_firma_wompi(referencia, monto, moneda)
+    
+    if not firma:
+        return jsonify({'error': 'Servidor no configurado con WOMPI_INTEGRITY_SECRET'}), 500
+
+    return jsonify({'firma': firma})
 
 
 # ---------------------------------------------------
