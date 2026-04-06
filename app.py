@@ -25,28 +25,37 @@ os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ---------------------------------------------------
-# MOTOR DE FIRMAS WOMPI (Prioridad para evitar 404)
+# MOTOR DE FIRMAS WOMPI (VERIFICADO)
 # ---------------------------------------------------
-def generar_firma_wompi(referencia, monto_en_centavos, moneda):
+def generar_firma_wompi(referencia, monto, moneda):
+    """
+    Crea el hash SHA256 exacto. 
+    Asegura que el monto no lleve decimales para que coincida con Wompi.
+    """
     if not WOMPI_SECRET:
         return None
-    # Cadena: referencia + monto + moneda + secreto
-    cadena = f"{referencia}{monto_en_centavos}{moneda}{WOMPI_SECRET}"
+    
+    # IMPORTANTE: Convertimos a entero para eliminar cualquier ".0"
+    monto_limpio = str(int(float(monto)))
+    
+    # Cadena estricta: referencia + monto_en_centavos + moneda + secreto
+    cadena = f"{referencia}{monto_limpio}{moneda}{WOMPI_SECRET}"
+    
     return hashlib.sha256(cadena.encode()).hexdigest()
 
 @app.route('/obtener-firma-wompi', methods=['GET'])
 def api_get_wompi_signature():
     referencia = request.args.get('referencia')
-    monto = request.args.get('monto')
+    monto = request.args.get('monto') # Llega en centavos desde el JS
     moneda = request.args.get('moneda', 'COP')
 
     if not referencia or not monto:
-        return jsonify({'error': 'Faltan parámetros: referencia y monto son requeridos'}), 400
+        return jsonify({'error': 'Referencia y monto son requeridos'}), 400
 
     firma = generar_firma_wompi(referencia, monto, moneda)
     
     if not firma:
-        return jsonify({'error': 'Falta WOMPI_INTEGRITY_SECRET en Railway'}), 500
+        return jsonify({'error': 'WOMPI_INTEGRITY_SECRET no configurada en Railway'}), 500
 
     return jsonify({'firma': firma})
 
