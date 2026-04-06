@@ -21,4 +21,98 @@
     <link rel="stylesheet" href="estilos/catalogo.css">
 </head>
 <body>
-    <div
+    <div id="mensaje-superior" class="mensaje-superior"></div>
+
+    <header class="catalogo-header">
+        <div class="catalogo-header-content">
+            <div class="header-left">
+                <a href="index.html">
+                    <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo">
+                </a>
+            </div>
+
+            <div class="catalogo-search-bar">
+                <input type="text" id="search-input" placeholder="¿Qué estás buscando hoy?">
+                <span class="icon-search"></span>
+            </div>
+
+            <div class="header-right">
+                <span class="icon-user"></span>
+                <div class="cart-container">
+                    <button id="btn-carrito" class="icon-cart" aria-label="carrito de compras"></button>
+                    <span id="cart-count" class="cart-count">(0)</span>
+                </div>
+            </div>
+        </div>
+
+        <button id="menu-toggle" class="menu-toggle" aria-label="Menú"> ☰ </button>
+        <div id="nav-overlay" class="nav-overlay"></div>
+    </header>
+
+    <nav class="catalogo-nav" id="catalogo-nav">
+        <ul id="catalogo-secciones">
+            </ul>
+    </nav>
+
+    <main>
+        <section class="catalogo-slider" id="catalogo-slider"></section>
+
+        <section id="catalogo-list" class="catalogo-list"></section>
+
+        <div class="carrito-overlay" id="carrito-overlay" style="display:none;">
+            <div class="carrito-modal">
+                <button class="carrito-cerrar" id="cerrar-carrito" title="Cerrar">&times;</button>
+                <div class="carrito-header">Cesta</div>
+                <div id="carrito-productos"></div>
+                <div class="carrito-resumen" id="carrito-resumen"></div>
+                <div class="carrito-btns">
+                    <button class="carrito-btn" id="continuar-compra" onclick="window.location.href='carrito.html'">Continuar al pago</button>
+                </div>
+            </div>
+        </div>
+
+        <section class="catalogo-marcas" id="catalogo-marcas"></section>
+    </main>
+
+    <footer class="catalogo-footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <img src="imagenes/logo.jpg" alt="Logo Marcas Col" class="logo">
+                <div class="footer-socials">
+                    <a href="https://www.facebook.com/marcas.coll/"><img src="imagenes/facebook.png" alt="Facebook"></a>
+                    <a href="https://www.instagram.com/marcas.col/?hl=es"><img src="imagenes/instagram.jpg" alt="Instagram"></a>
+                    <a href="https://www.tiktok.com/@marcas.col"><img src="imagenes/tiktok.png" alt="TikTok"></a>
+                    <a href="#"><img src="imagenes/x.png" alt="Threads/X"></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Contacto</h3>
+                <p>📧 marcass.col@gmail.com</p>
+                <p>📞 +57 314 4352536</p>
+            </div>
+            <div class="footer-col">
+                <h3>Enlaces de interés</h3>
+                <ul>
+                    <li><a href="acerca.html">Acerca de Nosotros</a></li>
+                    <li><a href="preguntas_frecuentes.html">Preguntas Frecuentes</a></li>
+                    <li><a href="politica_privacidad.html">Política de Privacidad</a></li>
+                    <li><a href="terminos_condiciones.html">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Marcas Col. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/573144352536" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+        <img src="imagenes/whatsapp.png" alt="WhatsApp">
+    </a>
+
+    <script>
+        // Esto asegura que las llamadas fetch en catalogo.js usen la raíz de Railway
+        window.API_BASE = window.location.origin;
+    </script>
+    <script src="catalogo.js"></script>
+</body>
+</html>
