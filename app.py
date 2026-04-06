@@ -3,19 +3,19 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import sqlite3
 import os
-import hashlib
+import hashlib  # Verificado: Indispensable para Wompi
 
 # ---------------------------------------------------
 # CONFIGURACIÓN BASE
 # ---------------------------------------------------
 app = Flask(__name__, static_folder='.', static_url_path='')
 
-# Llaves desde variables de entorno de Railway
 app.secret_key = os.environ.get('LLAVE_SECRETA', 'supersecretkey')
+CORS(app, supports_credentials=True)
+
+# Variables de entorno en Railway
 OWNER_CODE = os.environ.get('CODIGO_REGISTRO')
 WOMPI_SECRET = os.environ.get('WOMPI_INTEGRITY_SECRET')
-
-CORS(app, supports_credentials=True)
 
 DATA_DIR = "/data"
 DB_PATH = os.path.join(DATA_DIR, "database.db")
@@ -24,34 +24,39 @@ UPLOAD_FOLDER = os.path.join(DATA_DIR, "uploads")
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+
 # ---------------------------------------------------
-# UTILIDADES DE SEGURIDAD (WOMPI)
+# MOTOR DE FIRMAS WOMPI (VERIFICADO)
 # ---------------------------------------------------
 def generar_firma_wompi(referencia, monto_en_centavos, moneda):
+    """
+    Crea el hash SHA256 que Wompi exige para validar la integridad.
+    """
     if not WOMPI_SECRET:
         return None
-    # Estructura obligatoria de Wompi: referencia + monto + moneda + secreto
+    # El orden es estricto: referencia + monto + moneda + secreto
     cadena = f"{referencia}{monto_en_centavos}{moneda}{WOMPI_SECRET}"
     return hashlib.sha256(cadena.encode()).hexdigest()
 
 @app.route('/obtener-firma-wompi', methods=['GET'])
 def api_get_wompi_signature():
     referencia = request.args.get('referencia')
-    monto = request.args.get('monto')
+    monto = request.args.get('monto') 
     moneda = request.args.get('moneda', 'COP')
 
     if not referencia or not monto:
-        return jsonify({'error': 'Faltan parámetros: referencia y monto son obligatorios'}), 400
+        return jsonify({'error': 'Referencia y monto son obligatorios'}), 400
 
     firma = generar_firma_wompi(referencia, monto, moneda)
     
     if not firma:
-        return jsonify({'error': 'Falta WOMPI_INTEGRITY_SECRET en Railway'}), 500
+        return jsonify({'error': 'Configuración incompleta: Falta WOMPI_INTEGRITY_SECRET en Railway'}), 500
 
     return jsonify({'firma': firma})
 
+
 # ---------------------------------------------------
-# CONEXIÓN BD
+# GESTIÓN DE BASE DE DATOS
 # ---------------------------------------------------
 def obtener_conexion():
     conn = sqlite3.connect(DB_PATH)
@@ -88,12 +93,12 @@ if not os.path.exists(DB_PATH) and os.path.exists("database.db"):
 create_tables()
 
 # ---------------------------------------------------
-# ACCESO Y LOGIN
+# LOGIN ADMINISTRADOR
 # ---------------------------------------------------
 @app.route('/owner-login', methods=['POST'])
 def owner_login():
     code = (request.get_json() or {}).get('code')
-    if not OWNER_CODE: return jsonify({'error': 'Servidor sin CODIGO_REGISTRO'}), 500
+    if not OWNER_CODE: return jsonify({'error': 'Servidor sin clave configurada'}), 500
     if code == OWNER_CODE:
         session['owner'] = True
         return jsonify({'message': 'Acceso concedido'})
@@ -105,11 +110,11 @@ def owner_logout():
     return jsonify({'message': 'Sesión cerrada'})
 
 def require_owner():
-    if not session.get('owner'): return jsonify({'error': 'No autenticado'}), 401
+    if not session.get('owner'): return jsonify({'error': 'No autorizado'}), 401
     return None
 
 # ---------------------------------------------------
-# RUTAS DE PRODUCTOS Y GESTIÓN
+# RUTAS DE PRODUCTOS
 # ---------------------------------------------------
 @app.route('/product', methods=['POST'])
 def add_product():
@@ -155,7 +160,7 @@ def delete_product(id):
     return jsonify({'message':'Eliminado'})
 
 # ---------------------------------------------------
-# OTRAS ENTIDADES (MARCAS, SECCIONES, BANNERS, MENSAJES)
+# OTRAS GESTIONES (MARCAS, BANNERS, MENSAJES)
 # ---------------------------------------------------
 @app.route('/marcas', methods=['GET', 'POST'])
 def marcas():
@@ -179,57 +184,24 @@ def marcas():
         if m['imagen']: m['imagen'] = f"/uploads/{m['imagen']}"
     return jsonify(res)
 
-@app.route('/secciones', methods=['GET', 'POST'])
-def secciones():
-    conn = obtener_conexion()
-    if request.method == 'POST':
-        check = require_owner()
-        if check: return check
-        n = request.json.get('nombre')
-        try:
-            conn.execute("INSERT INTO secciones(nombre) VALUES (?)", (n,))
-            conn.commit()
-        except: return jsonify({'error':'Error o duplicado'}), 400
-        finally: conn.close()
-        return jsonify({'message':'Agregado'})
-    res = [row['nombre'] for row in conn.execute("SELECT nombre FROM secciones").fetchall()]
-    conn.close()
-    return jsonify(res)
-
 @app.route('/slides', methods=['GET', 'POST'])
 def slides():
     conn = obtener_conexion()
     if request.method == 'POST':
         check = require_owner()
         if check: return check
-        t = request.form.get('titulo')
-        img = request.files.get('imagen')
-        if not t or not img: return jsonify({'error':'Faltan datos'}), 400
+        t, img = request.form.get('titulo'), request.files.get('imagen')
+        if not t or not img: return jsonify({'error':'Datos incompletos'}), 400
         fname = secure_filename(img.filename)
         img.save(os.path.join(UPLOAD_FOLDER, fname))
         conn.execute("INSERT INTO slides(titulo, descripcion, marca, imagen, boton_texto, boton_url) VALUES (?,?,?,?,?,?)",
                      (t, request.form.get('descripcion'), request.form.get('marca'), fname, request.form.get('boton_texto'), request.form.get('boton_url')))
         conn.commit()
         conn.close()
-        return jsonify({'message':'Banner agregado'})
+        return jsonify({'message':'Banner guardado'})
     res = [dict(row) for row in conn.execute("SELECT * FROM slides ORDER BY id DESC").fetchall()]
     conn.close()
     for s in res: s['imagen'] = f"/uploads/{s['imagen']}"
-    return jsonify(res)
-
-@app.route('/mensajes', methods=['GET', 'POST'])
-def mensajes():
-    conn = obtener_conexion()
-    if request.method == 'POST':
-        check = require_owner()
-        if check: return check
-        t = request.json.get('texto')
-        conn.execute("INSERT INTO mensajes(texto) VALUES (?)", (t,))
-        conn.commit()
-        conn.close()
-        return jsonify({'message':'Agregado'})
-    res = [dict(row) for row in conn.execute("SELECT * FROM mensajes ORDER BY creado_en DESC").fetchall()]
-    conn.close()
     return jsonify(res)
 
 @app.route('/mensaje/ultimo', methods=['GET'])
@@ -240,7 +212,7 @@ def mensaje_ultimo():
     return jsonify({'mensaje': row['texto'] if row else None})
 
 # ---------------------------------------------------
-# ENTREGA DE ARCHIVOS Y RUTAS
+# SERVIDORES DE ARCHIVOS Y PÁGINAS
 # ---------------------------------------------------
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
@@ -256,4 +228,6 @@ def login_page():
     return send_from_directory('.', 'login.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+    # Configuración de puerto dinámica para Railway
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
