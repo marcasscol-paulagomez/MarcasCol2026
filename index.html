@@ -55,7 +55,8 @@
     </nav>
 
     <main>
-        <section class="catalogo-slider" id="catalogo-slider"></section>
+        <section class="catalogo-slider" id="catalogo-slider">
+            </section>
 
         <section id="catalogo-list" class="catalogo-list"></section>
 
@@ -66,12 +67,13 @@
                 <div id="carrito-productos"></div>
                 <div class="carrito-resumen" id="carrito-resumen"></div>
                 <div class="carrito-btns">
-                    <button class="carrito-btn" id="continuar-compra" onclick="window.location.href='carrito.html'">Continuar al pago</button>
+                    <button class="carrito-btn" id="continuar-compra" onclick="window.location.href='carrito.html'">Continuar</button>
                 </div>
             </div>
         </div>
 
-        <section class="catalogo-marcas" id="catalogo-marcas"></section>
+        <section class="catalogo-marcas" id="catalogo-marcas">
+            </section>
     </main>
 
     <footer class="catalogo-footer">
@@ -110,7 +112,6 @@
     </a>
 
     <script>
-        // Esto asegura que las llamadas fetch en catalogo.js usen la raíz de Railway
         window.API_BASE = window.location.origin;
     </script>
     <script src="catalogo.js"></script>
