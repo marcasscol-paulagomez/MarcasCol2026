@@ -1,6 +1,8 @@
 const STORAGE_KEY = "carrito";
 
-function getCarrito() { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+function getCarrito() { 
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; 
+}
 
 function guardarCarrito(carrito) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
@@ -74,15 +76,36 @@ function renderCarrito() {
         <strong>Total a pagar: $${total.toLocaleString()}</strong>`;
 }
 
-function irAPagarWompi() {
+// --- ESTA ES LA FUNCIÓN QUE CORREGIMOS ---
+async function irAPagarWompi() {
     const carrito = getCarrito();
+    if (carrito.length === 0) return alert("Tu carrito está vacío");
+
     let total = 0;
     carrito.forEach(p => total += (parseFloat(p.precio) || 0) * (p.cantidad || 1));
+    
+    // Wompi requiere centavos (ej: 50.000 -> 5000000)
     const totalCentavos = Math.floor(total * 100);
-    const referencia = "MC-ORDER-" + Date.now();
+    const referencia = "MC-" + Date.now();
+    const moneda = "COP";
     const llavePublica = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
-    const urlWompi = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=COP&amount-in-cents=${totalCentavos}&reference=${referencia}`;
-    window.location.href = urlWompi;
+
+    try {
+        // 1. Pedimos la firma al servidor de Railway
+        const response = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${totalCentavos}&moneda=${moneda}`);
+        const data = await response.json();
+
+        if (data.firma) {
+            // 2. Si el servidor nos da la firma, vamos a Wompi con todos los datos
+            const urlWompi = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=${moneda}&amount-in-cents=${totalCentavos}&reference=${referencia}&signature=${data.firma}`;
+            window.location.href = urlWompi;
+        } else {
+            alert("Error: El servidor no pudo generar la firma de seguridad.");
+        }
+    } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+        alert("Hubo un problema al conectar con la pasarela de pagos.");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
