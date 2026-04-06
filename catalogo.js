@@ -2,7 +2,7 @@
 // === MARCAS COL - CONFIGURACIÓN DE SEGURIDAD Y PAGOS ===
 // ============================================================
 
-// 1. Mostrar mensaje superior
+// 1. Mostrar mensaje superior dinámico
 async function cargarMensajeCatalogo() {
     try {
         const res = await fetch('/mensaje/ultimo');
@@ -69,8 +69,13 @@ function inicializarSlider() {
 // ==============================
 
 async function fetchProductos() {
-    const res = await fetch("/products");
-    return res.ok ? await res.json() : [];
+    try {
+        const res = await fetch("/products");
+        return res.ok ? await res.json() : [];
+    } catch (err) {
+        console.error("Error cargando productos:", err);
+        return [];
+    }
 }
 
 function renderProductos(productos, filtro = "") {
@@ -83,12 +88,17 @@ function renderProductos(productos, filtro = "") {
         filtrados = productos.filter(p => p.titulo.toLowerCase().includes(f));
     }
 
+    if (filtrados.length === 0) {
+        list.innerHTML = `<p style="text-align:center; color:#888; width:100%;">No se encontraron productos.</p>`;
+        return;
+    }
+
     list.innerHTML = filtrados.map(p => `
         <div class="catalogo-card">
             <img src="${p.imagen}" alt="${p.titulo}" class="catalogo-img">
             <div class="catalogo-title">${p.titulo}</div>
             <div class="catalogo-section">${p.marca} - ${p.seccion}</div>
-            <div class="catalogo-price">$${p.precio}</div>
+            <div class="catalogo-price">$${p.precio.toLocaleString('es-CO')}</div>
             <button class="catalogo-btn" 
                 onclick="procesarPagoDirecto('${p.titulo}', ${p.precio})">
                 Comprar ahora
@@ -102,35 +112,37 @@ function renderProductos(productos, filtro = "") {
 // ============================================================
 
 async function procesarPagoDirecto(titulo, precio) {
+    // Wompi requiere el monto en centavos (ej: 50000 pesos -> 5000000 centavos)
     const montoCentavos = Math.round(precio * 100);
-    const referencia = `MC-${Date.now()}`; // Referencia única
+    const referencia = `MC-${Date.now()}`; 
     const moneda = "COP";
-    const publicKey = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae"; // Tu llave pública
+    const publicKey = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
 
     try {
-        // 1. Pedir la firma de integridad al servidor de Railway
-        const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
-        const data = await res.json();
+        // 1. Pedir la firma de integridad a Railway (Ruta que creamos en app.py)
+        const response = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
+        const data = await response.json();
 
         if (!data.firma) {
-            alert("Error: No se pudo validar la seguridad del pago. Verifica la llave en Railway.");
+            console.error("Error del servidor:", data.error);
+            alert("Error de seguridad: No se pudo generar la firma de pago. Verifica WOMPI_INTEGRITY_SECRET en Railway.");
             return;
         }
 
-        // 2. Construir la URL de Wompi incluyendo el parámetro &signature=
+        // 2. Construir la URL completa de Wompi incluyendo la firma
         const urlWompi = `https://checkout.wompi.co/p/?` +
                          `public-key=${publicKey}` +
                          `&currency=${moneda}` +
                          `&amount-in-cents=${montoCentavos}` +
                          `&reference=${referencia}` +
-                         `&signature=${data.firma}`; // <--- AQUÍ SE AGREGA LA FIRMA
+                         `&signature=${data.firma}`;
 
-        // 3. Redirigir al cliente (Ya no saldrá en blanco)
+        // 3. Redirigir al checkout seguro
         window.location.href = urlWompi;
 
     } catch (err) {
-        console.error("Error en el proceso de pago:", err);
-        alert("Hubo un problema al conectar con la pasarela de pago.");
+        console.error("Fallo en la conexión para el pago:", err);
+        alert("Lo sentimos, hubo un problema al conectar con la pasarela de pagos.");
     }
 }
 
@@ -139,24 +151,60 @@ async function procesarPagoDirecto(titulo, precio) {
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // Cargar mensaje de cabecera
     await cargarMensajeCatalogo();
+    
+    // Cargar y mostrar productos
     const productos = await fetchProductos();
     renderProductos(productos);
     
-    // Iniciar el slider después de cargar datos
-    const slidesData = await fetch("/slides").then(res => res.json()).catch(() => []);
-    if(slidesData.length > 0) renderSlidesDyn(slidesData);
+    // Búsqueda en tiempo real
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            renderProductos(productos, e.target.value);
+        });
+    }
 
-    // Búsqueda
-    document.getElementById("search-input")?.addEventListener("input", (e) => {
-        renderProductos(productos, e.target.value);
-    });
+    // Cargar banners del slider
+    try {
+        const slidesRes = await fetch("/slides");
+        const slidesData = await slidesRes.json();
+        if(slidesData.length > 0) {
+            renderSlidesDyn(slidesData);
+        }
+    } catch (err) {
+        console.warn("No hay banners para mostrar.");
+    }
 });
 
-// Función auxiliar para renderizar slides si hay datos
+// Función para inyectar banners en el slider
 function renderSlidesDyn(slides) {
     const slider = document.getElementById("catalogo-slider");
     if (!slider) return;
-    // ... (Tu lógica de renderizado de slides que ya tenías)
+
+    slider.innerHTML = `
+        <button class="slider-arrow slider-arrow-left" aria-label="Anterior">&#10094;</button>
+        <div class="slider-track"></div>
+        <button class="slider-arrow slider-arrow-right" aria-label="Siguiente">&#10095;</button>
+        <div class="slider-dots"></div>
+    `;
+
+    const track = slider.querySelector(".slider-track");
+    const dotsContainer = slider.querySelector(".slider-dots");
+
+    track.innerHTML = slides.map((s, i) => `
+        <div class="slider-slide ${i === 0 ? 'active' : ''}">
+            <img src="${s.imagen}" alt="${s.titulo}" class="slider-img">
+            <div class="slider-content">
+                <h2>${s.titulo}</h2>
+                <p>${s.descripcion || ''}</p>
+                ${s.boton_texto ? `<button class="slider-btn" onclick="window.location.href='${s.boton_url}'">${s.boton_texto}</button>` : ''}
+            </div>
+        </div>
+    `).join("");
+
+    dotsContainer.innerHTML = slides.map((_, i) => `<span class="dot ${i === 0 ? 'active' : ''}"></span>`).join("");
+
     inicializarSlider();
 }
