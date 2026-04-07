@@ -1,16 +1,29 @@
 function renderCarritoFinal() {
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     const lista = document.getElementById("carrito-list");
-    let total = 0;
+    const totalEl = document.getElementById("carrito-total");
     if (!lista) return;
 
-    lista.innerHTML = carrito.map(p => {
-        const subtotal = p.precio * p.cantidad;
-        total += subtotal;
-        return `<div>${p.titulo} x${p.cantidad} - $${subtotal.toLocaleString()}</div>`;
+    if (carrito.length === 0) {
+        lista.innerHTML = "<h3>Tu carrito está vacío</h3>";
+        return;
+    }
+
+    let total = 0;
+    lista.innerHTML = carrito.map((p, index) => {
+        const sub = p.precio * p.cantidad;
+        total += sub;
+        return `
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px;">
+                <img src="${p.imagen}" width="50">
+                <div style="flex-grow:1; margin-left:10px;">
+                    <h4>${p.titulo}</h4>
+                    <p>Cant: ${p.cantidad} - $${sub.toLocaleString()}</p>
+                </div>
+            </div>`;
     }).join("");
     
-    document.getElementById("carrito-total").innerHTML = `<strong>Total: $${total.toLocaleString()}</strong>`;
+    if (totalEl) totalEl.innerHTML = `<h3>Total: $${total.toLocaleString()}</h3>`;
 }
 
 async function irAPagarWompi() {
@@ -23,16 +36,24 @@ async function irAPagarWompi() {
     const moneda = "COP";
     const publicKey = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
 
-    const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
-    const data = await res.json();
-
-    if (data.firma) {
-        window.location.href = `https://checkout.wompi.co/p/?public-key=${publicKey}&currency=${moneda}&amount-in-cents=${montoCentavos}&reference=${referencia}&signature=${data.firma}`;
-    }
+    try {
+        const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
+        const data = await res.json();
+        if (data.firma) {
+            window.location.href = `https://checkout.wompi.co/p/?public-key=${publicKey}&currency=${moneda}&amount-in-cents=${montoCentavos}&reference=${referencia}&signature=${data.firma}`;
+        }
+    } catch (e) { alert("Error al conectar con Wompi"); }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     renderCarritoFinal();
-    const btnPagar = document.getElementById("btn-pagar-real");
-    if (btnPagar) btnPagar.onclick = irAPagarWompi;
+    const btnCont = document.getElementById("continuar");
+    if (btnCont) {
+        btnCont.onclick = () => {
+            const container = document.getElementById("wompi-container");
+            container.innerHTML = `<button style="background:#000; color:#fff; width:100%; padding:20px; cursor:pointer;" id="btn-pago">PAGAR CON WOMPI</button>`;
+            document.getElementById("btn-pago").onclick = irAPagarWompi;
+            document.getElementById("checkout").style.display = "block";
+        };
+    }
 });
