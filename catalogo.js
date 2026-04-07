@@ -1,36 +1,31 @@
-// --- REEMPLAZA LA FUNCIÓN procesarPagoWompi EN TU CATALOGO.JS ---
-
-async function procesarPagoWompi(titulo, precio) {
-    // 1. Preparación de datos limpios
-    const montoCentavos = Math.round(parseFloat(precio) * 100);
-    const referencia = `MC${Date.now()}`; // Referencia limpia (ej: MC177550...)
-    const moneda = "COP";
-    const publicKey = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
-
+async function cargarProductos() {
     try {
-        // 2. Pedir firma al servidor
-        const response = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
-        
-        if (!response.ok) throw new Error("Error al obtener firma");
+        const res = await fetch('/products');
+        const productos = await res.json();
+        const lista = document.getElementById("catalogo-list");
+        if (!lista) return;
 
-        const data = await response.json();
-
-        if (data.firma) {
-            // 3. Construcción manual de la URL para evitar codificaciones erróneas
-            const urlFinal = "https://checkout.wompi.co/p/?" + 
-                             "public-key=" + publicKey + 
-                             "&currency=" + moneda + 
-                             "&amount-in-cents=" + montoCentavos + 
-                             "&reference=" + referencia + 
-                             "&signature=" + data.firma;
-
-            // Redirección
-            window.location.href = urlFinal;
-        } else {
-            alert("Error de configuración de seguridad.");
+        if (productos.length === 0) {
+            lista.innerHTML = "<p style='text-align:center;'>No hay productos. Sube uno desde el panel.</p>";
+            return;
         }
-    } catch (err) {
-        console.error("Error:", err);
-        alert("Hubo un error al conectar con la pasarela. Intenta de nuevo.");
-    }
+
+        lista.innerHTML = productos.map(p => `
+            <div class="catalogo-card">
+                <img src="${p.imagen}" class="catalogo-img">
+                <h3>${p.titulo}</h3>
+                <p>$${Number(p.precio).toLocaleString()}</p>
+                <button onclick="agregarAlCarrito('${p.titulo}', ${p.precio}, '${p.imagen}')">Agregar</button>
+            </div>
+        `).join("");
+    } catch (e) { console.error(e); }
 }
+
+function agregarAlCarrito(titulo, precio, imagen) {
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    carrito.push({ titulo, precio, imagen, cantidad: 1 });
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    alert("¡Producto añadido!");
+}
+
+document.addEventListener("DOMContentLoaded", cargarProductos);
