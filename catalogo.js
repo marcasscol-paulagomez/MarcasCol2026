@@ -1,104 +1,37 @@
-// Configuración inicial
 const STORAGE_KEY = "carrito";
-
-async function cargarProductos() {
-    try {
-        const res = await fetch('/products');
-        const productos = await res.json();
-        const lista = document.getElementById("catalogo-list");
-        if (!lista) return;
-
-        if (productos.length === 0) {
-            lista.innerHTML = "<p style='text-align:center;'>No hay productos disponibles por ahora.</p>";
-            return;
-        }
-
-        lista.innerHTML = productos.map(p => `
-            <div class="catalogo-card">
-                <img src="${p.imagen}" alt="${p.titulo}" class="catalogo-img">
-                <div class="catalogo-info">
-                    <h3 class="catalogo-title">${p.titulo}</h3>
-                    <p class="catalogo-price">$${Number(p.precio).toLocaleString()}</p>
-                    <button class="catalogo-btn" onclick="agregarAlCarrito('${p.titulo}', ${p.precio}, '${p.imagen}')">
-                        Agregar al Carrito
-                    </button>
-                </div>
-            </div>
-        `).join("");
-    } catch (error) {
-        console.error("Error al cargar productos:", error);
-    }
-}
 
 function agregarAlCarrito(titulo, precio, imagen) {
     let carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    
+    // Verificamos si el producto ya existe para sumar cantidad
     const existe = carrito.find(i => i.titulo === titulo);
-
     if (existe) {
         existe.cantidad++;
     } else {
+        // GUARDAMOS CON ESTOS NOMBRES EXACTOS: titulo, precio, imagen, cantidad
         carrito.push({ titulo, precio, imagen, cantidad: 1 });
     }
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
-    actualizarInterfaz();
-    document.getElementById("carrito-overlay").style.display = "flex";
-}
-
-function actualizarInterfaz() {
-    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     
-    // Contador del header
+    // Actualizar el numerito del carrito (0)
     const countEl = document.getElementById("cart-count");
-    if (countEl) {
-        const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-        countEl.innerText = `(${totalItems})`;
-    }
+    if (countEl) countEl.innerText = `(${carrito.reduce((s, i) => s + i.cantidad, 0)})`;
 
-    // Lista del modal (Cesta)
-    const productosContenedor = document.getElementById("carrito-productos");
-    const totalEl = document.getElementById("carrito-resumen");
-    const btnContinuar = document.getElementById("continuar-compra");
-
-    if (productosContenedor) {
-        if (carrito.length === 0) {
-            productosContenedor.innerHTML = "<p>Tu cesta está vacía</p>";
-            if (totalEl) totalEl.innerText = "Total: $0";
-            if (btnContinuar) btnContinuar.disabled = true;
-        } else {
-            let totalGeneral = 0;
-            productosContenedor.innerHTML = carrito.map((item, index) => {
-                const subtotal = item.precio * item.cantidad;
-                totalGeneral += subtotal;
-                return `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
-                        <div style="font-size:0.9rem;">
-                            <strong>${item.titulo}</strong><br>
-                            $${item.precio.toLocaleString()} x ${item.cantidad}
-                        </div>
-                        <div style="font-weight:bold;">$${subtotal.toLocaleString()}</div>
-                    </div>
-                `;
-            }).join("");
-            if (totalEl) totalEl.innerHTML = `<strong>Total: $${totalGeneral.toLocaleString()}</strong>`;
-            if (btnContinuar) {
-                btnContinuar.disabled = false;
-                btnContinuar.onclick = () => window.location.href = 'carrito.html';
-            }
-        }
-    }
+    // Abrir el modal de la cesta
+    document.getElementById("carrito-overlay").style.display = "flex";
+    actualizarMiniCarrito();
 }
 
-// Eventos de botones
-document.addEventListener("DOMContentLoaded", () => {
-    cargarProductos();
-    actualizarInterfaz();
-
-    document.getElementById("btn-carrito").onclick = () => {
-        document.getElementById("carrito-overlay").style.display = "flex";
-    };
-
-    document.getElementById("cerrar-carrito").onclick = () => {
-        document.getElementById("carrito-overlay").style.display = "none";
-    };
-});
+// Función para que el modal del index también muestre los productos
+function actualizarMiniCarrito() {
+    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const contenedor = document.getElementById("carrito-productos");
+    if (contenedor) {
+        contenedor.innerHTML = carrito.map(i => `
+            <div style="border-bottom:1px solid #eee; padding:5px 0;">
+                ${i.titulo} x${i.cantidad} - <strong>$${(i.precio * i.cantidad).toLocaleString()}</strong>
+            </div>
+        `).join("");
+    }
+}
