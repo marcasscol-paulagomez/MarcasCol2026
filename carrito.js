@@ -6,35 +6,33 @@ function render() {
     const totalEl = document.getElementById("carrito-total");
     if (!lista) return;
 
+    if (carrito.length === 0) {
+        lista.innerHTML = "<h2>Tu carrito está vacío</h2>";
+        return;
+    }
+
     let total = 0;
-    lista.innerHTML = carrito.map(p => {
+    lista.innerHTML = carrito.map((p, index) => {
         total += (p.precio * p.cantidad);
-        return `<div style="border-bottom:1px solid #eee; padding:10px;">
-            ${p.titulo} (x${p.cantidad}) - $${(p.precio * p.cantidad).toLocaleString()}
-        </div>`;
+        return `
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:10px;">
+                <span>${p.titulo} (x${p.cantidad})</span>
+                <span>$${(p.precio * p.cantidad).toLocaleString()}</span>
+            </div>`;
     }).join("");
 
     totalEl.innerHTML = `
-        <h2>Total: $${total.toLocaleString()}</h2>
+        <h2 style="text-align:right;">Total: $${total.toLocaleString()}</h2>
         <button id="btn-pago-test" style="width:100%; padding:20px; background:green; color:white; font-weight:bold; cursor:pointer; border-radius:10px;">
-            PAGAR AHORA (TEST)
-        </button>
-    `;
+            PROBAR PAGO CON WOMPI
+        </button>`;
 
-    document.getElementById("btn-pago-test").onclick = pagarTest;
-}
-
-function pagarTest() {
-    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    let total = 0;
-    carrito.forEach(p => total += (p.precio * p.cantidad));
-    
-    const montoCentavos = Math.floor(total * 100);
-    const referencia = "TEST-" + Date.now();
-    const llaveTest = "pub_test_Q5yS9J9ps9as03XpI89m266C7Uo6874e"; 
-
-    // REDIRECCIÓN DIRECTA QUE FUNCIONÓ
-    window.location.href = `https://checkout.wompi.co/p/?public-key=${llaveTest}&currency=COP&amount-in-cents=${montoCentavos}&reference=${referencia}`;
+    document.getElementById("btn-pago-test").onclick = () => {
+        const totalCentavos = Math.floor(total * 100);
+        const referencia = "TEST-" + Date.now();
+        const llaveTest = "pub_test_Q5yS9J9ps9as03XpI89m266C7Uo6874e"; 
+        window.location.href = `https://checkout.wompi.co/p/?public-key=${llaveTest}&currency=COP&amount-in-cents=${totalCentavos}&reference=${referencia}`;
+    };
 }
 
 document.addEventListener("DOMContentLoaded", render);
