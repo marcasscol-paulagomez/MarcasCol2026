@@ -1,17 +1,26 @@
 async function cargarProductos() {
-    const res = await fetch('/products');
-    const productos = await res.json();
-    const lista = document.getElementById("catalogo-list");
-    if (!lista || productos.length === 0) return;
+    try {
+        const res = await fetch('/products');
+        const productos = await res.json();
+        const lista = document.getElementById("catalogo-list");
+        if (!lista) return;
 
-    lista.innerHTML = productos.map(p => `
-        <div class="catalogo-card">
-            <img src="${p.imagen}" class="catalogo-img">
-            <h3>${p.titulo}</h3>
-            <p>$${Number(p.precio).toLocaleString()}</p>
-            <button onclick="agregarAlCarrito('${p.titulo}', ${p.precio}, '${p.imagen}')">Agregar</button>
-        </div>
-    `).join("");
+        if (productos.length === 0) {
+            lista.innerHTML = "<p style='text-align:center;'>No hay productos. Sube uno desde /login</p>";
+            return;
+        }
+
+        lista.innerHTML = productos.map(p => `
+            <div class="catalogo-card">
+                <img src="${p.imagen}" class="catalogo-img">
+                <div class="catalogo-info">
+                    <h3>${p.titulo}</h3>
+                    <p class="catalogo-price">$${Number(p.precio).toLocaleString()}</p>
+                    <button class="catalogo-btn" onclick="agregarAlCarrito('${p.titulo}', ${p.precio}, '${p.imagen}')">Agregar</button>
+                </div>
+            </div>
+        `).join("");
+    } catch (e) { console.error("Error cargando productos:", e); }
 }
 
 function agregarAlCarrito(titulo, precio, imagen) {
@@ -21,29 +30,22 @@ function agregarAlCarrito(titulo, precio, imagen) {
     else { carrito.push({ titulo, precio, imagen, cantidad: 1 }); }
     
     localStorage.setItem("carrito", JSON.stringify(carrito));
-    
     actualizarContador();
-    abrirCesta(); // Muestra el modal de confirmación
+    
+    // Abrir el mini-carrito (overlay) que tienes en el index.html
+    const overlay = document.getElementById("carrito-overlay");
+    if (overlay) overlay.style.display = "flex";
 }
 
 function actualizarContador() {
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    const total = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-    document.getElementById("cart-count").innerText = `(${total})`;
-}
-
-function abrirCesta() {
-    const overlay = document.getElementById("carrito-overlay");
-    if (overlay) overlay.style.display = "flex";
+    const count = document.getElementById("cart-count");
+    if (count) count.innerText = `(${carrito.reduce((s, i) => s + i.cantidad, 0)})`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     cargarProductos();
     actualizarContador();
-    
-    // Cerrar el modal de la cesta
     const btnCerrar = document.getElementById("cerrar-carrito");
-    if (btnCerrar) {
-        btnCerrar.onclick = () => document.getElementById("carrito-overlay").style.display = "none";
-    }
+    if (btnCerrar) btnCerrar.onclick = () => document.getElementById("carrito-overlay").style.display = "none";
 });
