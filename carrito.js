@@ -1,24 +1,20 @@
-const STORAGE_KEY = "carrito";
-
 function renderCarritoFinal() {
-    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const list = document.getElementById("carrito-list");
-    const totalEl = document.getElementById("carrito-total");
-    if (!list) return;
-
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const lista = document.getElementById("carrito-list");
     let total = 0;
-    list.innerHTML = carrito.map(p => {
-        total += (p.precio * p.cantidad);
-        return `<div class="carrito-item">
-            <h4>${p.titulo} (x${p.cantidad})</h4>
-            <p>$${(p.precio * p.cantidad).toLocaleString()}</p>
-        </div>`;
+    if (!lista) return;
+
+    lista.innerHTML = carrito.map(p => {
+        const subtotal = p.precio * p.cantidad;
+        total += subtotal;
+        return `<div>${p.titulo} x${p.cantidad} - $${subtotal.toLocaleString()}</div>`;
     }).join("");
-    if (totalEl) totalEl.innerHTML = `<strong>Total: $${total.toLocaleString()}</strong>`;
+    
+    document.getElementById("carrito-total").innerHTML = `<strong>Total: $${total.toLocaleString()}</strong>`;
 }
 
 async function irAPagarWompi() {
-    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     let total = 0;
     carrito.forEach(p => total += (p.precio * p.cantidad));
     
@@ -27,17 +23,11 @@ async function irAPagarWompi() {
     const moneda = "COP";
     const publicKey = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
 
-    try {
-        const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
-        const data = await res.json();
+    const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
+    const data = await res.json();
 
-        if (data.firma) {
-            window.location.href = `https://checkout.wompi.co/p/?public-key=${publicKey}&currency=${moneda}&amount-in-cents=${montoCentavos}&reference=${referencia}&signature=${data.firma}`;
-        } else {
-            alert("Error de seguridad en el servidor.");
-        }
-    } catch (e) {
-        alert("Error al conectar con la pasarela.");
+    if (data.firma) {
+        window.location.href = `https://checkout.wompi.co/p/?public-key=${publicKey}&currency=${moneda}&amount-in-cents=${montoCentavos}&reference=${referencia}&signature=${data.firma}`;
     }
 }
 
