@@ -32,7 +32,8 @@ function actualizarTotales() {
 
     const totalEl = document.getElementById("carrito-total");
     if (totalEl) {
-        totalEl.innerHTML = `<h2>Total a pagar: $${total.toLocaleString('es-CO')}</h2>`;
+        // Formato de moneda colombiana sin decimales para claridad
+        totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
     }
     
     // IMPORTANTE: Preparamos los datos para Wompi
@@ -49,7 +50,7 @@ function prepararPagoWompi(total) {
         const totalCentavos = Math.round(total * 100);
         wompiAmountInput.value = totalCentavos;
 
-        // Generar referencia única (ej: MARCAS-1712500000)
+        // Generar referencia única solo si no existe una
         if (!wompiReferenceInput.value || wompiReferenceInput.value === "") {
             wompiReferenceInput.value = "MARCAS-" + Date.now();
         }
@@ -61,6 +62,7 @@ function renderCarrito() {
     const list = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
     const checkoutSection = document.getElementById("checkout");
+    const cartSection = document.getElementById("cart");
 
     if (carrito.length === 0) {
         list.innerHTML = "<p>El carrito está vacío.</p>";
@@ -93,10 +95,40 @@ function renderCarrito() {
         `;
     }).join("");
 
-    totalEl.innerHTML = `<h2>Total a pagar: $${total.toLocaleString('es-CO')}</h2>`;
+    // Botón para proceder al pago si no estás ya en checkout
+    totalEl.innerHTML = `
+        <h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>
+        <button id="btn-continuar-checkout" class="btn-pago">Finalizar Pedido</button>
+    `;
     
     // Inicializar datos de Wompi
     prepararPagoWompi(total);
 
     // Eventos para inputs de cantidad
     document.querySelectorAll(".cantidad").forEach(input => {
+        input.addEventListener("change", actualizarTotales);
+    });
+
+    // Evento para mostrar formulario de checkout
+    document.getElementById("btn-continuar-checkout").addEventListener("click", () => {
+        cartSection.classList.add("hidden");
+        checkoutSection.classList.remove("hidden");
+    });
+}
+
+// === Inicialización al cargar la página ===
+document.addEventListener("DOMContentLoaded", () => {
+    renderCarrito();
+
+    const checkoutForm = document.getElementById("checkout-form");
+    if (checkoutForm) {
+        checkoutForm.addEventListener("submit", () => {
+            // No cancelamos el evento (e.preventDefault) para que 
+            // el formulario se envíe a la URL de Wompi.
+            console.log("Redirigiendo a la pasarela de pagos...");
+            
+            // Opcional: Podrías limpiar el carrito aquí, pero es mejor hacerlo 
+            // en la página de éxito de retorno.
+        });
+    }
+});
