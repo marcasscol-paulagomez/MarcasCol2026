@@ -23,8 +23,9 @@ function actualizarTotales() {
         const cantidadInput = item.querySelector(".cantidad");
         if (cantidadInput && carrito[i]) {
             const cantidad = parseInt(cantidadInput.value) || 1;
-            total += parseFloat(carrito[i].precio) * cantidad;
+            // Actualizamos el objeto en el array
             carrito[i].cantidad = cantidad;
+            total += parseFloat(carrito[i].precio) * cantidad;
         }
     });
 
@@ -32,26 +33,25 @@ function actualizarTotales() {
 
     const totalEl = document.getElementById("carrito-total");
     if (totalEl) {
-        // Formato de moneda colombiana sin decimales para claridad
         totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
     }
     
-    // IMPORTANTE: Preparamos los datos para Wompi
+    // Actualizamos Wompi cada vez que cambie una cantidad
     prepararPagoWompi(total);
 }
 
-// Función específica para actualizar los campos ocultos de Wompi
+// Función para actualizar los campos ocultos de Wompi
 function prepararPagoWompi(total) {
     const wompiAmountInput = document.getElementById('wompi-amount');
     const wompiReferenceInput = document.getElementById('wompi-reference');
 
     if (wompiAmountInput && wompiReferenceInput) {
-        // Wompi pide el monto en centavos (ej: 50.000 COP -> 5000000)
+        // Wompi pide el monto en centavos
         const totalCentavos = Math.round(total * 100);
         wompiAmountInput.value = totalCentavos;
 
-        // Generar referencia única solo si no existe una
-        if (!wompiReferenceInput.value || wompiReferenceInput.value === "") {
+        // Generar referencia única si está vacía
+        if (!wompiReferenceInput.value) {
             wompiReferenceInput.value = "MARCAS-" + Date.now();
         }
     }
@@ -61,21 +61,24 @@ function renderCarrito() {
     let carrito = getCarrito();
     const list = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
-    const checkoutSection = document.getElementById("checkout");
     const cartSection = document.getElementById("cart");
+    const checkoutSection = document.getElementById("checkout");
 
     if (carrito.length === 0) {
         list.innerHTML = "<p>El carrito está vacío.</p>";
-        totalEl.textContent = "";
+        totalEl.innerHTML = "";
         if(checkoutSection) checkoutSection.classList.add("hidden");
+        // Ocultar botón de finalizar si no hay nada
+        const btnFin = document.getElementById("btn-continuar-checkout");
+        if(btnFin) btnFin.style.display = "none";
         return;
     }
 
     let total = 0;
 
     list.innerHTML = carrito.map((p, i) => {
-        if (!p.cantidad) p.cantidad = 1;
-        const subtotal = parseFloat(p.precio) * p.cantidad;
+        const cantidad = p.cantidad || 1;
+        const subtotal = parseFloat(p.precio) * cantidad;
         total += subtotal;
 
         return `
@@ -86,49 +89,27 @@ function renderCarrito() {
                     <p><strong>Precio:</strong> $${parseFloat(p.precio).toLocaleString('es-CO')}</p>
                     <p><strong>Marca:</strong> ${p.marca}</p>
                     <p><strong>Sección:</strong> ${p.seccion}</p>
-                    <label for="cantidad-${i}">Cantidad:</label>
-                    <input type="number" id="cantidad-${i}" class="cantidad" 
-                           value="${p.cantidad}" min="1" data-index="${i}">
+                    <label>Cantidad:</label>
+                    <input type="number" class="cantidad" 
+                           value="${cantidad}" min="1" data-index="${i}">
                 </div>
                 <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">❌ Eliminar</button>
             </div>
         `;
     }).join("");
 
-    // Botón para proceder al pago si no estás ya en checkout
-    totalEl.innerHTML = `
-        <h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>
-        <button id="btn-continuar-checkout" class="btn-pago">Finalizar Pedido</button>
-    `;
+    totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
     
-    // Inicializar datos de Wompi
     prepararPagoWompi(total);
 
-    // Eventos para inputs de cantidad
+    // Eventos para detectar cambios de cantidad inmediatamente
     document.querySelectorAll(".cantidad").forEach(input => {
-        input.addEventListener("change", actualizarTotales);
-    });
-
-    // Evento para mostrar formulario de checkout
-    document.getElementById("btn-continuar-checkout").addEventListener("click", () => {
-        cartSection.classList.add("hidden");
-        checkoutSection.classList.remove("hidden");
+        input.addEventListener("input", actualizarTotales);
     });
 }
 
-// === Inicialización al cargar la página ===
+// === Eventos de Navegación ===
 document.addEventListener("DOMContentLoaded", () => {
     renderCarrito();
 
-    const checkoutForm = document.getElementById("checkout-form");
-    if (checkoutForm) {
-        checkoutForm.addEventListener("submit", () => {
-            // No cancelamos el evento (e.preventDefault) para que 
-            // el formulario se envíe a la URL de Wompi.
-            console.log("Redirigiendo a la pasarela de pagos...");
-            
-            // Opcional: Podrías limpiar el carrito aquí, pero es mejor hacerlo 
-            // en la página de éxito de retorno.
-        });
-    }
-});
+    const
