@@ -1,54 +1,74 @@
-function renderCarritoFinal() {
-    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+const STORAGE_KEY = "carrito";
+
+function render() {
+    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     const lista = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
-    if (!lista) return;
 
     if (carrito.length === 0) {
-        lista.innerHTML = "<h3>Tu carrito está vacío</h3><a href='index.html'>Volver a la tienda</a>";
+        lista.innerHTML = "<p style='text-align:center;'>Tu carrito está vacío.</p>";
+        totalEl.innerHTML = "";
         return;
     }
 
     let total = 0;
     lista.innerHTML = carrito.map((p, index) => {
-        const sub = p.precio * p.cantidad;
-        total += sub;
+        const subtotal = p.precio * p.cantidad;
+        total += subtotal;
         return `
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px;">
-                <img src="${p.imagen}" width="60">
+            <div style="display:flex; align-items:center; border-bottom:1px solid #eee; padding: 10px 0;">
+                <img src="${p.imagen}" style="width:60px; height:60px; object-fit:cover; border-radius:5px;">
                 <div style="flex-grow:1; margin-left:15px;">
                     <h4 style="margin:0;">${p.titulo}</h4>
-                    <p style="margin:0;">Cant: ${p.cantidad} - $${sub.toLocaleString()}</p>
+                    <p style="margin:5px 0; color:#666;">$${p.precio.toLocaleString()} x ${p.cantidad}</p>
                 </div>
-            </div>`;
+                <strong>$${subtotal.toLocaleString()}</strong>
+            </div>
+        `;
     }).join("");
-    
-    if (totalEl) totalEl.innerHTML = `<h3>Total a pagar: $${total.toLocaleString()}</h3>`;
+
+    totalEl.innerHTML = `Total: $${total.toLocaleString()}`;
 }
 
-async function irAPagarWompi() {
-    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+async function pagar() {
+    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     let total = 0;
     carrito.forEach(p => total += (p.precio * p.cantidad));
+    
     const montoCentavos = Math.floor(total * 100);
     const referencia = "MC-" + Date.now();
-    const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=COP`);
-    const data = await res.json();
+    
+    try {
+        // Pedimos la firma al servidor
+        const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=COP`);
+        const data = await res.json();
 
-    if (data.firma) {
-        const publicKey = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
-        window.location.href = `https://checkout.wompi.co/p/?public-key=${publicKey}&currency=COP&amount-in-cents=${montoCentavos}&reference=${referencia}&signature=${data.firma}`;
+        if (data.firma) {
+            const publicKey = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
+            window.location.href = `https://checkout.wompi.co/p/?public-key=${publicKey}&currency=COP&amount-in-cents=${montoCentavos}&reference=${referencia}&signature=${data.firma}`;
+        } else {
+            alert("Error: No se pudo conectar con la seguridad de Wompi.");
+        }
+    } catch (e) {
+        alert("Error de conexión con el servidor de Marcas Col.");
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    renderCarritoFinal();
-    const btnCont = document.getElementById("continuar");
+    render();
+    
+    const btnCont = document.getElementById("btn-continuar");
+    const wompiBox = document.getElementById("wompi-container");
+
     if (btnCont) {
         btnCont.onclick = () => {
-            document.getElementById("wompi-container").innerHTML = '<button id="btn-pago" style="background:black; color:white; width:100%; padding:20px; cursor:pointer;">PAGAR AHORA</button>';
-            document.getElementById("btn-pago").onclick = irAPagarWompi;
-            document.getElementById("checkout").style.display = "block";
+            btnCont.style.display = "none";
+            wompiBox.style.display = "block";
+            wompiBox.innerHTML = `
+                <button onclick="pagar()" style="width: 100%; padding: 15px; background: black; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                    PAGAR AHORA CON WOMPI
+                </button>
+            `;
         };
     }
 });
