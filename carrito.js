@@ -1,51 +1,111 @@
-function render() {
-    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    const lista = document.getElementById("carrito-list");
+// === Funciones del carrito ===
+function getCarrito() {
+    return JSON.parse(localStorage.getItem("carrito")) || [];
+}
+
+function guardarCarrito(carrito) {
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+
+function eliminarDelCarrito(index) {
+    let carrito = getCarrito();
+    carrito.splice(index, 1); // Elimina 1 producto en la posición index
+    guardarCarrito(carrito);
+    renderCarrito();
+}
+
+function actualizarTotales() {
+    const carrito = getCarrito();
+    let total = 0;
+
+    document.querySelectorAll(".carrito-item").forEach((item, i) => {
+        const cantidad = parseInt(item.querySelector(".cantidad").value);
+        total += carrito[i].precio * cantidad;
+        // actualizamos la cantidad dentro del localStorage también
+        carrito[i].cantidad = cantidad;
+    });
+
+    guardarCarrito(carrito);
+
+    const totalEl = document.getElementById("carrito-total");
+    totalEl.innerHTML = `<h2>Total a pagar: $${total.toFixed(2)}</h2>`;
+}
+
+function renderCarrito() {
+    let carrito = getCarrito();
+    const list = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
 
     if (carrito.length === 0) {
-        lista.innerHTML = "<p>Carrito vacío</p>";
+        list.innerHTML = "<p>El carrito está vacío.</p>";
+        totalEl.textContent = "";
         return;
     }
 
     let total = 0;
-    lista.innerHTML = carrito.map(p => {
-        total += (p.precio * p.cantidad);
-        return `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #ddd;">
-            <span>${p.titulo} x ${p.cantidad}</span>
-            <span>$${(p.precio * p.cantidad).toLocaleString()}</span>
-        </div>`;
+
+    list.innerHTML = carrito.map((p, i) => {
+        // si no tiene cantidad en memoria, inicializamos en 1
+        if (!p.cantidad) p.cantidad = 1;
+
+        total += parseFloat(p.precio) * p.cantidad;
+
+        return `
+            <div class="carrito-item">
+                <img src="${p.imagen}" alt="${p.titulo}">
+                <div class="carrito-info">
+                    <h3>${p.titulo}</h3>
+                    <p><strong>Precio:</strong> $${p.precio}</p>
+                    <p><strong>Marca:</strong> ${p.marca}</p>
+                    <p><strong>Sección:</strong> ${p.seccion}</p>
+                    <p>${p.descripcion}</p>
+
+                    <!-- NUEVO input cantidad -->
+                    <label for="cantidad-${i}">Cantidad:</label>
+                    <input type="number" id="cantidad-${i}" class="cantidad" 
+                           value="${p.cantidad}" min="1">
+                </div>
+                <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">❌ Eliminar</button>
+            </div>
+        `;
     }).join("");
 
-    totalEl.innerText = `Total: $${total.toLocaleString()}`;
+    totalEl.innerHTML = `<h2>Total a pagar: $${total.toFixed(2)}</h2>`;
+
+    // eventos para inputs de cantidad
+    document.querySelectorAll(".cantidad").forEach(input => {
+        input.addEventListener("input", actualizarTotales);
+    });
 }
 
-function pagarConWompi() {
-    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    let total = 0;
-    carrito.forEach(p => total += (p.precio * p.cantidad));
-    
-    const montoCentavos = total * 100;
-    const referencia = "MC-" + Date.now();
-    const llavePublica = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae";
-
-    // LINK DIRECTO USANDO SOLO LLAVE PÚBLICA (Sin parámetro &signature)
-    const urlWompi = `https://checkout.wompi.co/p/?public-key=${llavePublica}&currency=COP&amount-in-cents=${montoCentavos}&reference=${referencia}`;
-    
-    window.location.href = urlWompi;
-}
-
+// === Eventos ===
 document.addEventListener("DOMContentLoaded", () => {
-    render();
-    const btn = document.getElementById("btn-continuar");
-    if (btn) {
-        btn.onclick = () => {
-            document.getElementById("wompi-box").innerHTML = `
-                <button onclick="pagarConWompi()" style="width:100%; padding:20px; background:black; color:white; cursor:pointer;">
-                    PAGAR AHORA CON WOMPI
-                </button>`;
-            document.getElementById("wompi-box").style.display = "block";
-            btn.style.display = "none";
-        };
-    }
+    renderCarrito();
+
+    // Mostrar el formulario al presionar continuar
+    document.getElementById("continuar").addEventListener("click", () => {
+        document.getElementById("cart").classList.add("hidden");
+        document.getElementById("checkout").classList.remove("hidden");
+    });
+
+    // Manejo del formulario de checkout
+    document.getElementById("checkout-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        let nombre = document.getElementById("nombre").value;
+        let direccion = document.getElementById("direccion").value;
+        let barrio = document.getElementById("barrio").value;
+        let telefono = document.getElementById("telefono").value;
+        let pago = document.getElementById("pago").value;
+
+        // Mensaje de confirmación
+        alert(`✅ Pedido confirmado\n\nNombre: ${nombre}\nDirección: ${direccion}\nBarrio: ${barrio}\nTeléfono: ${telefono}\nMétodo de pago: ${pago}`);
+
+        // Vaciar carrito en localStorage
+        localStorage.removeItem("carrito");
+
+        // Regresar al carrito vacío
+        document.getElementById("checkout").classList.add("hidden");
+        document.getElementById("cart").classList.remove("hidden");
+        renderCarrito();
+    });
 });
