@@ -1,111 +1,69 @@
-// === Funciones del carrito ===
-function getCarrito() {
-    return JSON.parse(localStorage.getItem("carrito")) || [];
-}
-
-function guardarCarrito(carrito) {
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-}
-
-function eliminarDelCarrito(index) {
-    let carrito = getCarrito();
-    carrito.splice(index, 1); // Elimina 1 producto en la posición index
-    guardarCarrito(carrito);
-    renderCarrito();
-}
-
-function actualizarTotales() {
-    const carrito = getCarrito();
-    let total = 0;
-
-    document.querySelectorAll(".carrito-item").forEach((item, i) => {
-        const cantidad = parseInt(item.querySelector(".cantidad").value);
-        total += carrito[i].precio * cantidad;
-        // actualizamos la cantidad dentro del localStorage también
-        carrito[i].cantidad = cantidad;
-    });
-
-    guardarCarrito(carrito);
-
-    const totalEl = document.getElementById("carrito-total");
-    totalEl.innerHTML = `<h2>Total a pagar: $${total.toFixed(2)}</h2>`;
-}
+const STORAGE_KEY = "carrito";
 
 function renderCarrito() {
-    let carrito = getCarrito();
-    const list = document.getElementById("carrito-list");
+    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const lista = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
 
+    if (!lista) return;
+
     if (carrito.length === 0) {
-        list.innerHTML = "<p>El carrito está vacío.</p>";
-        totalEl.textContent = "";
+        lista.innerHTML = "<h2>Tu carrito está vacío</h2>";
+        if (totalEl) totalEl.innerHTML = "";
         return;
     }
 
     let total = 0;
-
-    list.innerHTML = carrito.map((p, i) => {
-        // si no tiene cantidad en memoria, inicializamos en 1
-        if (!p.cantidad) p.cantidad = 1;
-
-        total += parseFloat(p.precio) * p.cantidad;
-
+    lista.innerHTML = carrito.map((p, index) => {
+        const subtotal = p.precio * p.cantidad;
+        total += subtotal;
         return `
-            <div class="carrito-item">
-                <img src="${p.imagen}" alt="${p.titulo}">
-                <div class="carrito-info">
+            <div style="display:flex; align-items:center; gap:20px; border-bottom:1px solid #ddd; padding:15px 0;">
+                <img src="${p.imagen}" width="80" style="border-radius:10px;">
+                <div style="flex-grow:1;">
                     <h3>${p.titulo}</h3>
-                    <p><strong>Precio:</strong> $${p.precio}</p>
-                    <p><strong>Marca:</strong> ${p.marca}</p>
-                    <p><strong>Sección:</strong> ${p.seccion}</p>
-                    <p>${p.descripcion}</p>
-
-                    <!-- NUEVO input cantidad -->
-                    <label for="cantidad-${i}">Cantidad:</label>
-                    <input type="number" id="cantidad-${i}" class="cantidad" 
-                           value="${p.cantidad}" min="1">
+                    <p>$${p.precio.toLocaleString()}</p>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button onclick="cambiarCantidad(${index}, -1)" style="padding:5px 10px;">-</button>
+                        <span>${p.cantidad}</span>
+                        <button onclick="cambiarCantidad(${index}, 1)" style="padding:5px 10px;">+</button>
+                    </div>
                 </div>
-                <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">❌ Eliminar</button>
+                <div style="font-weight:bold; font-size:1.2rem;">$${subtotal.toLocaleString()}</div>
             </div>
         `;
     }).join("");
 
-    totalEl.innerHTML = `<h2>Total a pagar: $${total.toFixed(2)}</h2>`;
+    totalEl.innerHTML = `
+        <div style="text-align:right; margin-top:20px;">
+            <h2>Total: $${total.toLocaleString()}</h2>
+            <button id="btn-wompi-test" style="background:black; color:white; padding:20px; width:100%; cursor:pointer; font-weight:bold; border-radius:10px; margin-top:10px;">
+                PAGAR CON WOMPI (PRUEBA)
+            </button>
+        </div>
+    `;
 
-    // eventos para inputs de cantidad
-    document.querySelectorAll(".cantidad").forEach(input => {
-        input.addEventListener("input", actualizarTotales);
-    });
+    document.getElementById("btn-wompi-test").onclick = pagarWompiTest;
 }
 
-// === Eventos ===
-document.addEventListener("DOMContentLoaded", () => {
+function cambiarCantidad(index, delta) {
+    let carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    carrito[index].cantidad += delta;
+    if (carrito[index].cantidad < 1) carrito.splice(index, 1);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
     renderCarrito();
+}
 
-    // Mostrar el formulario al presionar continuar
-    document.getElementById("continuar").addEventListener("click", () => {
-        document.getElementById("cart").classList.add("hidden");
-        document.getElementById("checkout").classList.remove("hidden");
-    });
+function pagarWompiTest() {
+    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    let total = 0;
+    carrito.forEach(p => total += (p.precio * p.cantidad));
+    
+    const totalCentavos = Math.floor(total * 100);
+    const referencia = "TEST-" + Date.now();
+    const llaveTest = "pub_test_Q5yS9J9ps9as03XpI89m266C7Uo6874e"; 
 
-    // Manejo del formulario de checkout
-    document.getElementById("checkout-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        let nombre = document.getElementById("nombre").value;
-        let direccion = document.getElementById("direccion").value;
-        let barrio = document.getElementById("barrio").value;
-        let telefono = document.getElementById("telefono").value;
-        let pago = document.getElementById("pago").value;
+    window.location.href = `https://checkout.wompi.co/p/?public-key=${llaveTest}&currency=COP&amount-in-cents=${totalCentavos}&reference=${referencia}`;
+}
 
-        // Mensaje de confirmación
-        alert(`✅ Pedido confirmado\n\nNombre: ${nombre}\nDirección: ${direccion}\nBarrio: ${barrio}\nTeléfono: ${telefono}\nMétodo de pago: ${pago}`);
-
-        // Vaciar carrito en localStorage
-        localStorage.removeItem("carrito");
-
-        // Regresar al carrito vacío
-        document.getElementById("checkout").classList.add("hidden");
-        document.getElementById("cart").classList.remove("hidden");
-        renderCarrito();
-    });
-});
+document.addEventListener("DOMContentLoaded", renderCarrito);
