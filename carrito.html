@@ -3,30 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Carrito - Marcas Col</title>
-    <link rel="stylesheet" href="estilos/carrito.css">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="/estilos/carrito.css">
 </head>
 <body>
-    <header style="padding: 20px; text-align: center; border-bottom: 1px solid #eee;">
-        <a href="index.html">⬅ Volver a la tienda</a>
-        <h1>Mi Pedido</h1>
-    </header>
+<header class="catalogo-header">
+  <div class="catalogo-header-content">
+    <a href="index.html">
+      <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo">
+    </a>
+    <nav class="catalogo-nav">
+      <div class="cart-title">
+        <img src="imagenes/carrito.png" alt="Carrito de Compras" class="cart-icon">
+        <span>Carrito de Compras</span>
+      </div>
+    </nav>
+  </div>
+</header>
 
-    <main style="max-width: 600px; margin: 20px auto; padding: 20px;">
-        <div id="carrito-list"></div>
 
-        <div id="carrito-total" style="margin-top: 20px; font-size: 1.2rem; font-weight: bold; text-align: right;"></div>
+    <main>
+        <!-- Sección carrito -->
+        <section id="cart">
+            <div id="carrito-list"></div>
+            <div id="carrito-total"></div>
+            <button onclick="window.location.href='index.html'">Seguir comprando</button>
+        </section>
 
-        <div id="seccion-pago" style="margin-top: 30px;">
-            <button id="btn-continuar" style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
-                CONTINUAR CON EL PAGO
-            </button>
-            
-            <div id="wompi-container" style="margin-top: 20px; display: none;">
-                </div>
-        </div>
+        <!-- Sección checkout -->
+        <section id="checkout" class="hidden">
+            <h2>Finalizar compra</h2>
+            <form id="checkout-form">
+                <label>Nombre completo:
+                    <input type="text" id="nombre" required>
+                </label>
+                <label>Dirección:
+                    <input type="text" id="direccion" required>
+                </label>
+                <label>Barrio:
+                    <input type="text" id="barrio" required>
+                </label>
+                <label>Teléfono:
+                    <input type="text" id="telefono" required>
+                </label>
+                <label>Método de pago:
+                    <select id="pago" required>
+                        <option value="Tarjeta">Tarjeta de crédito/débito</option>
+                        <option value="Nequi">Nequi</option>
+                        <option value="Daviplata">Daviplata</option>
+                        <option value="Contra entrega">Pago contra entrega</option>
+                    </select>
+                </label>
+                <button type="submit">Confirmar pedido</button>
+            </form>
+        </section>
     </main>
+
+<footer class="catalogo-footer">
+  <div class="footer-content">
+    <!-- Columna 1 -->
+    <div class="footer-col">
+      <img src="imagenes/logo.jpg" alt="Logo Marcas Col" class="logo">
+      <p>Tu tienda de confianza en marcas exclusivas.</p>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/marcas.coll/"><img src="imagenes/facebook.png" alt="Facebook"></a>
+        <a href="https://www.instagram.com/marcas.col/?hl=es"><img src="imagenes/instagram.jpg" alt="Instagram"></a>
+        <a href="https://www.tiktok.com/@marcas.col?_t=ZS-8zzwawF5Mwc&_r=1"><img src="imagenes/tiktok.png" alt="TikTok"></a>
+        <a href="https://www.threads.com/@marcas.col?xmt=AQF0JsMs-NGcde6Zu-eC_zE1h3rb62Z1-dY-QNx"><img src="imagenes/x.png" alt="TikTok"></a>
+      </div>
+    </div>
+    <!-- Columna 2 -->
+    <div class="footer-col">
+      <h3>Contacto</h3>
+      <p>📍 Dirección: Cra 19#22-69 Barrio Córdoba</p>
+      <p>📧 contacto@marcascol.com</p>
+      <p>📞 +57 314 4352536</p>
+    </div>
+    <!-- Columna 3 -->
+    <div class="footer-col">
+      <h3>Enlaces de interés</h3>
+      <ul>
+        <li><a href="acerca.html">Acerca de Nosotros</a></li>
+        <li><a href="#">Preguntas Frecuentes</a></li>
+        <li><a href="#">Política de Privacidad</a></li>
+        <li><a href="#">Términos y Condiciones</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Marcas Col. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<!-- Botón flotante de WhatsApp -->
+<a href="https://wa.me/573144352536" 
+   class="whatsapp-float" 
+   target="_blank" 
+   aria-label="WhatsApp">
+   <img src="imagenes/whatsapp.png" alt="WhatsApp">
+</a>
 
     <script src="carrito.js"></script>
 </body>
+
 </html>
