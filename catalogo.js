@@ -1,108 +1,162 @@
-const STORAGE_KEY = "carrito";
-const LLAVE_TEST = "pub_test_Q5yS9J9ps9as03XpI89m266C7Uo6874e";
+// ============================================================
+// === MARCAS COL - CONFIGURACIÓN DE SEGURIDAD Y PAGOS ===
+// ============================================================
 
-// 1. Cargar productos desde el servidor
-async function cargarProductos() {
+// 1. Mostrar mensaje superior
+async function cargarMensajeCatalogo() {
     try {
-        const res = await fetch('/products');
-        const productos = await res.json();
-        const lista = document.getElementById("catalogo-list");
-        if (!lista) return;
-
-        lista.innerHTML = productos.map(p => `
-            <div class="producto-card" style="border:1px solid #eee; padding:10px; border-radius:10px; text-align:center;">
-                <img src="${p.imagen}" style="width:100%; border-radius:5px;">
-                <h3>${p.titulo}</h3>
-                <p style="font-weight:bold; color:green;">$${Number(p.precio).toLocaleString()}</p>
-                <button onclick="agregarAlCarrito('${p.titulo}', ${p.precio}, '${p.imagen}')" style="cursor:pointer; background:black; color:white; border:none; padding:10px; width:100%; border-radius:5px;">
-                    Agregar al Carrito
-                </button>
-            </div>
-        `).join("");
-    } catch (e) {
-        console.error("Error cargando productos:", e);
+        const res = await fetch('/mensaje/ultimo');
+        const data = await res.json();
+        const msgDiv = document.getElementById('mensaje-superior');
+        if (data.mensaje) {
+            msgDiv.textContent = data.mensaje;
+            msgDiv.style.display = "block";
+        } else {
+            msgDiv.style.display = "none";
+        }
+    } catch (err) {
+        console.error("No se pudo cargar el mensaje:", err);
     }
 }
 
-// 2. Lógica para agregar productos
-function agregarAlCarrito(titulo, precio, imagen) {
-    let carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const existe = carrito.find(i => i.titulo === titulo);
+// ================================
+// === SLIDER / BANNER PRINCIPAL ===
+// ================================
+function inicializarSlider() {
+    let idx = 0;
+    let timer = null;
+    const slider = document.getElementById("catalogo-slider");
+    if (!slider) return;
 
-    if (existe) {
-        existe.cantidad++;
-    } else {
-        carrito.push({ titulo, precio, imagen, cantidad: 1 });
+    const track = slider.querySelector(".slider-track");
+    let slides = Array.from(slider.querySelectorAll(".slider-slide"));
+    const dots = Array.from(slider.querySelectorAll(".slider-dots .dot"));
+
+    if (!track || slides.length === 0) return;
+
+    function ajustarAnchos() {
+        const w = slider.clientWidth;
+        slides.forEach(s => {
+            s.style.width = `${w}px`;
+            s.style.minWidth = `${w}px`;
+        });
+        track.style.width = `${w * slides.length}px`;
+        track.style.transform = `translateX(-${idx * w}px)`;
     }
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
-    actualizarInterfaz();
-    
-    // Mostrar el modal automáticamente
-    document.getElementById("carrito-overlay").style.display = "flex";
-}
-
-// 3. Actualizar la lista visual de la cesta
-function actualizarInterfaz() {
-    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    
-    // Número del botón carrito (0)
-    const countEl = document.getElementById("cart-count");
-    if (countEl) {
-        const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-        countEl.innerText = `(${totalItems})`;
+    function showSlide(i) {
+        if (i < 0) i = slides.length - 1;
+        if (i >= slides.length) i = 0;
+        idx = i;
+        const w = slider.clientWidth;
+        track.style.transform = `translateX(-${i * w}px)`;
+        dots.forEach((d, j) => d.classList.toggle("active", j === i));
     }
 
-    const contenedor = document.getElementById("carrito-productos");
-    const resumen = document.getElementById("carrito-resumen");
-    
-    if (!contenedor) return;
-
-    if (carrito.length === 0) {
-        contenedor.innerHTML = "<p>Tu cesta está vacía</p>";
-        if (resumen) resumen.innerText = "Total: $0";
-        return;
+    function auto() {
+        clearInterval(timer);
+        if (slides.length > 1) timer = setInterval(() => showSlide(idx + 1), 6000);
     }
 
-    let totalDinero = 0;
-    contenedor.innerHTML = carrito.map((p, index) => {
-        const sub = p.precio * p.cantidad;
-        totalDinero += sub;
-        return `
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem; border-bottom:1px solid #eee; padding-bottom:5px;">
-                <span>${p.titulo} x ${p.cantidad}</span>
-                <span>$${sub.toLocaleString()}</span>
-            </div>
-        `;
-    }).join("");
-
-    if (resumen) resumen.innerHTML = `<strong>Total: $${totalDinero.toLocaleString()}</strong>`;
+    window.addEventListener("resize", ajustarAnchos);
+    ajustarAnchos();
+    showSlide(0);
+    auto();
 }
 
-// 4. FUNCIÓN DE PAGO DIRECTA (Aquí estaba el error)
-function pagarWompi() {
-    const carrito = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    if (carrito.length === 0) return alert("Agrega algo al carrito primero");
+// ==============================
+// === PRODUCTOS Y FILTROS ======
+// ==============================
 
-    let total = 0;
-    carrito.forEach(p => total += (p.precio * p.cantidad));
-    
-    const montoCentavos = Math.floor(total * 100);
-    const referencia = "TEST-" + Date.now();
-
-    // Redirección a la pasarela de pruebas
-    window.location.href = `https://checkout.wompi.co/p/?public-key=${LLAVE_TEST}&currency=COP&amount-in-cents=${montoCentavos}&reference=${referencia}`;
+async function fetchProductos() {
+    const res = await fetch("/products");
+    return res.ok ? await res.json() : [];
 }
 
-// 5. EVENTOS
-document.addEventListener("DOMContentLoaded", () => {
-    cargarProductos();
-    actualizarInterfaz();
+function renderProductos(productos, filtro = "") {
+    const list = document.getElementById("catalogo-list");
+    if (!list) return;
 
-    // Abrir/Cerrar
-    document.getElementById("btn-carrito").onclick = () => document.getElementById("carrito-overlay").style.display = "flex";
-    document.getElementById("cerrar-carrito").onclick = () => document.getElementById("carrito-overlay").style.display = "none";
+    let filtrados = productos;
+    if (filtro) {
+        const f = filtro.toLowerCase();
+        filtrados = productos.filter(p => p.titulo.toLowerCase().includes(f));
+    }
+
+    list.innerHTML = filtrados.map(p => `
+        <div class="catalogo-card">
+            <img src="${p.imagen}" alt="${p.titulo}" class="catalogo-img">
+            <div class="catalogo-title">${p.titulo}</div>
+            <div class="catalogo-section">${p.marca} - ${p.seccion}</div>
+            <div class="catalogo-price">$${p.precio}</div>
+            <button class="catalogo-btn" 
+                onclick="procesarPagoDirecto('${p.titulo}', ${p.precio})">
+                Comprar ahora
+            </button>
+        </div>
+    `).join("");
+}
+
+// ============================================================
+// === LÓGICA DE PAGO CON FIRMA DE INTEGRIDAD (WOMPI) ===
+// ============================================================
+
+async function procesarPagoDirecto(titulo, precio) {
+    const montoCentavos = Math.round(precio * 100);
+    const referencia = `MC-${Date.now()}`; // Referencia única
+    const moneda = "COP";
+    const publicKey = "pub_prod_s6o6uRKmlae54oP8MP2gQihvJEkwxDae"; // Tu llave pública
+
+    try {
+        // 1. Pedir la firma de integridad al servidor de Railway
+        const res = await fetch(`/obtener-firma-wompi?referencia=${referencia}&monto=${montoCentavos}&moneda=${moneda}`);
+        const data = await res.json();
+
+        if (!data.firma) {
+            alert("Error: No se pudo validar la seguridad del pago. Verifica la llave en Railway.");
+            return;
+        }
+
+        // 2. Construir la URL de Wompi incluyendo el parámetro &signature=
+        const urlWompi = `https://checkout.wompi.co/p/?` +
+                         `public-key=${publicKey}` +
+                         `&currency=${moneda}` +
+                         `&amount-in-cents=${montoCentavos}` +
+                         `&reference=${referencia}` +
+                         `&signature=${data.firma}`; // <--- AQUÍ SE AGREGA LA FIRMA
+
+        // 3. Redirigir al cliente (Ya no saldrá en blanco)
+        window.location.href = urlWompi;
+
+    } catch (err) {
+        console.error("Error en el proceso de pago:", err);
+        alert("Hubo un problema al conectar con la pasarela de pago.");
+    }
+}
+
+// ============================================================
+// === INICIALIZACIÓN GLOBAL ===
+// ============================================================
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await cargarMensajeCatalogo();
+    const productos = await fetchProductos();
+    renderProductos(productos);
     
-    // BOTÓN CONTINUAR: Ahora ejecuta el pago, no cambia de página
-    document.getElementById("continuar-compra").onclick = pagarWompi;
+    // Iniciar el slider después de cargar datos
+    const slidesData = await fetch("/slides").then(res => res.json()).catch(() => []);
+    if(slidesData.length > 0) renderSlidesDyn(slidesData);
+
+    // Búsqueda
+    document.getElementById("search-input")?.addEventListener("input", (e) => {
+        renderProductos(productos, e.target.value);
+    });
 });
+
+// Función auxiliar para renderizar slides si hay datos
+function renderSlidesDyn(slides) {
+    const slider = document.getElementById("catalogo-slider");
+    if (!slider) return;
+    // ... (Tu lógica de renderizado de slides que ya tenías)
+    inicializarSlider();
+}
