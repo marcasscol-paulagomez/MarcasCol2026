@@ -23,9 +23,13 @@
 
     <main>
         <section id="cart">
-            <h2>Mi Carrito</h2>
-            <div id="carrito-list"></div>
-            <div id="carrito-total"></div>
+            <h2 class="titulo-seccion">Mi Carrito</h2>
+            
+            <div id="carrito-list">
+                <p style="text-align:center; padding:20px;">Cargando productos...</p>
+            </div>
+
+            <div id="carrito-total" class="total-container"></div>
             
             <div class="cart-actions">
                 <button type="button" onclick="window.location.href='index.html'" class="btn-secundario">Seguir comprando</button>
@@ -35,7 +39,7 @@
 
         <section id="checkout" class="hidden">
             <div class="checkout-header">
-                <button type="button" id="btn-volver-carrito" style="background: none; border: none; color: #666; cursor: pointer; margin-bottom: 15px;">← Volver al carrito</button>
+                <button type="button" id="btn-volver-carrito" class="btn-volver">← Volver al carrito</button>
                 <h2>Datos de Envío</h2>
             </div>
 
@@ -63,7 +67,7 @@
 
                 <div class="form-group">
                     <label for="telefono">Teléfono / WhatsApp:</label>
-                    <input type="text" id="telefono" name="customer-data:phone-number" placeholder="314..." required>
+                    <input type="text" id="telefono" name="customer-data:phone-number" placeholder="Ej: 3141234567" required>
                 </div>
                 
                 <button type="submit" id="btn-pagar" class="btn-wompi">Pagar con Wompi</button>
@@ -89,7 +93,7 @@
   </div>
 </footer>
 
-<a href="https://wa.me/573144352536" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+<a href="https://wa.me/573144352536" class="whatsapp-float" target="_blank">
    <img src="imagenes/whatsapp.png" alt="WhatsApp">
 </a>
 
