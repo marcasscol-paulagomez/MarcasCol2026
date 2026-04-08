@@ -3,109 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - Marcas Col</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="/estilos/catalogo.css">
+    <title>Carrito de Compras - Marcas Col</title>
+    <link rel="stylesheet" href="/estilos/carrito.css">
+    <style>
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
-    <div id="mensaje-superior" class="mensaje-superior">
-        <span>¡Envíos a toda Colombia! 🇨🇴</span>
-    </div>
-
-    <header class="catalogo-header">
-        <div class="catalogo-header-content">
-            <div class="header-left">
-                <a href="index.html"><img src="imagenes/logo.jpg" alt="Marcas Col" class="logo"></a>
-            </div>
-
-            <div class="catalogo-search-bar">
-                <input type="text" id="search-input" placeholder="¿Qué estás buscando hoy?">
-                <span class="icon-search">🔍</span>
-            </div>
-
-            <div class="header-right">
-                <div class="cart-container">
-                    <a href="carrito.html" id="btn-carrito" class="icon-cart" aria-label="Ver carrito">
-                        <img src="imagenes/carrito.png" alt="Carrito" style="width: 30px;">
-                        <span id="cart-count" class="cart-count">(0)</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <button id="menu-toggle" class="menu-toggle" aria-label="Menú">☰</button>
-        <div id="nav-overlay" class="nav-overlay"></div>
-    </header>
-
-    <nav class="catalogo-nav" id="catalogo-nav">
-        <ul id="catalogo-secciones">
-            </ul>
+<header class="catalogo-header">
+  <div class="catalogo-header-content">
+    <a href="index.html">
+      <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo">
+    </a>
+    <nav class="catalogo-nav">
+      <div class="cart-title">
+        <img src="imagenes/carrito.png" alt="Carrito de Compras" class="cart-icon">
+        <span>Carrito de Compras</span>
+      </div>
     </nav>
+  </div>
+</header>
 
     <main>
-        <section class="catalogo-slider" id="catalogo-slider">
-            </section>
-
-        <section id="catalogo-list" class="catalogo-list"></section>
-
-        <div class="carrito-overlay" id="carrito-overlay" style="display:none;">
-            <div class="carrito-modal">
-                <button class="carrito-cerrar" id="cerrar-carrito" title="Cerrar">&times;</button>
-                <div class="carrito-header">Tu Cesta</div>
-                <div id="carrito-productos"></div>
-                <div class="carrito-resumen" id="carrito-resumen"></div>
-                <div class="carrito-btns">
-                    <button class="carrito-btn" id="continuar-compra" onclick="window.location.href='carrito.html'">
-                        Ver Carrito y Pagar
-                    </button>
-                </div>
+        <section id="cart">
+            <h2 class="titulo-seccion">Mi Carrito</h2>
+            <div id="carrito-list">
+                <p style="text-align:center; padding:20px;">Cargando productos...</p>
             </div>
-        </div>
+            <div id="carrito-total" class="total-container"></div>
+            <div class="cart-actions">
+                <button type="button" onclick="window.location.href='index.html'" class="btn-secundario">Seguir comprando</button>
+                <button type="button" id="btn-continuar-checkout" class="btn-principal" onclick="toggleCheckout(true)">Finalizar compra</button>
+            </div>
+        </section>
 
-        <section class="catalogo-marcas" id="catalogo-marcas">
-            </section>
+        <section id="checkout" class="hidden">
+            <div class="checkout-header">
+                <button type="button" id="btn-volver-carrito" class="btn-volver" onclick="toggleCheckout(false)">← Volver al carrito</button>
+                <h2>Datos de Envío</h2>
+            </div>
+            <form id="checkout-form" action="https://checkout.wompi.co/p/" method="GET">
+                <input type="hidden" name="public-key" value="pub_test_cQrYMdUpn35pBXI9Rr7gJyyM7l0d793c" />
+                <input type="hidden" name="currency" value="COP" />
+                <input type="hidden" id="wompi-amount" name="amount-in-cents" value="0" />
+                <input type="hidden" id="wompi-reference" name="reference" value="" />
+                <input type="hidden" name="redirect-url" value="https://marcascol.com/confirmacion" />
+
+                <div class="form-group">
+                    <label for="nombre">Nombre completo:</label>
+                    <input type="text" id="nombre" name="customer-data:full-name" placeholder="Ej: Juan Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección de entrega:</label>
+                    <input type="text" id="direccion" placeholder="Calle, número, apto" required>
+                </div>
+                <div class="form-group">
+                    <label for="barrio">Barrio:</label>
+                    <input type="text" id="barrio" placeholder="Nombre del barrio" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono / WhatsApp:</label>
+                    <input type="text" id="telefono" name="customer-data:phone-number" placeholder="Ej: 3141234567" required>
+                </div>
+                <button type="submit" id="btn-pagar" class="btn-wompi">Pagar con Wompi</button>
+            </form>
+        </section>
     </main>
 
-    <footer class="catalogo-footer">
-        <div class="footer-content">
-            <div class="footer-col">
-                <img src="imagenes/logo.jpg" alt="Logo Marcas Col" class="logo">
-                <p>Tu tienda de confianza en marcas exclusivas.</p>
-                <div class="footer-socials">
-                    <a href="https://www.facebook.com/marcas.coll/"><img src="imagenes/facebook.png" alt="Facebook"></a>
-                    <a href="https://www.instagram.com/marcas.col/?hl=es"><img src="imagenes/instagram.jpg" alt="Instagram"></a>
-                    <a href="https://www.tiktok.com/@marcas.col?_t=ZS-8zzwawF5Mwc&_r=1"><img src="imagenes/tiktok.png" alt="TikTok"></a>
-                    <a href="https://www.threads.com/@marcas.col?xmt=AQF0JsMs-NGcde6Zu-eC_zE1h3rb62Z1-dY-QNx"><img src="imagenes/x.png" alt="Threads"></a>
-                </div>
-            </div>
-            <div class="footer-col">
-                <h3>Contacto</h3>
-                <p>📍 Dirección: Cra 19#22-69 Barrio Córdoba</p>
-                <p>📧 contacto@marcascol.com</p>
-                <p>📞 +57 314 4352536</p>
-            </div>
-            <div class="footer-col">
-                <h3>Enlaces de interés</h3>
-                <ul>
-                    <li><a href="acerca.html">Acerca de Nosotros</a></li>
-                    <li><a href="preguntas_frecuentes.html">Preguntas Frecuentes</a></li>
-                    <li><a href="politica_privacidad.html">Política de Privacidad</a></li>
-                    <li><a href="terminos_condiciones.html">Términos y Condiciones</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Marcas Col. Todos los derechos reservados.</p>
-        </div>
-    </footer>
-
-    <a href="https://wa.me/573144352536" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
-        <img src="imagenes/whatsapp.png" alt="WhatsApp">
-    </a>
-
     <script>
-        window.API_BASE = window.location.origin;
+        function toggleCheckout(showCheckout) {
+            const cartSec = document.getElementById('cart');
+            const checkSec = document.getElementById('checkout');
+            const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+            if (showCheckout) {
+                if (carrito.length === 0) {
+                    alert("Tu carrito está vacío");
+                    return;
+                }
+                cartSec.classList.add('hidden');
+                checkSec.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            } else {
+                cartSec.classList.remove('hidden');
+                checkSec.classList.add('hidden');
+            }
+        }
     </script>
-    <script src="catalogo.js"></script>
+    <script src="carrito.js"></script>
 </body>
 </html>
