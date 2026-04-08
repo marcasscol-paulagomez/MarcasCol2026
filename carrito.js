@@ -1,7 +1,8 @@
 // === Funciones de Datos ===
 function getCarrito() {
     try {
-        return JSON.parse(localStorage.getItem("carrito")) || [];
+        let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+        return agruparDuplicados(carrito); // Agrupamos antes de devolver
     } catch (e) {
         return [];
     }
@@ -9,6 +10,28 @@ function getCarrito() {
 
 function guardarCarrito(carrito) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+
+// === FUNCIÓN CLAVE: Agrupar productos iguales ===
+function agruparDuplicados(carrito) {
+    const carritoAgrupado = [];
+
+    carrito.forEach(producto => {
+        // Buscamos si el producto ya existe en nuestro nuevo arreglo (por título)
+        const existe = carritoAgrupado.find(p => p.titulo === producto.titulo);
+
+        if (existe) {
+            // Si ya existe, sumamos las cantidades
+            // Usamos || 1 por si el producto no tiene la propiedad definida
+            existe.cantidad = (existe.cantidad || 1) + (producto.cantidad || 1);
+        } else {
+            // Si no existe, lo añadimos asegurando que tenga cantidad 1 al menos
+            if (!producto.cantidad) producto.cantidad = 1;
+            carritoAgrupado.push(producto);
+        }
+    });
+
+    return carritoAgrupado;
 }
 
 // === Lógica del Carrito ===
@@ -51,7 +74,7 @@ function prepararPagoWompi(total) {
 }
 
 function renderCarrito() {
-    const carrito = getCarrito();
+    const carrito = getCarrito(); // Aquí ya viene agrupado por la función agruparDuplicados
     const list = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
 
@@ -90,14 +113,15 @@ function renderCarrito() {
     if (totalEl) {
         totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
     }
+    
+    // Guardamos el carrito limpio (ya agrupado) de vuelta en el localStorage
+    guardarCarrito(carrito);
     prepararPagoWompi(total);
 
-    // Re-vincular eventos
     document.querySelectorAll(".cantidad").forEach(input => {
         input.addEventListener("change", actualizarTotales);
         input.addEventListener("keyup", actualizarTotales);
     });
 }
 
-// Iniciar automáticamente al cargar el script
 document.addEventListener('DOMContentLoaded', renderCarrito);
