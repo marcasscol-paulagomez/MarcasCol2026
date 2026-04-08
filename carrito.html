@@ -6,8 +6,12 @@
     <title>Carrito de Compras - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
     <style>
-        /* Estilo simple para manejar la visibilidad sin archivos externos adicionales */
         .hidden { display: none !important; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; gap: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -58,20 +62,42 @@
                     <label for="nombre">Nombre completo:</label>
                     <input type="text" id="nombre" name="customer-data:full-name" placeholder="Ej: Juan Pérez" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="direccion">Dirección de entrega:</label>
-                    <input type="text" id="direccion" placeholder="Calle, número, apto" required>
+                    <label for="documento">Documento de identidad (Cédula/NIT):</label>
+                    <input type="text" id="documento" placeholder="Número de identificación" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departamento">Departamento:</label>
+                        <input type="text" id="departamento" placeholder="Ej: Antioquia" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="municipio">Municipio / Ciudad:</label>
+                        <input type="text" id="municipio" placeholder="Ej: Medellín" required>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="barrio">Barrio:</label>
-                    <input type="text" id="barrio" placeholder="Nombre del barrio" required>
+                    <label for="direccion">Dirección exacta:</label>
+                    <input type="text" id="direccion" placeholder="Calle, número, apto, barrio" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="telefono">Teléfono / WhatsApp:</label>
-                    <input type="text" id="telefono" name="customer-data:phone-number" placeholder="Ej: 3141234567" required>
+                    <label for="adicional">Información adicional:</label>
+                    <input type="text" id="adicional" placeholder="Conjunto, torre, indicaciones de entrega">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefono">Teléfono 1 (Principal):</label>
+                        <input type="text" id="telefono" name="customer-data:phone-number" placeholder="Ej: 3141234567" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono2">Teléfono 2 (Opcional):</label>
+                        <input type="text" id="telefono2" placeholder="Otro número de contacto">
+                    </div>
                 </div>
                 
                 <button type="submit" id="btn-pagar" class="btn-wompi">Pagar con Wompi</button>
@@ -81,41 +107,4 @@
 
 <footer class="catalogo-footer">
   <div class="footer-content">
-    <div class="footer-col">
-      <img src="imagenes/logo.jpg" alt="Logo Marcas Col" class="logo">
-      <p>Tu tienda de confianza en marcas exclusivas.</p>
-    </div>
-    <div class="footer-col">
-      <h3>Contacto</h3>
-      <p>📍 Dirección: Cra 19#22-69 Barrio Córdoba</p>
-      <p>📧 contacto@marcascol.com</p>
-      <p>📞 +57 314 4352536</p>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2026 Marcas Col. Todos los derechos reservados.</p>
-  </div>
-</footer>
-
-<a href="https://wa.me/573144352536" class="whatsapp-float" target="_blank">
-   <img src="imagenes/whatsapp.png" alt="WhatsApp">
-</a>
-
-    <script>
-        function toggleCheckout(showCheckout) {
-            const cartSection = document.getElementById('cart');
-            const checkoutSection = document.getElementById('checkout');
-            
-            if (showCheckout) {
-                cartSection.classList.add('hidden');
-                checkoutSection.classList.remove('hidden');
-                window.scrollTo(0, 0); // Sube la página al inicio
-            } else {
-                cartSection.classList.remove('hidden');
-                checkoutSection.classList.add('hidden');
-            }
-        }
-    </script>
-    <script src="carrito.js"></script>
-</body>
-</html>
+    <div class="footer-
