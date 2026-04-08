@@ -40,7 +40,12 @@ function actualizarTotales() {
 function prepararPagoWompi(total) {
     const wompiAmountInput = document.getElementById('wompi-amount');
     const wompiReferenceInput = document.getElementById('wompi-reference');
-    if (wompiAmountInput) wompiAmountInput.value = Math.round(total * 100);
+    
+    if (wompiAmountInput) {
+        // Wompi recibe el valor en centavos (ej: 1000 pesos = 100000 centavos)
+        wompiAmountInput.value = Math.round(total * 100);
+    }
+    
     if (wompiReferenceInput && !wompiReferenceInput.value) {
         wompiReferenceInput.value = "MARCAS-" + Date.now();
     }
@@ -51,7 +56,7 @@ function renderCarrito() {
     const list = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
 
-    if (!list) return; // Seguridad si el elemento no existe
+    if (!list) return;
 
     if (carrito.length === 0) {
         list.innerHTML = "<p style='text-align:center; padding:20px;'>Tu carrito está vacío.</p>";
@@ -84,37 +89,45 @@ function renderCarrito() {
     }
     prepararPagoWompi(total);
 
-    // Re-vincular eventos a los nuevos inputs creados
     document.querySelectorAll(".cantidad").forEach(input => {
         input.addEventListener("input", actualizarTotales);
     });
+}
+
+// === Navegación de Pasos (Integración con el HTML) ===
+function toggleCheckout(showCheckout) {
+    const cartSec = document.getElementById("cart");
+    const checkoutSec = document.getElementById("checkout");
+    const carrito = getCarrito();
+
+    if (showCheckout) {
+        if (carrito.length > 0) {
+            actualizarTotales(); // Asegura que Wompi tenga el total real antes de pasar
+            cartSec.classList.add("hidden");
+            checkoutSec.classList.remove("hidden");
+            window.scrollTo(0, 0);
+        } else {
+            alert("El carrito está vacío");
+        }
+    } else {
+        checkoutSec.classList.add("hidden");
+        cartSec.classList.remove("hidden");
+    }
 }
 
 // Ejecución al cargar
 window.addEventListener('load', () => {
     renderCarrito();
 
-    // Navegación
+    // Vinculamos los eventos de los botones de navegación
     const btnContinuar = document.getElementById("btn-continuar-checkout");
     const btnVolver = document.getElementById("btn-volver-carrito");
-    const cartSec = document.getElementById("cart");
-    const checkoutSec = document.getElementById("checkout");
 
     if (btnContinuar) {
-        btnContinuar.onclick = () => {
-            if (getCarrito().length > 0) {
-                cartSec.classList.add("hidden");
-                checkoutSec.classList.remove("hidden");
-            } else {
-                alert("El carrito está vacío");
-            }
-        };
+        btnContinuar.onclick = () => toggleCheckout(true);
     }
 
     if (btnVolver) {
-        btnVolver.onclick = () => {
-            checkoutSec.classList.add("hidden");
-            cartSec.classList.remove("hidden");
-        };
+        btnVolver.onclick = () => toggleCheckout(false);
     }
 });
