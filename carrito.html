@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
+    <style>
+        /* Estilo simple para manejar la visibilidad sin archivos externos adicionales */
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
 <header class="catalogo-header">
@@ -33,13 +37,13 @@
             
             <div class="cart-actions">
                 <button type="button" onclick="window.location.href='index.html'" class="btn-secundario">Seguir comprando</button>
-                <button type="button" id="btn-continuar-checkout" class="btn-principal">Finalizar compra</button>
+                <button type="button" id="btn-continuar-checkout" class="btn-principal" onclick="toggleCheckout(true)">Finalizar compra</button>
             </div>
         </section>
 
         <section id="checkout" class="hidden">
             <div class="checkout-header">
-                <button type="button" id="btn-volver-carrito" class="btn-volver">← Volver al carrito</button>
+                <button type="button" id="btn-volver-carrito" class="btn-volver" onclick="toggleCheckout(false)">← Volver al carrito</button>
                 <h2>Datos de Envío</h2>
             </div>
 
@@ -97,6 +101,21 @@
    <img src="imagenes/whatsapp.png" alt="WhatsApp">
 </a>
 
+    <script>
+        function toggleCheckout(showCheckout) {
+            const cartSection = document.getElementById('cart');
+            const checkoutSection = document.getElementById('checkout');
+            
+            if (showCheckout) {
+                cartSection.classList.add('hidden');
+                checkoutSection.classList.remove('hidden');
+                window.scrollTo(0, 0); // Sube la página al inicio
+            } else {
+                cartSection.classList.remove('hidden');
+                checkoutSection.classList.add('hidden');
+            }
+        }
+    </script>
     <script src="carrito.js"></script>
 </body>
 </html>
