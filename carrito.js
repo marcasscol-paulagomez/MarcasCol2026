@@ -1,5 +1,5 @@
 // === CONFIGURACIÓN GLOBAL ===
-const EPAYCO_PUBLIC_KEY = 'TU_PUBLIC_KEY_AQUÍ'; // <-- REEMPLAZA ESTO
+const EPAYCO_PUBLIC_KEY = '19079fa45709b5940ef2b4d0f1cb40b7892cdced'; 
 const ENTORNO_PRUEBAS = true; // Cambiar a false para ventas reales
 
 // === FUNCIONES DE DATOS ===
@@ -8,7 +8,6 @@ function getCarrito() {
         let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
         return agruparDuplicados(carrito);
     } catch (e) {
-        console.error("Error al obtener el carrito:", e);
         return [];
     }
 }
@@ -17,7 +16,6 @@ function guardarCarrito(carrito) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
-// === AGRUPAR PRODUCTOS IGUALES ===
 function agruparDuplicados(carrito) {
     const carritoAgrupado = [];
     carrito.forEach(producto => {
@@ -61,12 +59,12 @@ function actualizarTotales() {
         totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
     }
 
-    prepararDatosPago(total);
+    prepararPagoEpayco(total);
 }
 
 // === INTEGRACIÓN EPAYCO ===
 
-function prepararDatosPago(total) {
+function prepararPagoEpayco(total) {
     const carrito = getCarrito();
     const descripcion = carrito.length > 0 
         ? carrito.map(p => `${p.titulo} (x${p.cantidad})`).join(', ') 
@@ -80,31 +78,25 @@ function prepararDatosPago(total) {
 }
 
 function abrirCheckoutEpayco() {
-    // 1. Validar que haya datos de compra
     if (!window.datosCompra || window.datosCompra.valor <= 0) {
         alert("Tu carrito está vacío o el total no es válido.");
         return;
     }
 
-    // 2. Capturar datos del formulario de envío
-    const nombreForm = document.getElementById('nombre').value;
-    const direccionForm = document.getElementById('direccion').value;
-    const barrioForm = document.getElementById('barrio').value;
-    const telefonoForm = document.getElementById('telefono').value;
+    // Captura de datos del formulario extendido
+    const nombre = document.getElementById('nombre').value;
+    const documento = document.getElementById('documento').value;
+    const direccion = document.getElementById('direccion').value;
+    const ciudad = document.getElementById('municipio').value;
+    const depto = document.getElementById('departamento').value;
+    const adicionales = document.getElementById('adicional').value;
+    const telefono = document.getElementById('telefono').value;
 
-    // Validación básica de campos
-    if (!nombreForm || !direccionForm || !telefonoForm) {
-        alert("Por favor, completa todos los datos de envío.");
-        return;
-    }
-
-    // 3. Configuración del handler
     const handler = ePayco.checkout.configure({
         key: EPAYCO_PUBLIC_KEY,
         test: ENTORNO_PRUEBAS
     });
 
-    // 4. Parámetros de la transacción
     const data = {
         name: "Marcas.col",
         description: window.datosCompra.descripcion,
@@ -115,22 +107,24 @@ function abrirCheckoutEpayco() {
         tax: "0",
         country: "co",
         lang: "es",
-
         external: "false", 
         confirmation: "https://marcasscol-paulagomez.github.io/MarcasCol2026/confirmacion",
         response: "https://marcasscol-paulagomez.github.io/MarcasCol2026/index.html", 
 
-        // Datos del cliente pasados automáticamente
-        name_billing: nombreForm,
-        address_billing: `${direccionForm} - Barrio: ${barrioForm}`,
-        mobilephone_billing: telefonoForm,
-        type_doc_billing: "cc"
+        // Datos del cliente automáticos
+        name_billing: nombre,
+        address_billing: `${direccion} (${adicionales})`,
+        city_billing: ciudad,
+        mobilephone_billing: telefono,
+        type_doc_billing: "cc",
+        number_doc_billing: documento,
+        extra1: depto // Usamos campo extra para el departamento
     };
 
     handler.open(data);
 }
 
-// === RENDERIZADO DE LA INTERFAZ ===
+// === RENDERIZADO ===
 function renderCarrito() {
     const carrito = getCarrito();
     const list = document.getElementById("carrito-list");
@@ -167,22 +161,17 @@ function renderCarrito() {
     });
 
     list.innerHTML = html;
-
     if (totalEl) {
         totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
     }
 
     guardarCarrito(carrito);
-    prepararDatosPago(total);
+    prepararPagoEpayco(total);
 
-    // Escuchar cambios en inputs de cantidad
     document.querySelectorAll(".cantidad").forEach(input => {
         input.addEventListener("change", actualizarTotales);
         input.addEventListener("keyup", actualizarTotales);
     });
 }
 
-// === INICIALIZACIÓN ===
-document.addEventListener('DOMContentLoaded', () => {
-    renderCarrito();
-});
+document.addEventListener('DOMContentLoaded', renderCarrito);
