@@ -3,13 +3,13 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Login y Registro - Marcas Col</title>
+	<title>Login y Gestión - Marcas Col</title>
 	<link rel="stylesheet" href="/estilos/styles.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-	<!-- LOGIN PROPIETARIOS (solo código) -->
+	<!-- LOGIN PROPIETARIOS -->
 	<div class="container" id="login-container">
 		<div class="form-title">Acceso propietarios</div>
 		<div class="error-message" id="login-error"></div>
@@ -28,7 +28,7 @@
 		
 		<!-- AGREGAR MENSAJE -->
 		<div class="form-title">Añadir Mensaje</div>
-		<p class="form-help">Este mensaje se mostrará en la parte superior de la página como anuncio o aviso general.</p>
+		<p class="form-help">Este mensaje se mostrará en la parte superior del catálogo.</p>
 		<form id="mensaje-form">
 			<div class="input-group">
 				<label for="mensaje-texto">Mensaje</label>
@@ -40,24 +40,26 @@
 		</form>
 		<hr>
 
-		<!-- AGREGAR MARCA -->
-		<div class="form-title">Agregar Marca</div>
+		<!-- GESTIÓN DE MARCAS -->
+		<div class="form-title">Gestionar Marcas</div>
 		<form id="formulario-marca">
 			<div class="input-group">
 				<label for="marca-nombre">Nombre de la marca</label>
 				<input type="text" id="marca-nombre" required>
 			</div>
 			<div class="input-group">
-				<label for="marca-imagen">Imagen (opcional, sube desde tu dispositivo)</label>
+				<label for="marca-imagen">Imagen (opcional)</label>
 				<input type="file" id="marca-imagen" accept="image/*">
 			</div>
 			<button type="submit" class="btn">Agregar Marca</button>
 			<div class="error-message" id="marca-error"></div>
 		</form>
+		<!-- Contenedor para borrar marcas -->
+		<div id="lista-marcas-admin" style="margin-top: 15px;"></div>
 		<hr>
 
-		<!-- AGREGAR SECCIÓN -->
-		<div class="form-title">Agregar Sección</div>
+		<!-- GESTIÓN DE SECCIONES -->
+		<div class="form-title">Gestionar Secciones</div>
 		<form id="seccion-form">
 			<div class="input-group">
 				<label for="seccion-nombre">Nombre de la sección</label>
@@ -66,11 +68,12 @@
 			<button type="submit" class="btn">Agregar Sección</button>
 			<div class="error-message" id="seccion-error"></div>
 		</form>
+		<!-- Contenedor para borrar secciones -->
+		<div id="lista-secciones-admin" style="margin-top: 15px;"></div>
 		<hr>
 
 		<!-- AGREGAR BANNER -->
 		<div class="form-title">Agregar Banner</div>
-		<p class="form-help">Un <b>banner</b> es una imagen grande y llamativa que aparece en la parte superior del catálogo, ideal para promociones, productos destacados o mensajes importantes.</p>
 		<form id="formulario-banner">
 			<div class="input-group">
 				<label for="banner-titulo">Título</label>
@@ -85,7 +88,7 @@
 				<input type="text" id="banner-marca">
 			</div>
 			<div class="input-group">
-				<label for="banner-imagen">Imagen (sube desde tu dispositivo)</label>
+				<label for="banner-imagen">Imagen</label>
 				<input type="file" id="banner-imagen" accept="image/*" required>
 			</div>
 			<div class="input-group">
@@ -133,20 +136,19 @@
 				<label for="product-imagen">Imagen</label>
 				<input type="file" id="product-imagen" name="imagen" accept="image/*" required>
 			</div>
-			<button type="submit" class="btn">Guardar</button>
+			<button type="submit" class="btn">Guardar Producto</button>
 		</form>
 	</div>
 
-	
-	<!-- CONTROLES ADMIN: botones para mostrar productos y banners publicados -->
-	<div class="admin-controls" id="admin-controls" style="display:none; max-width:900px; margin:18px auto; gap:12px;">
-	<button id="btn-show-products" class="btn small">Productos publicados</button>
-	<button id="btn-show-banners" class="btn small">Banners publicados</button>
-	<button id="btn-refresh-lists" class="btn small">Refrescar listas</button>
-	<button id="btn-logout" class="btn small" style="margin-left:auto; background:#c0392b;">Cerrar sesión</button>
+	<!-- CONTROLES ADMIN -->
+	<div class="admin-controls" id="admin-controls" style="display:none; max-width:900px; margin:18px auto; gap:12px; flex-wrap: wrap; justify-content: center;">
+		<button id="btn-show-products" class="btn small">Productos publicados</button>
+		<button id="btn-show-banners" class="btn small">Banners publicados</button>
+		<button id="btn-refresh-lists" class="btn small">Refrescar todo</button>
+		<button id="btn-logout" class="btn small" style="background:#c0392b;">Cerrar sesión</button>
 	</div>
 
-	<!-- Contenedores para listas -->
+	<!-- Listas de resultados -->
 	<div id="products-list"></div>
 	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
 
