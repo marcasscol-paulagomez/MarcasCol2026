@@ -1,9 +1,14 @@
-// === Funciones de Datos ===
+// === CONFIGURACIÓN GLOBAL ===
+const EPAYCO_PUBLIC_KEY = 'TU_PUBLIC_KEY_AQUÍ'; // <-- REEMPLAZA ESTO
+const ENTORNO_PRUEBAS = true; // Cambiar a false para ventas reales
+
+// === FUNCIONES DE DATOS ===
 function getCarrito() {
     try {
         let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
         return agruparDuplicados(carrito);
     } catch (e) {
+        console.error("Error al obtener el carrito:", e);
         return [];
     }
 }
@@ -12,7 +17,7 @@ function guardarCarrito(carrito) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
-// === Agrupar productos iguales ===
+// === AGRUPAR PRODUCTOS IGUALES ===
 function agruparDuplicados(carrito) {
     const carritoAgrupado = [];
     carrito.forEach(producto => {
@@ -27,7 +32,7 @@ function agruparDuplicados(carrito) {
     return carritoAgrupado;
 }
 
-// === Lógica del Carrito ===
+// === LÓGICA DEL CARRITO ===
 function eliminarDelCarrito(index) {
     let carrito = getCarrito();
     carrito.splice(index, 1);
@@ -56,20 +61,17 @@ function actualizarTotales() {
         totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
     }
 
-    // Preparamos los datos para el checkout
-    prepararPagoEpayco(total);
+    prepararDatosPago(total);
 }
 
-// === Integración ePayco ===
+// === INTEGRACIÓN EPAYCO ===
 
-function prepararPagoEpayco(total) {
+function prepararDatosPago(total) {
     const carrito = getCarrito();
-    // Creamos la descripción comercial
     const descripcion = carrito.length > 0 
         ? carrito.map(p => `${p.titulo} (x${p.cantidad})`).join(', ') 
         : "Compra Marcas.col";
 
-    // Guardamos en una variable global para el handler
     window.datosCompra = {
         valor: Math.round(total),
         descripcion: descripcion,
@@ -78,18 +80,31 @@ function prepararPagoEpayco(total) {
 }
 
 function abrirCheckoutEpayco() {
+    // 1. Validar que haya datos de compra
     if (!window.datosCompra || window.datosCompra.valor <= 0) {
         alert("Tu carrito está vacío o el total no es válido.");
         return;
     }
 
-    // Configuración del handler de ePayco
-    // IMPORTANTE: Reemplaza 'TU_PUBLIC_KEY' con la que encuentras en tu panel de ePayco
+    // 2. Capturar datos del formulario de envío
+    const nombreForm = document.getElementById('nombre').value;
+    const direccionForm = document.getElementById('direccion').value;
+    const barrioForm = document.getElementById('barrio').value;
+    const telefonoForm = document.getElementById('telefono').value;
+
+    // Validación básica de campos
+    if (!nombreForm || !direccionForm || !telefonoForm) {
+        alert("Por favor, completa todos los datos de envío.");
+        return;
+    }
+
+    // 3. Configuración del handler
     const handler = ePayco.checkout.configure({
-        key: 'TU_PUBLIC_KEY_AQUÍ', 
-        test: true // Cambiar a false cuando vayas a vender real
+        key: EPAYCO_PUBLIC_KEY,
+        test: ENTORNO_PRUEBAS
     });
 
+    // 4. Parámetros de la transacción
     const data = {
         name: "Marcas.col",
         description: window.datosCompra.descripcion,
@@ -101,19 +116,21 @@ function abrirCheckoutEpayco() {
         country: "co",
         lang: "es",
 
-        // Configuración de redirección
         external: "false", 
-        confirmation: "https://marcasscol-paulagomez.github.io/MarcasCol2026/confirmacion", // Tu URL de Webhook
-        response: "https://marcasscol-paulagomez.github.io/MarcasCol2026/index.html",    // Donde vuelve el cliente
+        confirmation: "https://marcasscol-paulagomez.github.io/MarcasCol2026/confirmacion",
+        response: "https://marcasscol-paulagomez.github.io/MarcasCol2026/index.html", 
 
-        // Atributos opcionales
-        extra1: "Pedido Directo Web",
+        // Datos del cliente pasados automáticamente
+        name_billing: nombreForm,
+        address_billing: `${direccionForm} - Barrio: ${barrioForm}`,
+        mobilephone_billing: telefonoForm,
         type_doc_billing: "cc"
     };
 
     handler.open(data);
 }
 
+// === RENDERIZADO DE LA INTERFAZ ===
 function renderCarrito() {
     const carrito = getCarrito();
     const list = document.getElementById("carrito-list");
@@ -153,21 +170,19 @@ function renderCarrito() {
 
     if (totalEl) {
         totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
-        // Agregamos el botón de pago dinámicamente si no existe
-        totalEl.innerHTML += `
-            <button onclick="abrirCheckoutEpayco()" style="background-color: #000; color: #fff; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px;">
-                PAGAR CON EPAYCO
-            </button>
-        `;
     }
 
     guardarCarrito(carrito);
-    prepararPagoEpayco(total);
+    prepararDatosPago(total);
 
+    // Escuchar cambios en inputs de cantidad
     document.querySelectorAll(".cantidad").forEach(input => {
         input.addEventListener("change", actualizarTotales);
         input.addEventListener("keyup", actualizarTotales);
     });
 }
 
-document.addEventListener('DOMContentLoaded', renderCarrito);
+// === INICIALIZACIÓN ===
+document.addEventListener('DOMContentLoaded', () => {
+    renderCarrito();
+});
