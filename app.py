@@ -10,7 +10,8 @@ import os
 app = Flask(__name__, static_folder='.', static_url_path='')
 
 app.secret_key = os.environ.get('LLAVE_SECRETA', 'supersecretkey')
-CORS(app, supports_credentials=True)
+# IMPORTANTE: Aseguramos que CORS permita DELETE
+CORS(app, supports_credentials=True, methods=["GET", "POST", "OPTIONS", "DELETE"])
 
 OWNER_CODE = os.environ.get('CODIGO_REGISTRO')
 
@@ -121,7 +122,7 @@ def require_owner():
 
 
 # ---------------------------------------------------
-# SECCIONES
+# SECCIONES (CON DELETE AÑADIDO)
 # ---------------------------------------------------
 @app.route('/secciones', methods=['GET', 'POST'])
 def secciones():
@@ -150,10 +151,102 @@ def secciones():
     conn.close()
     return jsonify(result)
 
+# NUEVA RUTA PARA ELIMINAR SECCIÓN
+@app.route('/secciones/<string:nombre>', methods=['DELETE'])
+def delete_seccion(nombre):
+    not_owner = require_owner()
+    if not_owner: return not_owner
+
+    conn = obtener_conexion()
+    cur = conn.cursor()
+    
+    # Verificamos si hay productos usando esta sección
+    cur.execute("SELECT id FROM products WHERE seccion = ?", (nombre,))
+    if cur.fetchone():
+        conn.close()
+        return jsonify({'error': 'No puedes eliminar una sección que tiene productos asociados'}), 400
+
+    cur.execute("DELETE FROM secciones WHERE nombre = ?", (nombre,))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Sección eliminada'})
+
 
 # ---------------------------------------------------
-# SLIDES
+# MARCAS (CON DELETE AÑADIDO)
 # ---------------------------------------------------
+@app.route('/marcas', methods=['GET', 'POST'])
+def marcas():
+    conn = obtener_conexion()
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        not_owner = require_owner()
+        if not_owner: return not_owner
+
+        nombre = None
+        imagen = None
+
+        if request.content_type.startswith('multipart/form-data'):
+            nombre = request.form.get('nombre')
+            imagen_file = request.files.get('imagen')
+            if imagen_file:
+                filename = secure_filename(imagen_file.filename)
+                imagen_file.save(os.path.join(UPLOAD_FOLDER, filename))
+                imagen = filename
+        else:
+            data = request.json
+            nombre = data.get('nombre')
+            imagen = data.get('imagen')
+
+        if not nombre:
+            return jsonify({'error':'Falta nombre'}), 400
+
+        cur.execute("INSERT INTO marcas(nombre, imagen) VALUES (?, ?)", (nombre, imagen))
+        conn.commit()
+        conn.close()
+
+        return jsonify({'message':'Marca agregada'})
+
+    cur.execute("SELECT * FROM marcas ORDER BY id")
+    result = [dict(row) for row in cur.fetchall()]
+    conn.close()
+
+    for m in result:
+        if m['imagen'] and not str(m['imagen']).startswith("http"):
+            m['imagen'] = f"/uploads/{m['imagen']}"
+
+    return jsonify(result)
+
+# NUEVA RUTA PARA ELIMINAR MARCA
+@app.route('/marcas/<string:nombre>', methods=['DELETE'])
+def delete_marca(nombre):
+    not_owner = require_owner()
+    if not_owner: return not_owner
+
+    conn = obtener_conexion()
+    cur = conn.cursor()
+    
+    # Buscamos si tiene imagen para borrarla del disco
+    cur.execute("SELECT imagen FROM marcas WHERE nombre = ?", (nombre,))
+    row = cur.fetchone()
+    
+    cur.execute("DELETE FROM marcas WHERE nombre = ?", (nombre,))
+    conn.commit()
+    
+    if row and row['imagen']:
+        path = os.path.join(UPLOAD_FOLDER, row['imagen'])
+        if os.path.exists(path):
+            os.remove(path)
+            
+    conn.close()
+    return jsonify({'message': 'Marca eliminada'})
+
+
+# ---------------------------------------------------
+# SLIDES, PRODUCTOS, MENSAJES Y CATALOGO (SE MANTIENEN IGUAL)
+# ---------------------------------------------------
+
 @app.route('/slides', methods=['GET', 'POST'])
 def slides():
     conn = obtener_conexion()
@@ -233,56 +326,6 @@ def delete_slide(id):
     return jsonify({'message':'Banner eliminado'})
 
 
-# ---------------------------------------------------
-# MARCAS
-# ---------------------------------------------------
-@app.route('/marcas', methods=['GET', 'POST'])
-def marcas():
-    conn = obtener_conexion()
-    cur = conn.cursor()
-
-    if request.method == 'POST':
-        not_owner = require_owner()
-        if not_owner: return not_owner
-
-        nombre = None
-        imagen = None
-
-        if request.content_type.startswith('multipart/form-data'):
-            nombre = request.form.get('nombre')
-            imagen_file = request.files.get('imagen')
-            if imagen_file:
-                filename = secure_filename(imagen_file.filename)
-                imagen_file.save(os.path.join(UPLOAD_FOLDER, filename))
-                imagen = filename
-        else:
-            data = request.json
-            nombre = data.get('nombre')
-            imagen = data.get('imagen')
-
-        if not nombre:
-            return jsonify({'error':'Falta nombre'}), 400
-
-        cur.execute("INSERT INTO marcas(nombre, imagen) VALUES (?, ?)", (nombre, imagen))
-        conn.commit()
-        conn.close()
-
-        return jsonify({'message':'Marca agregada'})
-
-    cur.execute("SELECT * FROM marcas ORDER BY id")
-    result = [dict(row) for row in cur.fetchall()]
-    conn.close()
-
-    for m in result:
-        if m['imagen'] and not str(m['imagen']).startswith("http"):
-            m['imagen'] = f"/uploads/{m['imagen']}"
-
-    return jsonify(result)
-
-
-# ---------------------------------------------------
-# PRODUCTOS
-# ---------------------------------------------------
 @app.route('/product', methods=['POST'])
 def add_product():
     not_owner = require_owner()
@@ -355,9 +398,6 @@ def get_products():
     return jsonify(productos)
 
 
-# ---------------------------------------------------
-# MENSAJES
-# ---------------------------------------------------
 @app.route('/mensajes', methods=['GET', 'POST'])
 def mensajes():
     conn = obtener_conexion()
@@ -385,9 +425,6 @@ def mensajes():
     return jsonify(result)
 
 
-# ---------------------------------------------------
-# CATALOGO
-# ---------------------------------------------------
 @app.route('/mensaje/ultimo', methods=['GET'])
 def mensaje_ultimo():
     conn = obtener_conexion()
@@ -444,17 +481,11 @@ def products_filter():
     return jsonify(result)
 
 
-# ---------------------------------------------------
-# ARCHIVOS SUBIDOS
-# ---------------------------------------------------
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 
-# ---------------------------------------------------
-# PÁGINAS ESTÁTICAS
-# ---------------------------------------------------
 @app.route('/')
 def home():
     return send_from_directory('.', 'index.html')
