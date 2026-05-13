@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
+    <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
     <style>
         .hidden { display: none !important; }
+        .btn-epayco {
+            background-color: #ff5000;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -42,16 +56,11 @@
                 <button type="button" id="btn-volver-carrito" class="btn-volver" onclick="toggleCheckout(false)">← Volver al carrito</button>
                 <h2>Datos de Envío</h2>
             </div>
-            <form id="checkout-form" action="https://checkout.wompi.co/p/" method="GET">
-                <input type="hidden" name="public-key" value="c5fd780339f9e58bac3e6571c71d53d6" />
-                <input type="hidden" name="currency" value="COP" />
-                <input type="hidden" id="wompi-amount" name="amount-in-cents" value="0" />
-                <input type="hidden" id="wompi-reference" name="reference" value="" />
-                <input type="hidden" name="redirect-url" value="https://marcascol.com/confirmacion" />
-
+            
+            <form id="checkout-form" onsubmit="event.preventDefault(); abrirCheckoutEpayco();">
                 <div class="form-group">
                     <label for="nombre">Nombre completo:</label>
-                    <input type="text" id="nombre" name="customer-data:full-name" placeholder="Ej: Juan Pérez" required>
+                    <input type="text" id="nombre" placeholder="Ej: Juan Pérez" required>
                 </div>
 
                 <div class="form-group">
@@ -59,12 +68,12 @@
                     <input type="text" id="documento" placeholder="Número de identificación" required>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
+                <div class="form-row" style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
                         <label for="departamento">Departamento:</label>
                         <input type="text" id="departamento" placeholder="Ej: Antioquia" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 1;">
                         <label for="municipio">Municipio / Ciudad:</label>
                         <input type="text" id="municipio" placeholder="Ej: Medellín" required>
                     </div>
@@ -80,17 +89,17 @@
                     <input type="text" id="adicional" placeholder="Conjunto, torre, indicaciones de entrega">
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="telefono">Teléfono 1 (Principal):</label>
-                        <input type="text" id="telefono" name="customer-data:phone-number" placeholder="Ej: 3141234567" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="telefono2">Teléfono 2 (Opcional):</label>
-                        <input type="text" id="telefono2" placeholder="Otro número de contacto">
-                    </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono / WhatsApp:</label>
+                    <input type="text" id="telefono" placeholder="Ej: 3141234567" required>
                 </div>
-                <button type="submit" id="btn-pagar" class="btn-wompi">Pagar con Wompi</button>
+
+                <div class="pago-seguro-info" style="margin: 20px 0; text-align: center;">
+                    <p style="font-size: 0.9rem; color: #666;">Pagos protegidos por ePayco</p>
+                    <img src="https://369969691f4ad9213588-cf7563eead367d75333c72683ee069ef.ssl.cf2.rackcdn.com/epayco/pagos_procesados_por_epayco_2.png" alt="ePayco" style="width: 200px;">
+                </div>
+
+                <button type="submit" class="btn-epayco">Pagar con ePayco</button>
             </form>
         </section>
     </main>
