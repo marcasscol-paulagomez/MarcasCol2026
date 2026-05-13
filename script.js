@@ -14,7 +14,7 @@ async function poblarSelectMarcas() {
             opt.textContent = marca.nombre;
             select.appendChild(opt);
         });
-    } catch { /* ignorar */ }
+    } catch (e) { console.error("Error al poblar marcas:", e); }
 }
 
 async function poblarSelectSecciones() {
@@ -31,10 +31,10 @@ async function poblarSelectSecciones() {
             opt.textContent = sec;
             select.appendChild(opt);
         });
-    } catch { /* ignorar */ }
+    } catch (e) { console.error("Error al poblar secciones:", e); }
 }
 
-// ================= Gestión de Eliminación (NUEVO) =================
+// ================= Gestión de Visualización y Eliminación de Listas =================
 
 async function listarYBorrarSecciones() {
     const listaDiv = document.getElementById('lista-secciones-admin');
@@ -121,6 +121,8 @@ function setupAdminControls() {
             await fetchAndRenderBanners();
             await listarYBorrarSecciones();
             await listarYBorrarMarcas();
+            await poblarSelectMarcas();
+            await poblarSelectSecciones();
         });
     }
 
@@ -185,6 +187,26 @@ document.getElementById('seccion-form').onsubmit = async function(e) {
     }
 };
 
+document.getElementById('formulario-banner').onsubmit = async function(e) {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('titulo', document.getElementById('banner-titulo').value.trim());
+    formData.append('descripcion', document.getElementById('banner-descripcion').value.trim());
+    formData.append('marca', document.getElementById('banner-marca').value.trim());
+    formData.append('imagen', document.getElementById('banner-imagen').files[0]);
+    formData.append('boton_texto', document.getElementById('banner-boton-texto').value.trim());
+    formData.append('boton_url', document.getElementById('banner-boton-url').value.trim());
+
+    const res = await fetch('/slides', { method: 'POST', body: formData });
+    if (res.ok) {
+        alert('¡Banner agregado!');
+        document.getElementById('formulario-banner').reset();
+        await fetchAndRenderBanners();
+    } else {
+        alert('Error al agregar banner');
+    }
+};
+
 // ================= Login Propietario =================
 
 document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
@@ -211,7 +233,7 @@ document.getElementById('owner-login-form').addEventListener('submit', async fun
     }
 });
 
-// ================= Resto de Funciones (Productos, Banners, Mensajes) =================
+// ================= Guardar producto =================
 
 document.getElementById('product-form').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -233,24 +255,48 @@ document.getElementById('product-form').addEventListener('submit', async functio
     }
 });
 
+// ================= Renderizado de Listas (Productos y Banners) =================
+
 async function fetchAndRenderProducts() {
     const res = await fetch('/products', { credentials: 'include' });
     if (!res.ok) return;
     const products = await res.json();
     const list = document.getElementById('products-list');
+    if (!list) return;
     if (!products.length) {
-        list.innerHTML = '<p class="no-products">No hay productos publicados.</p>';
+        list.innerHTML = '<p class="no-products" style="text-align:center; padding:20px;">No hay productos publicados.</p>';
         return;
     }
     list.innerHTML = products.map(p => `
-        <div class="producto-item">
-            <img src="${p.imagen}" alt="${p.titulo}" class="producto-imagen">
-            <div class="producto-info">
-                <div class="producto-titulo">${p.titulo} <span class="product-section">(${p.seccion})</span></div>
-                <div class="producto-descripcion">${p.descripcion}</div>
-                <div class="producto-precio">$${p.precio}</div>
+        <div class="producto-item" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; display:flex; align-items:center; border-radius:8px;">
+            <img src="${p.imagen}" alt="${p.titulo}" style="width:70px; height:70px; object-fit:cover; margin-right:15px; border-radius:5px;">
+            <div style="flex:1;">
+                <div style="font-weight:bold;">${p.titulo} <span style="font-size:0.8rem; color:#666;">(${p.seccion})</span></div>
+                <div style="font-size:0.9rem;">$${p.precio}</div>
             </div>
-            <button class="btn-eliminar" onclick="eliminarProducto(${p.id})">Eliminar Producto</button>
+            <button class="btn-eliminar" onclick="eliminarProducto(${p.id})" style="background:#e74c3c; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Eliminar</button>
+        </div>
+    `).join('');
+}
+
+async function fetchAndRenderBanners() {
+    const res = await fetch('/slides', { credentials: 'include' });
+    if (!res.ok) return;
+    const slides = await res.json();
+    const container = document.getElementById('banners-list');
+    if (!container) return;
+    if (!slides.length) {
+        container.innerHTML = '<p style="text-align:center; padding:20px;">No hay banners publicados.</p>';
+        return;
+    }
+    container.innerHTML = slides.map(s => `
+        <div class="banner-item" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; display:flex; align-items:center; border-radius:8px;">
+            <img src="${s.imagen}" style="width:100px; height:50px; object-fit:cover; margin-right:15px; border-radius:5px;">
+            <div style="flex:1;">
+                <div style="font-weight:bold;">${s.titulo}</div>
+                <div style="font-size:0.8rem; color:#666;">${s.marca}</div>
+            </div>
+            <button class="btn-eliminar" onclick="eliminarBanner(${s.id})" style="background:#e74c3c; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Eliminar</button>
         </div>
     `).join('');
 }
@@ -261,7 +307,14 @@ async function eliminarProducto(id) {
     if (res.ok) { alert("Producto eliminado"); await fetchAndRenderProducts(); }
 }
 
-// Banners, Mensajes y Carga Inicial
+async function eliminarBanner(id) {
+    if (!confirm("¿Eliminar este banner?")) return;
+    const res = await fetch(`/slides/${id}`, { method: 'DELETE', credentials: 'include' });
+    if (res.ok) { alert("Banner eliminado"); await fetchAndRenderBanners(); }
+}
+
+// ================= Carga Inicial =================
+
 window.addEventListener('DOMContentLoaded', () => {
     poblarSelectMarcas();
     poblarSelectSecciones();
@@ -272,11 +325,25 @@ async function cargarMensajeActivo() {
     try {
         const res = await fetch('/mensaje/ultimo');
         const data = await res.json();
-        if (data.mensaje) {
-            const msgDiv = document.getElementById('mensaje-global');
-            if (msgDiv) { msgDiv.textContent = data.mensaje; msgDiv.style.display = "block"; }
+        const msgDiv = document.getElementById('mensaje-global');
+        if (data.mensaje && msgDiv) {
+            msgDiv.textContent = data.mensaje;
+            msgDiv.style.display = "block";
         }
     } catch (err) { console.error("No se pudo cargar el mensaje:", err); }
 }
 
-// (Otras funciones de Banner y Mensaje se mantienen igual según tu código previo)
+document.getElementById('mensaje-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const texto = document.getElementById('mensaje-texto').value.trim();
+    const res = await fetch('/mensajes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto })
+    });
+    if (res.ok) {
+        alert('Mensaje guardado');
+        document.getElementById('mensaje-form').reset();
+        cargarMensajeActivo();
+    }
+};
