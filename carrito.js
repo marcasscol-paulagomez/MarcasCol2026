@@ -2,7 +2,7 @@
 function getCarrito() {
     try {
         let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-        return agruparDuplicados(carrito); // Agrupamos antes de devolver
+        return agruparDuplicados(carrito);
     } catch (e) {
         return [];
     }
@@ -12,25 +12,18 @@ function guardarCarrito(carrito) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
-// === FUNCIÓN CLAVE: Agrupar productos iguales ===
+// === Agrupar productos iguales ===
 function agruparDuplicados(carrito) {
     const carritoAgrupado = [];
-
     carrito.forEach(producto => {
-        // Buscamos si el producto ya existe en nuestro nuevo arreglo (por título)
         const existe = carritoAgrupado.find(p => p.titulo === producto.titulo);
-
         if (existe) {
-            // Si ya existe, sumamos las cantidades
-            // Usamos || 1 por si el producto no tiene la propiedad definida
             existe.cantidad = (existe.cantidad || 1) + (producto.cantidad || 1);
         } else {
-            // Si no existe, lo añadimos asegurando que tenga cantidad 1 al menos
             if (!producto.cantidad) producto.cantidad = 1;
             carritoAgrupado.push(producto);
         }
     });
-
     return carritoAgrupado;
 }
 
@@ -57,24 +50,72 @@ function actualizarTotales() {
     });
 
     guardarCarrito(carrito);
+    
     const totalEl = document.getElementById("carrito-total");
     if (totalEl) {
         totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
     }
-    prepararPagoWompi(total);
+
+    // Preparamos los datos para el checkout
+    prepararPagoEpayco(total);
 }
 
-function prepararPagoWompi(total) {
-    const wompiAmountInput = document.getElementById('wompi-amount');
-    const wompiReferenceInput = document.getElementById('wompi-reference');
-    if (wompiAmountInput) wompiAmountInput.value = Math.round(total * 100);
-    if (wompiReferenceInput && !wompiReferenceInput.value) {
-        wompiReferenceInput.value = "MARCAS-" + Date.now();
+// === Integración ePayco ===
+
+function prepararPagoEpayco(total) {
+    const carrito = getCarrito();
+    // Creamos la descripción comercial
+    const descripcion = carrito.length > 0 
+        ? carrito.map(p => `${p.titulo} (x${p.cantidad})`).join(', ') 
+        : "Compra Marcas.col";
+
+    // Guardamos en una variable global para el handler
+    window.datosCompra = {
+        valor: Math.round(total),
+        descripcion: descripcion,
+        referencia: "MARCAS-" + Date.now()
+    };
+}
+
+function abrirCheckoutEpayco() {
+    if (!window.datosCompra || window.datosCompra.valor <= 0) {
+        alert("Tu carrito está vacío o el total no es válido.");
+        return;
     }
+
+    // Configuración del handler de ePayco
+    // IMPORTANTE: Reemplaza 'TU_PUBLIC_KEY' con la que encuentras en tu panel de ePayco
+    const handler = ePayco.checkout.configure({
+        key: 'TU_PUBLIC_KEY_AQUÍ', 
+        test: true // Cambiar a false cuando vayas a vender real
+    });
+
+    const data = {
+        name: "Marcas.col",
+        description: window.datosCompra.descripcion,
+        invoice: window.datosCompra.referencia,
+        currency: "cop",
+        amount: window.datosCompra.valor.toString(),
+        tax_base: "0",
+        tax: "0",
+        country: "co",
+        lang: "es",
+
+        // Configuración de redirección
+        external: "false", 
+        confirmation: "https://marcasscol-paulagomez.github.io/MarcasCol2026/confirmacion", // Tu URL de Webhook
+        response: "https://marcasscol-paulagomez.github.io/MarcasCol2026/index.html",    // Donde vuelve el cliente
+
+        // Atributos opcionales
+        extra1: "Pedido Directo Web",
+        type_doc_billing: "cc"
+    };
+
+    handler.open(data);
 }
 
 function renderCarrito() {
-    const carrito = getCarrito(); // Aquí ya viene agrupado por la función agruparDuplicados
+    const carrito = getCarrito();
     const list = document.getElementById("carrito-list");
     const totalEl = document.getElementById("carrito-total");
 
@@ -112,11 +153,16 @@ function renderCarrito() {
 
     if (totalEl) {
         totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
+        // Agregamos el botón de pago dinámicamente si no existe
+        totalEl.innerHTML += `
+            <button onclick="abrirCheckoutEpayco()" style="background-color: #000; color: #fff; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px;">
+                PAGAR CON EPAYCO
+            </button>
+        `;
     }
-    
-    // Guardamos el carrito limpio (ya agrupado) de vuelta en el localStorage
+
     guardarCarrito(carrito);
-    prepararPagoWompi(total);
+    prepararPagoEpayco(total);
 
     document.querySelectorAll(".cantidad").forEach(input => {
         input.addEventListener("change", actualizarTotales);
