@@ -63,7 +63,6 @@ function actualizarTotales() {
 }
 
 // === INTEGRACIÓN EPAYCO ===
-
 function prepararPagoEpayco(total) {
     const carrito = getCarrito();
     const descripcion = carrito.length > 0 
@@ -111,14 +110,14 @@ function abrirCheckoutEpayco() {
         confirmation: "https://marcasscol-paulagomez.github.io/MarcasCol2026/confirmacion",
         response: "https://marcasscol-paulagomez.github.io/MarcasCol2026/index.html", 
 
-        // Datos del cliente automáticos
+        // Datos del cliente
         name_billing: nombre,
         address_billing: `${direccion} (${adicionales})`,
         city_billing: ciudad,
         mobilephone_billing: telefono,
         type_doc_billing: "cc",
         number_doc_billing: documento,
-        extra1: depto // Usamos campo extra para el departamento
+        extra1: depto 
     };
 
     handler.open(data);
