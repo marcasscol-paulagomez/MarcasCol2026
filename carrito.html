@@ -3,136 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito de Compras - Marcas Col</title>
+    <title>Tu Carrito - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
-    <!-- Script de ePayco (Esencial para la pasarela) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
-    <style>
-        .hidden { display: none !important; }
-        .btn-epayco {
-            background-color: #ff5000;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            transition: background 0.3s ease;
-        }
-        .btn-epayco:hover {
-            background-color: #e64500;
-        }
-    </style>
 </head>
 <body>
-<header class="catalogo-header">
-  <div class="catalogo-header-content">
-    <a href="index.html">
-      <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo">
-    </a>
-    <nav class="catalogo-nav">
-      <div class="cart-title">
-        <img src="imagenes/carrito.png" alt="Carrito de Compras" class="cart-icon">
-        <span>Carrito de Compras</span>
-      </div>
-    </nav>
-  </div>
+
+<header class="header-minimal">
+    <div class="container-header">
+        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Volver a la tienda</a>
+        <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo-mini">
+    </div>
 </header>
 
-    <main>
-        <!-- SECCIÓN DE PRODUCTOS -->
-        <section id="cart">
-            <h2 class="titulo-seccion">Mi Carrito</h2>
+<main class="cart-wrapper">
+    <div class="cart-container" id="cart-main-content">
+        
+        <div class="cart-products">
+            <h1 class="page-title">Tu Carrito <span id="cart-count-title">(0)</span></h1>
             <div id="carrito-list">
-                <p style="text-align:center; padding:20px;">Cargando productos...</p>
-            </div>
-            <div id="carrito-total" class="total-container"></div>
-            <div class="cart-actions">
-                <button type="button" onclick="window.location.href='index.html'" class="btn-secundario">Seguir comprando</button>
-                <button type="button" id="btn-continuar-checkout" class="btn-principal" onclick="toggleCheckout(true)">Finalizar compra</button>
-            </div>
-        </section>
+                </div>
+        </div>
 
-        <!-- SECCIÓN DE ENVÍO Y PAGO -->
-        <section id="checkout" class="hidden">
-            <div class="checkout-header">
-                <button type="button" id="btn-volver-carrito" class="btn-volver" onclick="toggleCheckout(false)">← Volver al carrito</button>
-                <h2>Datos de Envío</h2>
-            </div>
-            
-            <!-- IMPORTANTE: El onsubmit tiene "return false" para evitar recargas de página -->
-            <form id="checkout-form" onsubmit="abrirCheckoutEpayco(); return false;">
-                <div class="form-group">
-                    <label for="nombre">Nombre completo:</label>
-                    <input type="text" id="nombre" placeholder="Ej: Juan Pérez" required>
+        <aside class="cart-summary" id="cart-sidebar">
+            <div class="summary-box">
+                <h3>Resumen del pedido</h3>
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span id="subtotal-val">$0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Envío</span>
+                    <span class="free-shipping">Calculado en checkout</span>
+                </div>
+                <hr>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="total-val">$0</span>
                 </div>
 
-                <div class="form-group">
-                    <label for="documento">Documento de identidad (Cédula/NIT):</label>
-                    <input type="text" id="documento" placeholder="Número de identificación" required>
-                </div>
-
-                <div class="form-row" style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="departamento">Departamento:</label>
-                        <input type="text" id="departamento" placeholder="Ej: Antioquia" required>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label for="municipio">Municipio / Ciudad:</label>
-                        <input type="text" id="municipio" placeholder="Ej: Medellín" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="direccion">Dirección exacta:</label>
-                    <input type="text" id="direccion" placeholder="Calle, número, apto, barrio" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="adicional">Información adicional:</label>
-                    <input type="text" id="adicional" placeholder="Conjunto, torre, indicaciones de entrega">
-                </div>
-
-                <div class="form-group">
-                    <label for="telefono">Teléfono / WhatsApp:</label>
-                    <input type="text" id="telefono" placeholder="Ej: 3141234567" required>
-                </div>
-
-                <div class="pago-seguro-info" style="margin: 20px 0; text-align: center;">
-                    <p style="font-size: 0.9rem; color: #666;">Pagos seguros protegidos por ePayco</p>
-                    <img src="https://369969691f4ad9213588-cf7563eead367d75333c72683ee069ef.ssl.cf2.rackcdn.com/epayco/pagos_procesados_por_epayco_2.png" alt="ePayco" style="width: 200px;">
-                </div>
-
-                <!-- BOTÓN DE PAGO: type="button" para que no interfiera con el script de ePayco -->
-                <button type="button" class="btn-epayco" onclick="abrirCheckoutEpayco()">Pagar con ePayco</button>
-            </form>
-        </section>
-    </main>
-
-    <script>
-        function toggleCheckout(showCheckout) {
-            const cartSec = document.getElementById('cart');
-            const checkSec = document.getElementById('checkout');
-            const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-
-            if (showCheckout) {
-                if (carrito.length === 0) {
-                    alert("Tu carrito está vacío");
-                    return;
-                }
-                cartSec.classList.add('hidden');
-                checkSec.classList.remove('hidden');
-                window.scrollTo(0, 0);
-            } else {
-                cartSec.classList.remove('hidden');
-                checkSec.classList.add('hidden');
-            }
-        }
-    </script>
-    <script src="carrito.js"></script>
-</body>
-</html>
+                <button type="button" class="btn-checkout-trigger" onclick="toggleCheckout(true)">
+                    Finalizar Compra
+                </button>
+                <div class="secure-badges">
+                    <i class="fa-solid fa-shield-halved">
