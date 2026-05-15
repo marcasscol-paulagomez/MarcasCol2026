@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
+    <!-- Script de ePayco -->
     <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
     <style>
         .hidden { display: none !important; }
@@ -39,6 +40,7 @@
 </header>
 
     <main>
+        <!-- SECCIÓN DE PRODUCTOS -->
         <section id="cart">
             <h2 class="titulo-seccion">Mi Carrito</h2>
             <div id="carrito-list">
@@ -51,6 +53,7 @@
             </div>
         </section>
 
+        <!-- SECCIÓN DE ENVÍO Y PAGO -->
         <section id="checkout" class="hidden">
             <div class="checkout-header">
                 <button type="button" id="btn-volver-carrito" class="btn-volver" onclick="toggleCheckout(false)">← Volver al carrito</button>
@@ -95,7 +98,7 @@
                 </div>
 
                 <div class="pago-seguro-info" style="margin: 20px 0; text-align: center;">
-                    <p style="font-size: 0.9rem; color: #666;">Pagos protegidos por ePayco</p>
+                    <p style="font-size: 0.9rem; color: #666;">Pagos seguros protegidos por ePayco</p>
                     <img src="https://369969691f4ad9213588-cf7563eead367d75333c72683ee069ef.ssl.cf2.rackcdn.com/epayco/pagos_procesados_por_epayco_2.png" alt="ePayco" style="width: 200px;">
                 </div>
 
