@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
-    <!-- Script de ePayco -->
+    <!-- Script de ePayco (Esencial para la pasarela) -->
     <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
     <style>
         .hidden { display: none !important; }
@@ -21,6 +21,10 @@
             margin-top: 10px;
             font-size: 1.1rem;
             text-transform: uppercase;
+            transition: background 0.3s ease;
+        }
+        .btn-epayco:hover {
+            background-color: #e64500;
         }
     </style>
 </head>
@@ -60,7 +64,8 @@
                 <h2>Datos de Envío</h2>
             </div>
             
-            <form id="checkout-form" onsubmit="event.preventDefault(); abrirCheckoutEpayco();">
+            <!-- IMPORTANTE: El onsubmit tiene "return false" para evitar recargas de página -->
+            <form id="checkout-form" onsubmit="abrirCheckoutEpayco(); return false;">
                 <div class="form-group">
                     <label for="nombre">Nombre completo:</label>
                     <input type="text" id="nombre" placeholder="Ej: Juan Pérez" required>
@@ -102,7 +107,8 @@
                     <img src="https://369969691f4ad9213588-cf7563eead367d75333c72683ee069ef.ssl.cf2.rackcdn.com/epayco/pagos_procesados_por_epayco_2.png" alt="ePayco" style="width: 200px;">
                 </div>
 
-                <button type="submit" class="btn-epayco">Pagar con ePayco</button>
+                <!-- BOTÓN DE PAGO: type="button" para que no interfiera con el script de ePayco -->
+                <button type="button" class="btn-epayco" onclick="abrirCheckoutEpayco()">Pagar con ePayco</button>
             </form>
         </section>
     </main>
