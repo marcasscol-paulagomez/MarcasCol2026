@@ -1,6 +1,6 @@
 // === CONFIGURACIÓN GLOBAL ===
 const EPAYCO_PUBLIC_KEY = 'c5fd780339f9e58bac3e6571c71d53d6'; 
-const ENTORNO_PRUEBAS = true; // Cambiar a false cuando pases a producción real
+const ENTORNO_PRUEBAS = false; 
 
 // === FUNCIONES DE DATOS ===
 function getCarrito() {
