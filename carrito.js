@@ -40,7 +40,7 @@ function eliminarDelCarrito(index) {
 function actualizarTotales() {
     const carrito = getCarrito();
     let total = 0;
-    const items = document.querySelectorAll(".cantidad-input");
+    const items = document.querySelectorAll(".cantidad"); // Ajustado a la clase real de tu input (.cantidad)
 
     items.forEach((input) => {
         const index = input.getAttribute("data-index");
@@ -115,7 +115,7 @@ function abrirCheckoutEpayco() {
         response: "https://www.marcascol-bypaulagomez.com/index.html", 
 
         name_billing: nombre,
-        address_billing: adicionales ? `${direccion} - ${adionales}` : direccion,
+        address_billing: adicionales ? `${direccion} - ${adicionales}` : direccion, // ¡Corregido el typo aquí!
         city_billing: ciudad,
         mobilephone_billing: telefono,
         type_doc_billing: "cc",
@@ -145,7 +145,7 @@ function renderCarrito() {
             </div>`;
         if (totalEl) totalEl.innerText = "$0";
         if (subtotalEl) subtotalEl.innerText = "$0";
-        if (resCant) resCant.innerText = "0 items";
+        if (resCant) resCant.innerText = "0 productos";
         return;
     }
 
@@ -160,15 +160,15 @@ function renderCarrito() {
         html += `
             <div class="carrito-item">
                 <img src="${p.imagen}" alt="${p.titulo}" class="item-img">
-                <div class="item-info">
+                <div class="carrito-info">
                     <h3>${p.titulo}</h3>
                     <p>$${precio.toLocaleString('es-CO')}</p>
                     <div class="qty-wrapper">
-                        <label style="font-size: 0.85rem; color: #777;">Cant:</label>
-                        <input type="number" class="cantidad-input" value="${cantidad}" min="1" data-index="${i}">
+                        <label>Cantidad: </label>
+                        <input type="number" class="cantidad" value="${cantidad}" min="1" data-index="${i}">
                     </div>
                 </div>
-                <button class="btn-remove" onclick="eliminarDelCarrito(${i})">
+                <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">
                     ❌
                 </button>
             </div>
@@ -176,14 +176,26 @@ function renderCarrito() {
     });
 
     list.innerHTML = html;
-    if (totalEl) totalEl.innerText = `$${Math.round(total).toLocaleString('es-CO')}`;
-    if (subtotalEl) subtotalEl.innerText = `$${Math.round(total).toLocaleString('es-CO')}`;
+    
+    // Mapeo dinámico a los contenedores de texto correctos de tu HTML
+    const formattedTotal = `$${Math.round(total).toLocaleString('es-CO')}`;
+    if (totalEl) totalEl.innerText = formattedTotal;
+    if (subtotalEl) subtotalEl.innerText = formattedTotal;
+    
+    // Si tienes un div contenedor viejo de totales, inyectamos el h2 esperado por el CSS
+    const viejoTotalContainer = document.getElementById("carrito-total");
+    if (viejoTotalContainer) {
+        viejoTotalContainer.innerHTML = `<h2>Total a pagar: ${formattedTotal}</h2>`;
+    }
+    
     if (resCant) resCant.innerText = `${carrito.length} ${carrito.length === 1 ? 'producto' : 'productos'}`;
 
     prepararPagoEpayco(total);
 
-    document.querySelectorAll(".cantidad-input").forEach(input => {
+    // Escuchador asociado a la clase real de tu HTML (.cantidad)
+    document.querySelectorAll(".cantidad").forEach(input => {
         input.addEventListener("change", actualizarTotales);
+        input.addEventListener("keyup", actualizarTotales);
     });
 }
 
