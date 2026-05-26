@@ -3,136 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito de Compras - Marcas Col</title>
+    <title>Tu Carrito - Marcas Col</title>
     <link rel="stylesheet" href="/estilos/carrito.css">
-    <!-- Script de ePayco (Esencial para la pasarela) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
     <style>
-        .hidden { display: none !important; }
-        .btn-epayco {
-            background-color: #ff5000;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            transition: background 0.3s ease;
+        :root {
+            --primary-color: #000000;
+            --accent-color: #ff5000;
+            --bg-light: #f8f8f8;
+            --text-muted: #666;
         }
-        .btn-epayco:hover {
-            background-color: #e64500;
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-light); margin: 0; color: #333; }
+
+        /* Header Minimalista */
+        .cart-header-simple { background: #fff; border-bottom: 1px solid #eee; padding: 15px 0; position: sticky; top: 0; z-index: 100; }
+        .container-header { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .logo-mini { height: 40px; }
+        .back-link { text-decoration: none; color: var(--primary-color); font-size: 0.9rem; font-weight: 500; }
+
+        /* Layout On-Page de Dos Columnas */
+        .main-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 420px; gap: 30px; }
+
+        @media (max-width: 900px) {
+            .main-container { grid-template-columns: 1fr; margin: 20px auto; gap: 20px; }
         }
+
+        /* Columna Izquierda: Lista de Productos */
+        .cart-box { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); box-sizing: border-box; }
+        .titulo-seccion { margin-top: 0; font-size: 1.4rem; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Items del Carrito */
+        .carrito-item { display: grid; grid-template-columns: 80px 1fr auto; gap: 15px; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+        .item-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+        .item-info h3 { margin: 0 0 5px 0; font-size: 1.05rem; color: #111; }
+        .item-info p { margin: 0; color: var(--accent-color); font-weight: bold; font-size: 0.95rem; }
+        .qty-wrapper { margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+        .cantidad-input { width: 50px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; text-align: center; font-size: 0.9rem; }
+        .btn-remove { background: none; border: none; color: #bbb; cursor: pointer; transition: color 0.2s; font-size: 1.1rem; }
+        .btn-remove:hover { color: #e74c3c; }
+
+        /* Columna Derecha: Formulario de Despacho y Totales */
+        .summary-box { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: fit-content; position: sticky; top: 100px; box-sizing: border-box; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--text-muted); font-size: 0.95rem; }
+        .summary-row.total { color: #000; font-size: 1.3rem; font-weight: bold; border-top: 1px solid #eee; padding-top: 15px; margin-top: 15px; }
+        
+        /* Formulario de Envío Estilizado */
+        .checkout-form-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.8rem; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; color: #55px; }
+        .form-group input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; background: #fafafa; transition: border 0.2s; }
+        .form-group input:focus { border-color: #000; background: #fff; outline: none; }
+
+        /* Único Botón de Pago */
+        .btn-epayco-direct { background: var(--accent-color); color: #fff; border: none; width: 100%; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 20px; transition: background 0.2s, transform 0.2s; letter-spacing: 0.5px; }
+        .btn-epayco-direct:hover { background: #e64500; transform: translateY(-1px); }
+
+        .secure-info { text-align: center; margin-top: 25px; font-size: 0.8rem; color: #999; border-top: 1px solid #eee; padding-top: 15px; }
+        .secure-info img { width: 140px; margin-top: 8px; opacity: 0.8; }
     </style>
 </head>
 <body>
-<header class="catalogo-header">
-  <div class="catalogo-header-content">
-    <a href="index.html">
-      <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo">
-    </a>
-    <nav class="catalogo-nav">
-      <div class="cart-title">
-        <img src="imagenes/carrito.png" alt="Carrito de Compras" class="cart-icon">
-        <span>Carrito de Compras</span>
-      </div>
-    </nav>
-  </div>
+
+<header class="cart-header-simple">
+    <div class="container-header">
+        <a href="index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Seguir comprando</a>
+        <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo-mini">
+        <div style="width: 100px;"></div> </div>
 </header>
 
-    <main>
-        <!-- SECCIÓN DE PRODUCTOS -->
-        <section id="cart">
-            <h2 class="titulo-seccion">Mi Carrito</h2>
-            <div id="carrito-list">
-                <p style="text-align:center; padding:20px;">Cargando productos...</p>
-            </div>
-            <div id="carrito-total" class="total-container"></div>
-            <div class="cart-actions">
-                <button type="button" onclick="window.location.href='index.html'" class="btn-secundario">Seguir comprando</button>
-                <button type="button" id="btn-continuar-checkout" class="btn-principal" onclick="toggleCheckout(true)">Finalizar compra</button>
-            </div>
-        </section>
+<main class="main-container">
+    
+    <section class="cart-box">
+        <h2 class="titulo-seccion">Productos en tu carrito</h2>
+        <div id="carrito-list">
+            <p style="text-align:center; padding:20px; color:#999;">Cargando productos...</p>
+        </div>
+    </section>
 
-        <!-- SECCIÓN DE ENVÍO Y PAGO -->
-        <section id="checkout" class="hidden">
-            <div class="checkout-header">
-                <button type="button" id="btn-volver-carrito" class="btn-volver" onclick="toggleCheckout(false)">← Volver al carrito</button>
-                <h2>Datos de Envío</h2>
-            </div>
-            
-            <!-- IMPORTANTE: El onsubmit tiene "return false" para evitar recargas de página -->
+    <aside class="summary-box">
+        <h3 style="margin-top:0; font-size:1.2rem; text-transform:uppercase;">Resumen de tu Pedido</h3>
+        
+        <div class="summary-row">
+            <span>Subtotal (<span id="resumen-cantidad">0 items</span>)</span>
+            <span id="subtotal-val">$0</span>
+        </div>
+        <div class="summary-row">
+            <span>Envío</span>
+            <span style="color: #27ae60; font-weight: 500;">Por acordar con la tienda</span>
+        </div>
+        
+        <div class="summary-row total">
+            <span>Total a pagar</span>
+            <span id="total-val">$0</span>
+        </div>
+
+        <div class="checkout-form-container">
+            <h4 style="margin: 0 0 15px 0; font-size: 1rem; text-transform: uppercase; color:#111;">Datos para el despacho</h4>
             <form id="checkout-form" onsubmit="abrirCheckoutEpayco(); return false;">
                 <div class="form-group">
-                    <label for="nombre">Nombre completo:</label>
+                    <label for="nombre">Nombre completo</label>
                     <input type="text" id="nombre" placeholder="Ej: Juan Pérez" required>
                 </div>
-
-                <div class="form-group">
-                    <label for="documento">Documento de identidad (Cédula/NIT):</label>
-                    <input type="text" id="documento" placeholder="Número de identificación" required>
-                </div>
-
-                <div class="form-row" style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="departamento">Departamento:</label>
-                        <input type="text" id="departamento" placeholder="Ej: Antioquia" required>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label for="municipio">Municipio / Ciudad:</label>
-                        <input type="text" id="municipio" placeholder="Ej: Medellín" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="direccion">Dirección exacta:</label>
-                    <input type="text" id="direccion" placeholder="Calle, número, apto, barrio" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="adicional">Información adicional:</label>
-                    <input type="text" id="adicional" placeholder="Conjunto, torre, indicaciones de entrega">
-                </div>
-
-                <div class="form-group">
-                    <label for="telefono">Teléfono / WhatsApp:</label>
-                    <input type="text" id="telefono" placeholder="Ej: 3141234567" required>
-                </div>
-
-                <div class="pago-seguro-info" style="margin: 20px 0; text-align: center;">
-                    <p style="font-size: 0.9rem; color: #666;">Pagos seguros protegidos por ePayco</p>
-                    <img src="https://369969691f4ad9213588-cf7563eead367d75333c72683ee069ef.ssl.cf2.rackcdn.com/epayco/pagos_procesados_por_epayco_2.png" alt="ePayco" style="width: 200px;">
-                </div>
-
-                <!-- BOTÓN DE PAGO: type="button" para que no interfiera con el script de ePayco -->
-                <button type="button" class="btn-epayco" onclick="abrirCheckoutEpayco()">Pagar con ePayco</button>
-            </form>
-        </section>
-    </main>
-
-    <script>
-        function toggleCheckout(showCheckout) {
-            const cartSec = document.getElementById('cart');
-            const checkSec = document.getElementById('checkout');
-            const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-
-            if (showCheckout) {
-                if (carrito.length === 0) {
-                    alert("Tu carrito está vacío");
-                    return;
-                }
-                cartSec.classList.add('hidden');
-                checkSec.classList.remove('hidden');
-                window.scrollTo(0, 0);
-            } else {
-                cartSec.classList.remove('hidden');
-                checkSec.classList.add('hidden');
-            }
-        }
-    </script>
-    <script src="carrito.js"></script>
-</body>
-</html>
+                <div class="form
