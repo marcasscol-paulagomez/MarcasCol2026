@@ -1,6 +1,6 @@
 // === CONFIGURACIÓN GLOBAL ===
 const EPAYCO_PUBLIC_KEY = 'c5fd780339f9e58bac3e6571c71d53d6'; 
-const ENTORNO_PRUEBAS = true; // Cambiar a false cuando pases a producción definitiva
+const ENTORNO_PRUEBAS = true; // Cambiar a false cuando pases a producción real
 
 // === FUNCIONES DE DATOS ===
 function getCarrito() {
@@ -61,7 +61,7 @@ function actualizarTotales() {
     prepararPagoEpayco(total);
 }
 
-// === INTEGRACIÓN EPAYCO ===
+// === INTEGRACIÓN DIRECTA EPAYCO ===
 function prepararPagoEpayco(total) {
     const carrito = getCarrito();
     const descripcion = carrito.length > 0 
@@ -81,7 +81,7 @@ function abrirCheckoutEpayco() {
         return;
     }
 
-    // Captura campos del formulario unificado
+    // Capturar y limpiar datos del formulario On-Page
     const nombre = document.getElementById('nombre').value.trim();
     const documento = document.getElementById('documento').value.trim().replace(/[^0-9]/g, "");
     const direccion = document.getElementById('direccion').value.trim().replace(/[^a-zA-Z0-9 ]/g, "");
@@ -91,7 +91,7 @@ function abrirCheckoutEpayco() {
     const telefono = document.getElementById('telefono').value.trim().replace(/[^0-9]/g, "");
 
     if (!nombre || !documento || !direccion || !ciudad || !depto || !telefono) {
-        alert("Por favor, completa todos los campos obligatorios del despacho antes de pagar.");
+        alert("Por favor, completa todos los campos obligatorios antes de proceder con el pago.");
         return;
     }
 
@@ -115,7 +115,7 @@ function abrirCheckoutEpayco() {
         response: "https://www.marcascol-bypaulagomez.com/index.html", 
 
         name_billing: nombre,
-        address_billing: `${direccion} ${adicionales}`,
+        address_billing: adicionales ? `${direccion} - ${adionales}` : direccion,
         city_billing: ciudad,
         mobilephone_billing: telefono,
         type_doc_billing: "cc",
@@ -123,11 +123,11 @@ function abrirCheckoutEpayco() {
         extra1: depto 
     };
 
-    console.log("Desplegando pasarela unificada ePayco...");
+    console.log("Abriendo pasarela directa ePayco...");
     handler.open(data);
 }
 
-// === RENDERIZADO ===
+// === RENDERIZADO DE INTERFAZ ===
 function renderCarrito() {
     const carrito = getCarrito();
     const list = document.getElementById("carrito-list");
