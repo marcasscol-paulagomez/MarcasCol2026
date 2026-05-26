@@ -1,25 +1,19 @@
 /* ================================
-   FUENTES
+   FUENTES Y PALETA DE COLORES (ORIGINALES)
    ================================ */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* ================================
-   PALETA DE COLORES ORIGINAL
-   ================================ */
 :root {
-  --color-1: #89FFFF; /* Celeste brillante */
-  --color-2: #A0C5FD; /* Azul suave */
-  --color-3: #9390FF; /* Azul-violeta */
-  --color-4: #B5A8FF; /* Lila */
-  --color-5: #E3C5FF; /* Lila claro */
-
-  /* Colores adicionales de apoyo */
+  --color-1: #89FFFF;
+  --color-2: #A0C5FD;
+  --color-3: #9390FF;
+  --color-4: #B5A8FF;
+  --color-5: #E3C5FF;
   --color-texto: #2d2d6d;
   --color-acento: #0074d9;
-  --color-fondo: #ffffff;
 }
 
-/* === ESTILO GENERAL === */
+/* === REESTRUCTURACIÓN GENERAL === */
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -29,98 +23,109 @@ body {
     min-height: 100vh;
 }
 
-/* ===== HEADER GENERAL ===== */
+/* ===== HEADER ===== */
 .catalogo-header {
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 10px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 15px 0;
+    margin-bottom: 30px;
 }
 
 .catalogo-header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.cart-header-simple .back-link {
-    text-decoration: none;
-    color: var(--color-texto);
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: color 0.2s;
-}
-
-.cart-header-simple .back-link:hover {
-    color: var(--color-3);
-}
-
-.logo-mini {
-    height: 48px;
-    border-radius: 12px;
-}
-
-/* === LAYOUT ON-PAGE (DOS COLUMNAS JUNTA) === */
-.main-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     max-width: 1200px;
-    margin: 30px auto;
+    margin: 0 auto;
     padding: 0 20px;
+}
+
+.logo {
+    height: 50px;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+.cart-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-texto);
+}
+
+.cart-icon {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+/* === CONTENEDOR EN DOS COLUMNAS (ON-PAGE CHECKOUT) === */
+main {
     display: grid;
     grid-template-columns: 1fr 440px;
     gap: 30px;
-    align-items: start;
-    box-sizing: border-box;
+    max-width: 1200px;
+    width: 95%;
+    margin: 0 auto 40px auto;
+    padding: 0;
+    background: transparent !important; /* Quitamos el fondo blanco global que desordenaba todo */
+    box-shadow: none !important;
 }
 
-/* Optimización para Tablets y Celulares */
-@media (max-width: 900px) {
-    .main-container {
-        grid-template-columns: 1fr;
-        margin: 15px auto;
-        gap: 20px;
-        padding: 0 15px;
-    }
-}
-
-/* === BLOQUES PRINCIPALES CON ESTILO BLANCO === */
-.cart-box, .summary-box {
-    background: white;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
-    box-sizing: border-box;
-}
-
-/* El panel lateral se queda fijo al hacer scroll en PC */
-.summary-box {
-    position: sticky;
-    top: 90px;
+/* Columna Izquierda: Tarjeta del Carrito */
+#cart {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     height: fit-content;
 }
 
-.titulo-seccion {
-    margin-top: 0;
-    font-size: 1.3rem;
-    border-bottom: 2px solid var(--color-4);
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-    color: var(--color-texto);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+/* Columna Derecha: Tarjeta de Datos de Envío */
+#checkout {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    height: fit-content;
+    margin-top: 0 !important; /* Evita que se ruede hacia abajo */
+    position: sticky;
+    top: 110px; /* Se queda fijo estéticamente al bajar */
 }
 
-/* === LISTA DE PRODUCTOS (COLUMNA IZQUIERDA) === */
+/* Diseño Adaptable para Celulares */
+@media (max-width: 900px) {
+    main {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    #checkout {
+        position: relative;
+        top: 0;
+    }
+}
+
+/* === TÍTULOS DE SECCIÓN === */
+.titulo-seccion, #checkout h2 {
+    margin-top: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-texto);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--color-5);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    text-align: left !important;
+}
+
+/* === LISTADO DE PRODUCTOS === */
 .carrito-item {
-    display: grid;
-    grid-template-columns: 90px 1fr auto;
-    gap: 20px;
+    display: flex;
     align-items: center;
-    border-bottom: 1px solid #eee;
+    gap: 20px;
+    border-bottom: 1px solid #f0f0f0;
     padding: 20px 0;
 }
 
@@ -128,15 +133,15 @@ body {
     border-bottom: none;
 }
 
-.item-img {
+.carrito-item img {
     width: 90px;
     height: 90px;
     border-radius: 10px;
     object-fit: cover;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .carrito-info {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -145,73 +150,170 @@ body {
 .carrito-info h3 {
     margin: 0;
     font-size: 1.1rem;
-    color: var(--color-texto);
+    color: #333;
     font-weight: 600;
 }
 
 .carrito-info p {
     margin: 0;
     font-size: 1rem;
-    color: var(--color-3);
-    font-weight: bold;
+    color: var(--color-texto);
+    font-weight: 700;
 }
 
-.qty-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 6px;
-}
-
-.qty-wrapper label {
+/* Campo Cantidad */
+.carrito-info label {
     font-size: 0.85rem;
-    font-weight: 500;
     color: #666;
+    margin-top: 4px;
 }
 
-.cantidad-input {
-    width: 55px;
-    padding: 6px;
-    border: 1px solid #ccc;
+.carrito-item .cantidad {
+    width: 60px;
+    padding: 5px;
+    margin-left: 8px;
+    border: 1px solid #ddd;
     border-radius: 6px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     text-align: center;
     font-family: 'Poppins', sans-serif;
-    outline: none;
-    transition: all 0.2s ease;
 }
 
-.cantidad-input:focus {
-    border-color: var(--color-3);
-    box-shadow: 0 0 4px rgba(147, 144, 255, 0.4);
-}
-
-.btn-remove {
-    background: none;
-    border: none;
-    color: #ccc;
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 10px;
-    transition: color 0.2s, transform 0.2s;
-}
-
-.btn-remove:hover {
-    color: #e74c3c;
-    transform: scale(1.1);
-}
-
-/* === RESUMEN DE TOTALES (COLUMNA DERECHA) === */
-.summary-title {
-    margin-top: 0;
+.btn-eliminar {
+    background: none !important;
+    color: #ccc !important;
     font-size: 1.2rem;
+    padding: 8px !important;
+    margin: 0 !important;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-eliminar:hover {
+    color: #e74c3c !important;
+}
+
+/* === RESUMEN TOTAL === */
+#carrito-total {
+    margin-top: 20px;
+    padding: 15px 0;
+    background: transparent;
+    border: none;
+    border-top: 2px dashed #eee;
+    text-align: right;
+}
+
+#carrito-total h2 {
+    font-size: 1.25rem;
+    color: #111;
+    font-weight: 700;
+}
+
+/* Acciones ocultas del viejo diseño */
+.cart-actions {
+    display: none !important;
+}
+
+/* === FORMULARIO DE ENVÍO (COLUMNA DERECHA) === */
+#checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 100%;
+}
+
+#checkout-form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
     color: var(--color-texto);
+    gap: 4px;
+}
+
+#checkout-form input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+#checkout-form input:focus {
+    border-color: var(--color-3);
+    background: #ffffff;
+    box-shadow: 0 0 6px rgba(147, 144, 255, 0.3);
+}
+
+/* Fila dividida para depto/ciudad */
+.form-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* === BOTÓN DE PAGO ÚNICO === */
+.btn-epayco {
+    background: var(--color-3) !important;
+    color: #ffffff !important;
+    width: 100%;
+    padding: 15px !important;
+    border: none;
+    border-radius: 8px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 20px;
+    cursor: pointer;
+    margin-top: 15px !important;
+    transition: background 0.3s, transform 0.1s !important;
+    box-shadow: 0 4px 12px rgba(147, 144, 255, 0.25);
 }
 
-.summary-row {
+.btn-epayco:hover {
+    background: var(--color-4) !important;
+    transform: translateY(-1px);
+}
+
+.pago-seguro-info {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+/* === FOOTER === */
+.catalogo-footer {
+    background: #ffffff;
+    padding: 40px 20px 20px 20px;
+    color: var(--color-texto);
+    border-top: 1px solid #eee;
+    margin-top: 60px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
-    margin
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.footer-col {
+    flex: 1 1 260px;
+}
+
+.footer-col h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--color-texto);
+}
