@@ -1,6 +1,7 @@
 // === CONFIGURACIÓN GLOBAL ===
-const EPAYCO_PUBLIC_KEY = '19079fa45709b5940ef2b4d0f1cb40b7892cdced'; 
-const ENTORNO_PRUEBAS = true; // Cambiar a false para ventas reales en el panel de ePayco
+// Actualizado con tu nueva Public Key del panel de ePayco
+const EPAYCO_PUBLIC_KEY = 'c5fd780339f9e58bac3e6571c71d53d6'; 
+const ENTORNO_PRUEBAS = true; // Cambiar a false cuando pases a producción (ventas reales)
 
 // === FUNCIONES DE DATOS ===
 function getCarrito() {
@@ -43,7 +44,7 @@ function eliminarDelCarrito(index) {
 function actualizarTotales() {
     const carrito = getCarrito();
     let total = 0;
-    const items = document.querySelectorAll(".cantidad");
+    const items = document.querySelectorAll(".cantidad-input");
 
     items.forEach((input) => {
         const index = input.getAttribute("data-index");
@@ -56,9 +57,9 @@ function actualizarTotales() {
 
     guardarCarrito(carrito);
     
-    const totalEl = document.getElementById("carrito-total");
+    const totalEl = document.getElementById("total-val");
     if (totalEl) {
-        totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
+        totalEl.innerText = `$${Math.round(total).toLocaleString('es-CO')}`;
     }
 
     prepararPagoEpayco(total);
@@ -72,7 +73,7 @@ function actualizarIconoCarrito() {
     }
 }
 
-// === INTEGRACIÓN EPAYCO ===
+// === INTEGRACIÓN EPAYCO (Ajustado según documentación oficial) ===
 
 function prepararPagoEpayco(total) {
     const carrito = getCarrito();
@@ -82,39 +83,39 @@ function prepararPagoEpayco(total) {
 
     window.datosCompra = {
         valor: Math.round(total),
-        descripcion: descripcion.substring(0, 250), // Límite de caracteres de ePayco
+        // ePayco limita la descripción a 250 caracteres en su pasarela estándar
+        descripcion: descripcion.substring(0, 245), 
         referencia: "MARCAS-" + Date.now()
     };
 }
 
 function abrirCheckoutEpayco() {
-    // 1. Validar si hay productos
+    // 1. Validar si el carrito tiene un precio real
     if (!window.datosCompra || window.datosCompra.valor <= 0) {
         alert("Tu carrito está vacío o el total no es válido.");
         return;
     }
 
-    // 2. Captura y validación de datos del formulario
+    // 2. Captura y limpieza de datos del formulario (Evita caracteres especiales que rompan ePayco)
     const nombre = document.getElementById('nombre').value.trim();
-    const documento = document.getElementById('documento').value.trim();
-    const direccion = document.getElementById('direccion').value.trim();
+    const documento = document.getElementById('documento').value.trim().replace(/[^0-9]/g, "");
+    const direccion = document.getElementById('direccion').value.trim().replace(/[^a-zA-Z0-9 ]/g, "");
     const ciudad = document.getElementById('municipio').value.trim();
     const depto = document.getElementById('departamento').value.trim();
-    const adicionales = document.getElementById('adicional').value.trim();
-    const telefono = document.getElementById('telefono').value.trim();
+    const telefono = document.getElementById('telefono').value.trim().replace(/[^0-9]/g, "");
 
     if (!nombre || !documento || !direccion || !ciudad || !depto || !telefono) {
-        alert("Por favor, completa todos los campos obligatorios del formulario de envío.");
+        alert("Por favor, completa todos los campos obligatorios para procesar el despacho.");
         return;
     }
 
-    // 3. Configuración del Handler
+    // 3. Inicializar el objeto de ePayco con tu llave pública correcta
     const handler = ePayco.checkout.configure({
         key: EPAYCO_PUBLIC_KEY,
         test: ENTORNO_PRUEBAS
     });
 
-    // 4. Parámetros de la transacción
+    // 4. Mapeo estricto de variables según la documentación técnica de ePayco
     const data = {
         name: "Marcas Col",
         description: window.datosCompra.descripcion,
@@ -125,29 +126,34 @@ function abrirCheckoutEpayco() {
         tax: "0",
         country: "co",
         lang: "es",
-        external: "false", 
-        confirmation: "https://marcasscol-paulagomez.github.io/MarcasCol2026/confirmacion",
+        external: "false", // "false" abre el modal estético encima de la web sin redirigir de inmediato
+
+        // Rutas de retorno oficiales ajustadas a tu dominio personalizado
+        confirmation: "https://www.marcascol-bypaulagomez.com/confirmacion", 
         response: "https://www.marcascol-bypaulagomez.com/index.html", 
 
-        // Datos del cliente automáticos para ahorrarle trabajo al usuario
+        // Atributos de facturación y envío corregidos según estándar ePayco
         name_billing: nombre,
-        address_billing: `${direccion} ${adicionales}`,
+        address_billing: direccion,
         city_billing: ciudad,
         mobilephone_billing: telefono,
         type_doc_billing: "cc",
         number_doc_billing: documento,
+        
+        // Pasamos el departamento en el campo extra opcional
         extra1: depto 
     };
 
-    console.log("Iniciando pasarela ePayco...");
+    console.log("Abriendo pasarela ePayco con llave: ", EPAYCO_PUBLIC_KEY);
     handler.open(data);
 }
 
-// === RENDERIZADO ===
+// === RENDERIZADO DE INTERFAZ ===
 function renderCarrito() {
     const carrito = getCarrito();
     const list = document.getElementById("carrito-list");
-    const totalEl = document.getElementById("carrito-total");
+    const totalVal = document.getElementById("total-val");
+    const resCant = document.getElementById("resumen-cantidad");
 
     if (!list) return;
 
@@ -155,9 +161,10 @@ function renderCarrito() {
         list.innerHTML = `
             <div style="text-align:center; padding:40px;">
                 <p style="font-size:1.2rem; color:#666;">Tu carrito está vacío.</p>
-                <a href="index.html" class="btn-secundario" style="display:inline-block; margin-top:20px; text-decoration:none; padding:10px 20px; background:#eee; color:#333; border-radius:5px;">Volver a la tienda</a>
+                <a href="index.html" style="display:inline-block; margin-top:20px; text-decoration:none; padding:12px 24px; background:#000; color:#fff; border-radius:6px; font-weight:bold;">Volver a la tienda</a>
             </div>`;
-        if (totalEl) totalEl.innerHTML = "";
+        if (totalVal) totalVal.innerText = "$0";
+        if (resCant) resCant.innerText = "0 items";
         return;
     }
 
@@ -177,33 +184,31 @@ function renderCarrito() {
                     <p style="margin: 5px 0; color: #ff5000; font-weight: bold;">$${precio.toLocaleString('es-CO')}</p>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <label style="font-size: 0.9rem; color: #666;">Cantidad:</label>
-                        <input type="number" class="cantidad" value="${cantidad}" min="1" data-index="${i}" 
+                        <input type="number" class="cantidad-input" value="${cantidad}" min="1" data-index="${i}" 
                                style="width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center;">
                     </div>
                 </div>
-                <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})" 
-                        style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.4rem; padding: 10px;" title="Eliminar">
-                    <i class="fa-solid fa-trash-can"></i> ❌
+                <button class="btn-remove" onclick="eliminarDelCarrito(${i})" 
+                        style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2rem; padding: 10px;" title="Eliminar">
+                    ❌
                 </button>
             </div>
         `;
     });
 
     list.innerHTML = html;
-    if (totalEl) {
-        totalEl.innerHTML = `<h2>Total a pagar: $${Math.round(total).toLocaleString('es-CO')}</h2>`;
-    }
+    if (totalVal) totalVal.innerText = `$${Math.round(total).toLocaleString('es-CO')}`;
+    if (resCant) resCant.innerText = `${carrito.length} productos`;
 
     prepararPagoEpayco(total);
 
-    // Escuchar cambios en las cantidades
-    document.querySelectorAll(".cantidad").forEach(input => {
+    // Añadir eventos a los inputs de cantidad
+    document.querySelectorAll(".cantidad-input").forEach(input => {
         input.addEventListener("change", actualizarTotales);
-        input.addEventListener("keyup", actualizarTotales);
     });
 }
 
-// === CARGA INICIAL ===
+// === EJECUCIÓN INICIAL ===
 document.addEventListener('DOMContentLoaded', () => {
     renderCarrito();
     actualizarIconoCarrito();
