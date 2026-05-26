@@ -3,93 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Carrito - Marcas Col</title>
-    <link rel="stylesheet" href="estilos/carrito.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Carrito de Compras - Marcas Col</title>
+    <link rel="stylesheet" href="/estilos/carrito.css">
     <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
 </head>
 <body>
-
-<header class="cart-header-simple">
-    <div class="container-header">
-        <a href="index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Seguir comprando</a>
-        <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo-mini">
-        <div style="width: 100px;"></div>
-    </div>
+<header class="catalogo-header">
+  <div class="catalogo-header-content">
+    <a href="index.html">
+      <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo">
+    </a>
+    <nav class="catalogo-nav">
+      <div class="cart-title">
+        <img src="imagenes/carrito.png" alt="Carrito de Compras" class="cart-icon">
+        <span>Carrito de Compras</span>
+      </div>
+    </nav>
+  </div>
 </header>
 
-<main class="main-container">
-    
-    <section class="cart-box">
-        <h2 class="titulo-seccion">Productos en tu carrito</h2>
+<main class="carrito-main-layout">
+    <section id="cart" class="columna-productos">
+        <h2 class="titulo-seccion">Mi Carrito</h2>
         <div id="carrito-list">
-            <p style="text-align:center; padding:20px; color:#999;">Cargando tus productos...</p>
+            <p style="text-align:center; padding:20px;">Cargando productos...</p>
         </div>
+        <div id="carrito-total" class="total-container"></div>
     </section>
 
-    <aside class="summary-box">
-        <h3 class="summary-title">Resumen de tu Pedido</h3>
+    <section id="checkout" class="columna-despacho">
+        <h2>Datos de Envío</h2>
         
-        <div class="summary-row">
-            <span>Subtotal (<span id="resumen-cantidad">0 productos</span>)</span>
-            <span id="subtotal-val">$0</span>
-        </div>
-        <div class="summary-row">
-            <span>Envío</span>
-            <span style="color: #27ae60; font-weight: 500;">Por acordar con la tienda</span>
-        </div>
-        
-        <div class="summary-row total">
-            <span>Total a pagar</span>
-            <span id="total-val">$0</span>
-        </div>
+        <form id="checkout-form" onsubmit="event.preventDefault(); abrirCheckoutEpayco(); return false;">
+            <div class="form-group">
+                <label for="nombre">Nombre completo:</label>
+                <input type="text" id="nombre" placeholder="Ej: Juan Pérez" required>
+            </div>
 
-        <div class="checkout-form-container">
-            <h4 class="form-title">Datos para el despacho</h4>
-            <form id="checkout-form" onsubmit="abrirCheckoutEpayco(); return false;">
-                <div class="form-group">
-                    <label for="nombre">Nombre completo</label>
-                    <input type="text" id="nombre" placeholder="Ej: Juan Pérez" required>
-                </div>
-                <div class="form-group">
-                    <label for="documento">Documento de identidad (CC/NIT)</label>
-                    <input type="text" id="documento" placeholder="Número de identificación" required>
-                </div>
-                <div class="form-row-grid">
-                    <div class="form-group">
-                        <label for="departamento">Departamento</label>
-                        <input type="text" id="departamento" placeholder="Ej: Antioquia" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="municipio">Ciudad / Municipio</label>
-                        <input type="text" id="municipio" placeholder="Ej: Medellín" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="direccion">Dirección exacta de entrega</label>
-                    <input type="text" id="direccion" placeholder="Calle, número, apto, barrio" required>
-                </div>
-                <div class="form-group">
-                    <label for="adicional">Información adicional (Opcional)</label>
-                    <input type="text" id="adicional" placeholder="Conjunto, torre, datos de entrega">
-                </div>
-                <div class="form-group">
-                    <label for="telefono">Teléfono celular / WhatsApp</label>
-                    <input type="text" id="telefono" placeholder="Ej: 3141234567" required>
-                </div>
+            <div class="form-group">
+                <label for="documento">Documento de identidad (Cédula/NIT):</label>
+                <input type="text" id="documento" placeholder="Número de identificación" required>
+            </div>
 
-                <button type="submit" class="btn-epayco-direct">
-                    Proceder al pago seguro
-                </button>
-            </form>
-        </div>
+            <div class="form-row">
+                <div class="form-group-half">
+                    <label for="departamento">Departamento:</label>
+                    <input type="text" id="departamento" placeholder="Ej: Antioquia" required>
+                </div>
+                <div class="form-group-half">
+                    <label for="municipio">Municipio / Ciudad:</label>
+                    <input type="text" id="municipio" placeholder="Ej: Medellín" required>
+                </div>
+            </div>
 
-        <div class="secure-info">
-            <p><i class="fa-solid fa-lock" style="color:#27ae60;"></i> Conexión cifrada y segura</p>
-            <img src="https://369969691f4ad9213588-cf7563eead367d75333c72683ee069ef.ssl.cf2.rackcdn.com/epayco/pagos_procesados_por_epayco_2.png" alt="ePayco">
-        </div>
-    </aside>
+            <div class="form-group">
+                <label for="direccion">Dirección exacta:</label>
+                <input type="text" id="direccion" placeholder="Calle, número, apto, barrio" required>
+            </div>
 
+            <div class="form-group">
+                <label for="adicional">Información adicional:</label>
+                <input type="text" id="adicional" placeholder="Conjunto, torre, indicaciones de entrega">
+            </div>
+
+            <div class="form-group">
+                <label for="telefono">Teléfono / WhatsApp:</label>
+                <input type="text" id="telefono" placeholder="Ej: 3141234567" required>
+            </div>
+
+            <div class="pago-seguro-info">
+                <p>Pagos seguros protegidos por ePayco</p>
+                <img src="https://369969691f4ad9213588-cf7563eead367d75333c72683ee069ef.ssl.cf2.rackcdn.com/epayco/pagos_procesados_por_epayco_2.png" alt="ePayco">
+            </div>
+
+            <button type="button" class="btn-epayco" onclick="abrirCheckoutEpayco()">Pagar con ePayco</button>
+        </form>
+    </section>
 </main>
 
 <script src="carrito.js"></script>
