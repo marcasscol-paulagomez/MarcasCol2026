@@ -58,7 +58,7 @@ header img.logo {
 }
 .search-bar input {
     width: 100%;
-    padding: 10px 40px 10px 15px;
+    padding: 10px 44px 10px 15px;
     border: none;
     border-radius: 25px;
     background-color: #f0f0f0;
@@ -67,7 +67,7 @@ header img.logo {
 }
 
 /* ================================
-   CORRECCIÓN COMPLETA: CONTROL DE REDES SOCIALES
+   CONTROL DE REDES SOCIALES EN EL FOOTER
    ================================ */
 .footer-socials {
     display: flex !important;
@@ -77,10 +77,9 @@ header img.logo {
     align-items: center !important;
 }
 
-/* Fuerza a que las imágenes dentro de los enlaces midan 26px y no se desparramen */
-.footer-socials a, 
-.footer-socials img,
-.footer-socials a img {
+/* Encoge las imágenes dentro de los links de redes */
+.footer-socials a img,
+.footer-socials img {
     width: 26px !important;
     height: 26px !important;
     max-width: 26px !important;
@@ -90,22 +89,21 @@ header img.logo {
     border-radius: 0px !important;
     box-shadow: none !important;
     border: none !important;
-    transform: none !important;
 }
 
 /* ================================
-   CATÁLOGO PÚBLICO (GRILLA REAPARECIDA EN 4 COLUMNAS)
+   CATÁLOGO PÚBLICO (GRILLA DE 4 COLUMNAS PARA PC)
    ================================ */
 #catalogo-list, .catalogo-list {
     display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important; /* Fuerza las 4 columnas en PC */
+    grid-template-columns: repeat(4, 1fr) !important; /* Fuerza las 4 columnas */
     gap: 25px !important;
     margin: 40px auto 60px auto !important;
     width: 100% !important;
     max-width: 1200px !important;
     padding: 0 20px !important;
     box-sizing: border-box !important;
-    min-height: 300px !important;
+    min-height: 350px !important;
     visibility: visible !important;
     opacity: 1 !important;
 }
@@ -117,7 +115,7 @@ header img.logo {
     padding: 20px !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important; /* Alineación perfecta de botones al fondo */
+    justify-content: space-between !important; /* Alinea los botones al fondo */
     border: 1px solid #f0f0f0 !important;
     box-sizing: border-box !important;
 }
@@ -125,7 +123,7 @@ header img.logo {
 .catalogo-img {
     width: 100% !important;
     height: 210px !important;
-    object-fit: cover !important; /* Cuadra la foto capilar de forma limpia */
+    object-fit: cover !important; /* Recorta la foto capilar estéticamente */
     border-radius: 10px !important;
     margin-bottom: 14px !important;
 }
@@ -147,10 +145,10 @@ header img.logo {
     width: 100% !important;
     text-transform: uppercase;
 }
+.catalogo-btn:hover { background: #0074d9 !important; }
 
 /* ================================
-   RESTAURACIÓN TOTAL: ESTILOS DEL PANEL ADMIN
-   (Garantiza que tus productos montados se listen en tu sesión)
+   ESTILOS DEL PANEL ADMIN (CONSERVADOS)
    ================================ */
 #products-list {
     width: 100%;
@@ -205,9 +203,10 @@ textarea { width: 100%; min-height: 80px; resize: vertical; padding: 8px; border
    ================================ */
 @media (max-width: 900px) {
     #catalogo-list, .catalogo-list {
-        grid-template-columns: repeat(2, 1fr) !important; /* 2 por fila limpios en móvil */
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 por fila exactos en móvil */
         gap: 15px !important;
         padding: 0 12px !important;
+        min-height: auto !important;
     }
     .catalogo-card { padding: 12px !important; }
     .catalogo-img { height: 145px !important; }
