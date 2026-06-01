@@ -49,6 +49,7 @@ header {
 }
 header img.logo {
     height: 40px;
+    width: auto !important; /* Evita que el logo principal herede anchos raros */
 }
 .search-bar {
     flex: 1;
@@ -67,7 +68,7 @@ header img.logo {
 }
 
 /* ================================
-   CONTROL DE REDES SOCIALES EN EL FOOTER
+   CONTROL ABSOLUTO DE REDES SOCIALES (FOOTER)
    ================================ */
 .footer-socials {
     display: flex !important;
@@ -77,18 +78,22 @@ header img.logo {
     align-items: center !important;
 }
 
-/* Encoge las imágenes dentro de los links de redes */
+/* Forzado estricto: Esto aísla las imágenes de las redes para que midan 26px exactos */
+.footer-socials img,
 .footer-socials a img,
-.footer-socials img {
+.catalogo-footer .footer-socials img {
     width: 26px !important;
     height: 26px !important;
     max-width: 26px !important;
     max-height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
     display: inline-block !important;
     object-fit: contain !important;
-    border-radius: 0px !important;
+    border-radius: 0px !important; /* Quita redondeados heredados de productos */
     box-shadow: none !important;
     border: none !important;
+    margin: 0 !important;
 }
 
 /* ================================
@@ -126,6 +131,7 @@ header img.logo {
     object-fit: cover !important; /* Recorta la foto capilar estéticamente */
     border-radius: 10px !important;
     margin-bottom: 14px !important;
+    display: block !important;
 }
 
 .catalogo-title { font-size: 1.05rem !important; font-weight: 600; color: #222; margin-bottom: 6px; }
@@ -170,7 +176,12 @@ header img.logo {
     padding: 15px;
     border: 1px solid #eee;
 }
-.producto-imagen { width: 90px; height: 90px; object-fit: cover; border-radius: 8px; }
+.producto-imagen { 
+    width: 90px !important; 
+    height: 90px !important; 
+    object-fit: cover !important; 
+    border-radius: 8px !important; 
+}
 .producto-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .producto-titulo { font-size: 1.1rem; font-weight: bold; color: #2d2d6d; }
 .producto-descripcion { color: #666; font-size: 0.9rem; }
@@ -184,7 +195,7 @@ header img.logo {
     border-radius: 12px; padding: 12px 14px; width: 100%; max-width: 900px;
     box-shadow: 0 4px 18px rgba(0,0,0,0.06); box-sizing: border-box;
 }
-.banner-imagen { width: 140px; height: 80px; object-fit: cover; border-radius: 8px; }
+.banner-imagen { width: 140px !important; height: 80px !important; object-fit: cover !important; border-radius: 8px !important; }
 
 /* Formulario Login */
 .container {
@@ -212,5 +223,5 @@ textarea { width: 100%; min-height: 80px; resize: vertical; padding: 8px; border
     .catalogo-img { height: 145px !important; }
     
     .producto-item, .banner-item { flex-direction: column; align-items: flex-start; }
-    .producto-imagen, .banner-imagen { width: 100%; height: auto; max-height: 200px; }
+    .producto-imagen, .banner-imagen { width: 100% !important; height: auto !important; max-height: 200px !important; }
 }
