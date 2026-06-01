@@ -38,7 +38,7 @@ main { flex: 1 0 auto; }
 /* ================================
    ENCABEZADO (HEADER)
    ================================ */
-header {
+header, .catalogo-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -47,17 +47,25 @@ header {
     position: relative;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
-header img.logo {
-    height: 40px;
-    width: auto !important; /* Evita que el logo principal herede anchos raros */
+
+/* Protegemos el logo principal de la tienda para que mantenga su proporción */
+header img.logo, 
+.catalogo-header img.logo {
+    height: 40px !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: 40px !important;
+    border-radius: 0px !important;
+    box-shadow: none !important;
 }
-.search-bar {
+
+.search-bar, .catalogo-search-bar {
     flex: 1;
     margin: 0 20px;
     position: relative;
     max-width: 400px;
 }
-.search-bar input {
+.search-bar input, .catalogo-search-bar input {
     width: 100%;
     padding: 10px 44px 10px 15px;
     border: none;
@@ -72,28 +80,31 @@ header img.logo {
    ================================ */
 .footer-socials {
     display: flex !important;
-    gap: 12px !important;
+    gap: 14px !important;
     margin-top: 12px !important;
     justify-content: flex-start !important;
     align-items: center !important;
 }
 
-/* Forzado estricto: Esto aísla las imágenes de las redes para que midan 26px exactos */
-.footer-socials img,
+/* Bloqueo matemático definitivo: Ningún otro CSS podrá alterar el tamaño de estos iconos */
+.catalogo-footer .footer-socials img,
+.footer-footer .footer-socials img,
+.footer-col .footer-socials a img,
 .footer-socials a img,
-.catalogo-footer .footer-socials img {
-    width: 26px !important;
-    height: 26px !important;
-    max-width: 26px !important;
-    max-height: 26px !important;
-    min-width: 26px !important;
-    min-height: 26px !important;
+.footer-socials img {
+    width: 24px !important;
+    height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
     display: inline-block !important;
     object-fit: contain !important;
-    border-radius: 0px !important; /* Quita redondeados heredados de productos */
+    border-radius: 0px !important;
     box-shadow: none !important;
     border: none !important;
     margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* ================================
@@ -131,7 +142,6 @@ header img.logo {
     object-fit: cover !important; /* Recorta la foto capilar estéticamente */
     border-radius: 10px !important;
     margin-bottom: 14px !important;
-    display: block !important;
 }
 
 .catalogo-title { font-size: 1.05rem !important; font-weight: 600; color: #222; margin-bottom: 6px; }
