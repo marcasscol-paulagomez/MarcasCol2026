@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta Visual - Marcas Col</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --color-lila-pastel: #E3C5FF;
+            --color-lila-firme: #9390FF;
+            --color-texto: #2d2d6d;
+            --color-bg-tarjeta: #ffffff;
+            --color-gris-suave: #f9f9fb;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0;
+            background-color: #f2f4f8;
+            color: #333;
+        }
+
+        /* BARRA SUPERIOR DE SIMULACIÓN */
+        .simulador-panel {
+            background: #111126;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .simulador-panel h4 { margin: 0 0 10px 0; font-weight: 500; letter-spacing: 1px; font-size: 0.95rem; }
+        .btn-cambio {
+            background: var(--color-lila-firme);
+            color: white; border: none;
+            padding: 10px 20px; font-size: 0.85rem;
+            border-radius: 25px; cursor: pointer;
+            font-weight: 600; margin: 0 6px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+        .btn-cambio:hover { background: var(--color-lila-pastel); color: var(--color-texto); }
+
+        /* LIENZO DE LA TIENDA */
+        .contenedor-lienzo { display: flex; justify-content: center; padding: 40px 20px; transition: all 0.3s; }
+        
+        .tienda-frame {
+            background: #ffffff;
+            width: 100%; max-width: 1200px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-sizing: border-box;
+        }
+
+        /* Modo Celular Activado */
+        .tienda-frame.modo-celular { max-width: 400px; }
+
+        /* 1. TOP CINTA */
+        .top-cinta {
+            background: #f3e8ff; color: var(--color-texto);
+            text-align: center; padding: 10px 15px;
+            font-size: 0.85rem; font-weight: 700;
+            letter-spacing: 0.5px; border-bottom: 1px solid #e9ddf5;
+        }
+
+        /* 2. BARRA DE NAVEGACIÓN (HEADER) */
+        .nav-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 40px; border-bottom: 1px solid #f0f0f5;
+        }
+        .logo-box {
+            background: #fff; border: 2px solid #000;
+            padding: 6px 14px; font-weight: 800; font-size: 1rem;
+            letter-spacing: 1px; text-transform: uppercase; border-radius: 4px;
+        }
+        .menu-links { display: flex; gap: 24px; color: #555; font-size: 0.9rem; font-weight: 500; }
+        .cart-box-icon { font-size: 1.3rem; color: var(--color-texto); position: relative; cursor: pointer; }
+        .badge {
+            position: absolute; top: -8px; right: -10px;
+            background: var(--color-lila-pastel); color: var(--color-texto);
+            font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 50%;
+        }
+
+        /* 3. HERO BANNER PRINCIPAL (Fijo y Limpio) */
+        .hero-banner {
+            background: linear-gradient(135deg, #e3c5ff22, #9390ff15);
+            height: 420px; display: flex; align-items: center;
+            justify-content: space-between; padding: 0 8%;
+            border-bottom: 1px solid #f5f5f9; transition: all 0.3s;
+        }
+        .hero-text { max-width: 48%; }
+        .hero-text h1 { font-size: 2.6rem; color: var(--color-texto); margin: 0 0 12px 0; line-height: 1.2; font-weight: 700; }
+        .hero-text p { color: #666; font-size: 1.05rem; margin: 0 0 24px 0; line-height: 1.5; }
+        .hero-btn {
+            background: var(--color-texto); color: white; border: none;
+            padding: 14px 30px; border-radius: 6px; font-weight: 600;
+            text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;
+        }
+        .hero-img-placeholder {
+            width: 42%; height: 85%; background: #ffffff;
+            border: 2px dashed var(--color-lila-firme); border-radius: 16px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--color-lila-firme); font-size: 0.9rem; font-weight: 500;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.02);
+        }
+
+        /* 4. TÍTULOS DE SECCIÓN CON RITMO VISUAL */
+        .titulo-bloque {
+            text-align: center; font-size: 1.5rem; font-weight: 700;
+            color: var(--color-texto); text-transform: uppercase;
+            letter-spacing: 2px; margin: 60px 0 35px 0;
+        }
+        .titulo-bloque::after {
+            content: ''; display: block; width: 45px; height: 3px;
+            background: var(--color-lila-firme); margin: 10px auto 0 auto; border-radius: 2px;
+        }
+
+        /* 5. CUADRÍCULA DE PRODUCTOS ALINEADA (GRID) */
+        .grid-productos-tienda {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 25px; padding: 0 40px; margin-bottom: 70px;
+            box-sizing: border-box; transition: all 0.3s;
+        }
+        .tarjeta-bien-ordenada {
+            background: #ffffff; border: 1px solid #eee;
+            border-radius: 14px; padding: 18px;
+            display: flex; flex-direction: column;
+            justify-content: space-between; /* Clava el botón al fondo siempre */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            box-sizing: border-box; transition: all 0.2s;
+        }
+        .tarjeta-bien-ordenada:hover {
+            transform: translateY(-4px); box-shadow: 0 10px 25px rgba(45,45,109,0.08);
+        }
+        .foto-box-fija {
+            width: 100%; height: 210px; background: var(--color-gris-suave);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; color: #aaa; font-size: 0.8rem;
+            margin-bottom: 14px; border: 1px solid #f0f0f5;
+        }
+        .card-tags { font-size: 0.75rem; text-transform: uppercase; color: var(--color-lila-firme); font-weight: 700; margin-bottom: 4px; }
+        .card-name { font-size: 0.98rem; font-weight: 600; color: #222; margin: 0 0 6px 0; line-height: 1.35; }
+        .card-price { font-size: 1.15rem; font-weight: 700; color: var(--color-texto); margin-bottom: 16px; }
+        
+        .card-action-btn {
+            background: var(--color-lila-firme); color: white; border: none;
+            width: 100%; padding: 12px; border-radius: 8px;
+            font-weight: 600; font-size: 0.85rem; text-transform: uppercase;
+            letter-spacing: 0.5px; cursor: pointer; transition: background 0.2s;
+        }
+        .card-action-btn:hover { background: var(--color-texto); }
+
+        /* SECCIÓN EXTRA: COMPRAR POR MARCAS */
+        .marcas-flex-layout {
+            display: flex; justify-content: center; gap: 30px;
+            padding: 0 40px; margin-bottom: 60px;
+        }
+        .marca-circulo {
+            width: 90px; height: 90px; background: white; border: 1px solid #eee;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 600; color: var(--color-texto); text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        /* 6. PIE DE PÁGINA (FOOTER) */
+        .footer-tienda {
+            background: linear-gradient(135deg, #a0c5fd15, #e3c5ff15);
+            border-top: 1px solid #eee; padding: 45px 40px 25px 40px;
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px;
+        }
+        .foot-columna { flex: 1; min-width: 180px; }
+        .foot-columna h5 { margin: 0 0 14px 0; color: var(--color-texto); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .foot-columna p { font-size: 0.85rem; color: #555; margin: 0; line-height: 1.6; }
+
+        /* COMPORTAMIENTOS DINÁMICOS PARA EL MODO CELULAR */
+        .modo-celular .nav-header { padding: 12px 18px; }
+        .modo-celular .menu-links { display: none; } /* En celular colapsa al menú hamburguesa */
+        
+        .modo-celular .hero-banner {
+            height: auto; flex-direction: column;
+            padding: 35px 20px; text-align: center; gap: 20px;
+        }
+        .modo-celular .hero-text { max-width: 100%; }
+        .modo-celular .hero-text h1 { font-size: 1.6rem; }
+        .modo-celular .hero-img-placeholder { width: 100%; height: 180px; padding: 25px 0; }
+
+        .modo-celular .marcas-flex-layout { gap: 12px; flex-wrap: wrap; padding: 0 15px; }
+        .modo-celular .marca-circulo { width: 75px; height: 75px; font-size: 0.7rem; }
+
+        .modo-celular .grid-productos-tienda {
+            grid-template-columns: repeat(2, 1fr); /* 2 productos idénticos por fila en celular */
+            gap: 12px; padding: 0 15px;
+        }
+        .modo-celular .foto-box-fija { height: 145px; }
+        .modo-celular .card-name { font-size: 0.82rem; }
+        .modo-celular .card-price { font-size: 1rem; margin-bottom: 12px; }
+        .modo-celular .card-action-btn { padding: 10px; font-size: 0.78rem; }
+
+        .modo-celular .footer-tienda { flex-direction: column; gap: 25px; padding: 30px 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="simulador-panel">
+        <h4>PROTOTIPO DE ESTRUCTURA VISUAL OPTIMIZADA (MARCAS COL)</h4>
+        <button class="btn-change" onclick="ajustarVista('desktop')"><i class="fa-solid fa-desktop"></i> Pantalla Computador</button>
+        <button class="btn-change" onclick="ajustarVista('mobile')"><i class="fa-solid fa-mobile-screen"></i> Pantalla Celular</button>
+    </div>
+
+    <div class="contenedor-lienzo">
+        
+        <div class="tienda-frame" id="render-target">
+            
+            <!-- 1. Cinta de Avisos -->
+            <div class="top-cinta">
+                ✨ ENVÍOS SEGUROS A TODA COLOMBIA | CÚCUTA Y ARAUCA PAGAN CONTRAENTREGA ✨
+            </div>
+
+            <!-- 2. Header Sincronizado -->
+            <header class="nav-header">
+                <div class="logo-box">Marcas Col</div>
+                <div class="menu-links">
+                    <span>Inicio</span>
+                    <span>Marcas <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i></span>
+                    <span>Categorías <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i></span>
+                    <span>Contacto</span>
+                </div>
+                <div class="cart-box-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="badge">3</span>
+                </div>
+            </header>
+
+            <!-- 3. Hero Banner con Altura Fija Inteligente -->
+            <section class="hero-banner">
+                <div class="hero-text">
+                    <div style="color: var(--color-lila-firme); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px;">Línea de Belleza Profesional</div>
+                    <h1>Crecimiento Capilar Efectivo</h1>
+                    <p>Fórmulas magistrales de alta concentración diseñadas para acelerar el crecimiento y frenar la caída desde la primera semana.</p>
+                    <button class="hero-btn">Ver Productos</button>
+                </div>
+                <div class="hero-img-placeholder">
+                    <i class="fa-regular fa-images" style="font-size: 2.2rem; margin-bottom: 10px;"></i>
+                    <span style="padding: 0 20px; text-align: center;">Imagen Limpia del Banner (object-fit: cover)</span>
+                </div>
+            </section>
+
+            <!-- Nueva sección intermedia recomendada para Marcas -->
+            <div class="titulo-bloque">Comprar por Marcas</div>
+            <section class="marcas-flex-layout">
+                <div class="marca-circulo">Lola<br>Cosmetics</div>
+                <div class="marca-circulo">Rapunzel<br>Co</div>
+                <div class="marca-circulo">Menta<br>Hair</div>
+                <div class="marca-circulo">Difeel<br>Premium</div>
+            </section>
+
+            <!-- 4. Título de Bloque Limpio -->
+            <div class="titulo-bloque">Productos Destacados</div>
+
+            <!-- 5. Grilla de Productos de Alta Simetría -->
+            <section class="grid-productos-tienda">
+                
+                <!-- Tarjeta 1 -->
+                <div class="tarjeta-bien-ordenada">
+                    <div class="foto-box-fija">FOTO PRODUCTO (210px)</div>
+                    <div>
+                        <div class="card-tags">Lola Cosmetics</div>
+                        <h3 class="card-name">Tónico de Crecimiento Rapunzel 250ml</h3>
+                        <div class="card-price">$65.000</div>
+                    </div>
+                    <button class="card-action-btn">Agregar al carrito</button>
+                </div>
+
+                <!-- Tarjeta 2 -->
+                <div class="tarjeta-bien-ordenada">
+                    <div class="foto-box-fija">FOTO PRODUCTO (210px)</div>
+                    <div>
+                        <div class="card-tags">Difeel</div>
+                        <h3 class="card-name">Aceite de Castor Orgánico Concentrado</h3>
+                        <div class="card-price">$48.000</div>
+                    </div>
+                    <button class="card-action-btn">Agregar al carrito</button>
+                </div>
+
+                <!-- Tarjeta 3 (Caso de título extremadamente largo) -->
+                <div class="tarjeta-bien-ordenada">
+                    <div class="foto-box-fija">FOTO PRODUCTO (210px)</div>
+                    <div>
+                        <div class="card-tags">Marcas Col</div>
+                        <!-- Este nombre largo demuestra que el botón morado de abajo no se corre ni se desalinea de su riel horizontal -->
+                        <h3 class="card-name">Gummies de Biotina Concentrada Suplemento para Caída Severa</h3>
+                        <div class="card-price">$55.000</div>
+                    </div>
+                    <button class="card-action-btn">Agregar al carrito</button>
+                </div>
+
+                <!-- Tarjeta 4 -->
+                <div class="tarjeta-producto tarjeta-bien-ordenada">
+                    <div class="foto-box-fija">FOTO PRODUCTO (210px)</div>
+                    <div>
+                        <div class="card-tags">Menta Hair</div>
+                        <h3 class="card-name">Shampoo Terapia Capilar Romero y Menta</h3>
+                        <div class="card-price">$42.000</div>
+                    </div>
+                    <button class="card-action-btn">Agregar al carrito</button>
+                </div>
+
+            </section>
+
+            <!-- 6. Footer Unificado -->
+            <footer class="footer-tienda">
+                <div class="foot-columna">
+                    <h5>Marcas Col</h5>
+                    <p>Boutique exclusiva de cuidado personal, salud capilar y belleza integral.</p>
+                </div>
+                <div class="foot-columna">
+                    <h5>Despachos</h5>
+                    <p>Envíos nacionales con Interrapidísimo. Entregas inmediatas en regiones seleccionadas.</p>
+                </div>
+                <div class="foot-columna">
+                    <h5>Canal Oficial</h5>
+                    <p>Soporte personalizado vía WhatsApp las 24 horas del día.</p>
+                </div>
+            </footer>
+
+        </div>
+
+    </div>
+
+    <script>
+        function ajustarVista(modo) {
+            const el = document.getElementById('render-target');
+            if (modo === 'mobile') {
+                el.classList.add('modo-celular');
+            } else {
+                el.classList.remove('modo-celular');
+            }
+        }
+    </script>
+</body>
+</html>
