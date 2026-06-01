@@ -20,7 +20,7 @@ body {
 main { flex: 1 0 auto; }
 
 /* ================================
-   MENSAJE SUPERIOR INFORMATIVO
+   MENSAJE SUPERIOR
    ================================ */
 .mensaje-superior {
     width: 100%;
@@ -65,41 +65,92 @@ header img.logo {
     font-size: 14px;
     outline: none;
 }
-.search-bar i {
-    position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-    color: gray;
-}
-.icons { display: flex; gap: 15px; font-size: 22px; color: #6d6d6d; }
 
 /* ================================
-   COMPONENTE: ENCOGER REDES SOCIALES EN EL FOOTER
+   CORRECCIÓN COMPLETA: CONTROL DE REDES SOCIALES
    ================================ */
 .footer-socials {
     display: flex !important;
-    gap: 14px !important;
-    margin-top: 10px !important;
+    gap: 12px !important;
+    margin-top: 12px !important;
     justify-content: flex-start !important;
+    align-items: center !important;
 }
 
-/* Forzamos a que las imágenes de redes midan 28px y no se vean gigantes */
-.footer-socials a img,
-.footer-socials img {
-    width: 28px !important;
-    height: 28px !important;
-    max-width: 28px !important;
-    max-height: 28px !important;
+/* Fuerza a que las imágenes dentro de los enlaces midan 26px y no se desparramen */
+.footer-socials a, 
+.footer-socials img,
+.footer-socials a img {
+    width: 26px !important;
+    height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
+    display: inline-block !important;
     object-fit: contain !important;
-    border-radius: 0px !important; /* Quita el redondeado tosco */
+    border-radius: 0px !important;
     box-shadow: none !important;
-    transition: transform 0.2s !important;
-}
-.footer-socials img:hover {
-    transform: scale(1.1);
+    border: none !important;
+    transform: none !important;
 }
 
 /* ================================
-   RESTAURACIÓN: LISTA DE PRODUCTOS DEL PANEL ADMIN
-   (Esto hace que tus productos vuelvan a aparecer al iniciar sesión)
+   CATÁLOGO PÚBLICO (GRILLA REAPARECIDA EN 4 COLUMNAS)
+   ================================ */
+#catalogo-list, .catalogo-list {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important; /* Fuerza las 4 columnas en PC */
+    gap: 25px !important;
+    margin: 40px auto 60px auto !important;
+    width: 100% !important;
+    max-width: 1200px !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+    min-height: 300px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.catalogo-card {
+    background: #ffffff !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 15px rgba(45,45,109,0.04) !important;
+    padding: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important; /* Alineación perfecta de botones al fondo */
+    border: 1px solid #f0f0f0 !important;
+    box-sizing: border-box !important;
+}
+
+.catalogo-img {
+    width: 100% !important;
+    height: 210px !important;
+    object-fit: cover !important; /* Cuadra la foto capilar de forma limpia */
+    border-radius: 10px !important;
+    margin-bottom: 14px !important;
+}
+
+.catalogo-title { font-size: 1.05rem !important; font-weight: 600; color: #222; margin-bottom: 6px; }
+.catalogo-section { color: #9390FF; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+.catalogo-desc { color: #666; font-size: 0.88rem; margin-bottom: 12px; line-height: 1.4; }
+.catalogo-price { color: #2d2d6d; font-weight: 700; font-size: 1.15rem; margin-bottom: 14px; }
+
+.catalogo-btn {
+    background: #9390FF !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    text-transform: uppercase;
+}
+
+/* ================================
+   RESTAURACIÓN TOTAL: ESTILOS DEL PANEL ADMIN
+   (Garantiza que tus productos montados se listen en tu sesión)
    ================================ */
 #products-list {
     width: 100%;
@@ -121,101 +172,46 @@ header img.logo {
     padding: 15px;
     border: 1px solid #eee;
 }
-.producto-imagen {
-    width: 90px;
-    height: 90px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
-.producto-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+.producto-imagen { width: 90px; height: 90px; object-fit: cover; border-radius: 8px; }
+.producto-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .producto-titulo { font-size: 1.1rem; font-weight: bold; color: #2d2d6d; }
 .producto-descripcion { color: #666; font-size: 0.9rem; }
-.producto-precio { color: #1a1a4d; font-weight: bold; }
+.producto-price, .producto-precio { color: #1a1a4d; font-weight: bold; }
 
-/* ================================
-   CATÁLOGO PÚBLICO (GRILLA DE 4 COLUMNAS PARA CLIENTES)
-   ================================ */
-.catalogo-list {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 25px !important;
-    margin: 30px auto 60px auto !important;
-    width: 100% !important;
-    max-width: 1200px !important;
-    padding: 0 20px !important;
-    box-sizing: border-box !important;
-    min-height: 350px !important;
+/* Banners del Admin */
+#banners-list { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.banner-item {
+    display: flex;
+    align-items: center; gap: 16px; background: #fff;
+    border-radius: 12px; padding: 12px 14px; width: 100%; max-width: 900px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06); box-sizing: border-box;
 }
-.catalogo-card {
-    background: #fff !important;
-    border-radius: 14px !important;
-    box-shadow: 0 4px 15px rgba(45,45,109,0.04) !important;
-    padding: 20px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    border: 1px solid #f0f0f0 !important;
-    box-sizing: border-box !important;
-}
-.catalogo-img {
-    width: 100% !important;
-    height: 210px !important;
-    object-fit: cover !important;
-    border-radius: 10px !important;
-    margin-bottom: 14px !important;
-}
+.banner-imagen { width: 140px; height: 80px; object-fit: cover; border-radius: 8px; }
 
-/* ================================
-   FORMULARIOS Y LOGIN (LOGIN.HTML)
-   ================================ */
+/* Formulario Login */
 .container {
-    max-width: 400px;
-    margin: 60px auto;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    padding: 32px 28px 24px 28px;
-    box-sizing: border-box;
+    max-width: 400px; margin: 60px auto; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 32px 28px 24px 28px; box-sizing: border-box;
 }
 .form-title { font-size: 2rem; font-weight: bold; margin-bottom: 18px; color: #2d2d6d; text-align: center; }
 .input-group { margin-bottom: 18px; }
 .input-group label { display: block; margin-bottom: 6px; color: #444; }
 .input-group input { width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; }
 .btn { width: 100%; padding: 12px; background: #2d2d6d; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-sizing: border-box; }
-
 textarea { width: 100%; min-height: 80px; resize: vertical; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
 
-/* Banners list */
-#banners-list { display: flex; flex-direction: column; gap: 16px; align-items: center; }
-.banner-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 12px 14px;
-    width: 100%;
-    max-width: 900px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
-    box-sizing: border-box;
-}
-.banner-imagen { width: 140px; height: 80px; object-fit: cover; border-radius: 8px; }
-
 /* ================================
-   RESPONSIVE MÓVIL
+   DISEÑO ADAPTABLE CELULARES (RESPONSIVE)
    ================================ */
 @media (max-width: 900px) {
-    .catalogo-list {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 12px !important;
+    #catalogo-list, .catalogo-list {
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 por fila limpios en móvil */
+        gap: 15px !important;
         padding: 0 12px !important;
     }
+    .catalogo-card { padding: 12px !important; }
+    .catalogo-img { height: 145px !important; }
+    
     .producto-item, .banner-item { flex-direction: column; align-items: flex-start; }
     .producto-imagen, .banner-imagen { width: 100%; height: auto; max-height: 200px; }
 }
