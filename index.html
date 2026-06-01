@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Catálogo - Marcas Col</title>
-        <link rel="stylesheet" href="styles.css">
-        <link rel="stylesheet" href="/estilos/catalogo.css">
-    </head>
-    <body>
-      <!-- MENSAJE SUPERIOR -->
-<div id="mensaje-superior" class="mensaje-superior">
-   
-</div>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Marcas Col</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/estilos/catalogo.css">
+</head>
+<body>
 
-        <!-- Banner superior -->
+<!-- MENSAJE SUPERIOR -->
+<div id="mensaje-superior" class="mensaje-superior"></div>
+
+<!-- BARRA DE NAVEGACIÓN (HEADER) -->
 <header class="catalogo-header">
   <div class="catalogo-header-content">
     
     <!-- Zona izquierda: Logo -->
     <div class="header-left">
-      <a href="index.html"><img src="imagenes/logo.jpg" alt="Marcas Col" class="logo"></a>
+      <a href="index.html">
+        <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo">
+      </a>
     </div>
 
     <!-- Zona centro: Barra búsqueda -->
@@ -28,7 +29,7 @@
       <span class="icon-search"></span>
     </div>
 
-    <!-- Zona derecha: Iconos -->
+    <!-- Zona derecha: Iconos y Carrito -->
     <div class="header-right">
       <span class="icon-user"></span>
 
@@ -39,47 +40,56 @@
       </div>
     </div>
 
-
-    </div>
-
   </div>
-        <button id="menu-toggle" class="menu-toggle" aria-label="Menú">
-          ☰
-        </button>
-        <div id="nav-overlay" class="nav-overlay"></div>
+  
+  <!-- Botón menú móvil y overlay ajustados en su jerarquía -->
+  <button id="menu-toggle" class="menu-toggle" aria-label="Menú">☰</button>
+  <div id="nav-overlay" class="nav-overlay"></div>
 </header>
 
-            <nav class="catalogo-nav" id="catalogo-nav">
-                <ul id="catalogo-secciones">
-                    <!-- Secciones dinámicas generadas por JS -->
-                </ul>
-            </nav>
-        <main>
-            <!-- Slider/banner principal -->
-            <section class="catalogo-slider" id="catalogo-slider">
-                <!-- Slides dinámicos generados por JS -->
-            </section>
-            <section id="catalogo-list" class="catalogo-list"></section>
-            <!-- Carrito -->
-            <div class="carrito-overlay" id="carrito-overlay" style="display:none;">
-                <div class="carrito-modal">
-                    <button class="carrito-cerrar" id="cerrar-carrito" title="Cerrar">&times;</button>
-                    <div class="carrito-header">Cesta</div>
-                    <div id="carrito-productos"></div>
-                    <div class="carrito-resumen" id="carrito-resumen"></div>
-                    <div class="carrito-btns">
-                        <button class="carrito-btn" id="continuar-compra" disabled>Continuar</button>
-                    </div>
-                </div>
+<!-- MENÚ DE SECCIONES -->
+<nav class="catalogo-nav" id="catalogo-nav">
+    <ul id="catalogo-secciones">
+        <!-- Secciones dinámicas generadas por JS -->
+    </ul>
+</nav>
+
+<main>
+    <!-- 1. SLIDER / BANNER PRINCIPAL (HÉROE) -->
+    <section class="catalogo-slider" id="catalogo-slider">
+        <!-- Slides dinámicos generados por JS -->
+    </section>
+
+    <!-- 2. NUEVA SECCIÓN: COMPRAR POR MARCAS (Ubicación ideal para el flujo comercial) -->
+    <h2 class="titulo-seccion">Nuestras Marcas</h2>
+    <section class="catalogo-marcas" id="catalogo-marcas">
+        <!-- Marcas dinámicas generadas por JS -->
+    </section>
+
+    <!-- 3. SECCIÓN: PRODUCTOS DESTACADOS (En grilla simétrica de 4 columnas) -->
+    <h2 class="titulo-seccion">Productos Destacados</h2>
+    <section id="catalogo-list" class="catalogo-list">
+        <!-- Tarjetas dinámicas generadas por JS -->
+    </section>
+
+    <!-- OVERLAY DEL CARRITO / CESTA -->
+    <div class="carrito-overlay" id="carrito-overlay" style="display:none;">
+        <div class="carrito-modal">
+            <button class="carrito-cerrar" id="cerrar-carrito" title="Cerrar">&times;</button>
+            <div class="carrito-header">Cesta</div>
+            <div id="carrito-productos"></div>
+            <div class="carrito-resumen" id="carrito-resumen"></div>
+            <div class="carrito-btns">
+                <button class="carrito-btn" id="continuar-compra" disabled>Continuar</button>
             </div>
-            <!-- Marcas destacadas -->
-            <section class="catalogo-marcas" id="catalogo-marcas">
-                <!-- Marcas dinámicas generadas por JS -->
-            </section>
-        </main>
+        </div>
+    </div>
+</main>
+
+<!-- PIE DE PÁGINA (FOOTER) -->
 <footer class="catalogo-footer">
   <div class="footer-content">
-    <!-- Columna 1 -->
+    <!-- Columna 1: Branding y Redes -->
     <div class="footer-col">
       <img src="imagenes/logo.jpg" alt="Logo Marcas Col" class="logo">
       <p>Tu tienda de confianza en marcas exclusivas.</p>
@@ -87,17 +97,16 @@
         <a href="https://www.facebook.com/marcas.coll/"><img src="imagenes/facebook.png" alt="Facebook"></a>
         <a href="https://www.instagram.com/marcas.col/?hl=es"><img src="imagenes/instagram.jpg" alt="Instagram"></a>
         <a href="https://www.tiktok.com/@marcas.col?_t=ZS-8zzwawF5Mwc&_r=1"><img src="imagenes/tiktok.png" alt="TikTok"></a>
-        <a href="https://www.threads.com/@marcas.col?xmt=AQF0JsMs-NGcde6Zu-eC_zE1h3rb62Z1-dY-QNx"><img src="imagenes/x.png" alt="TikTok"></a>
-
+        <a href="https://www.threads.com/@marcas.col?xmt=AQF0JsMs-NGcde6Zu-eC_zE1h3rb62Z1-dY-QNx"><img src="imagenes/x.png" alt="Threads"></a>
       </div>
     </div>
-    <!-- Columna 2 -->
+    <!-- Columna 2: Datos de Contacto -->
     <div class="footer-col">
       <h3>Contacto</h3>
       <p>📧 Marcass.col@gmail.com </p>
       <p>📞 +57 314 4352536</p>
     </div>
-    <!-- Columna 3 -->
+    <!-- Columna 3: Legal e Interés -->
     <div class="footer-col">
       <h3>Enlaces de interés</h3>
       <ul>
@@ -109,7 +118,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>&copy; 2025 Marcas Col. Todos los derechos reservados.</p>
+    <p>&copy; 2026 Marcas Col. Todos los derechos reservados.</p>
   </div>
 </footer>
 
@@ -121,11 +130,10 @@
    <img src="imagenes/whatsapp.png" alt="WhatsApp">
 </a>
 
-        <script>
-          // Definir API_BASE automáticamente: usa el mismo origen donde está la web.
-          // Si tu backend está en otro dominio, reemplaza por la URL pública del backend.
-          window.API_BASE = window.location.origin;
-        </script>
-        <script src="catalogo.js"></script>
-    </body>
+<script>
+  // Configuración de API_BASE alineada al origen de tu despliegue
+  window.API_BASE = window.location.origin;
+</script>
+<script src="catalogo.js"></script>
+</body>
 </html>
