@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from urllib.parse import unquote  # Crucial para solucionar los errores %20 de espacios
 import sqlite3
 import os
 
@@ -10,8 +11,8 @@ import os
 app = Flask(__name__, static_folder='.', static_url_path='')
 
 app.secret_key = os.environ.get('LLAVE_SECRETA', 'supersecretkey')
-# IMPORTANTE: Aseguramos que CORS permita DELETE
-CORS(app, supports_credentials=True, methods=["GET", "POST", "OPTIONS", "DELETE"])
+# Soportamos todos los métodos necesarios de administración de forma explícita
+CORS(app, supports_credentials=True, methods=["GET", "POST", "OPTIONS", "DELETE", "PUT"])
 
 OWNER_CODE = os.environ.get('CODIGO_REGISTRO')
 
@@ -102,7 +103,7 @@ def owner_login():
     if not OWNER_CODE:
         return jsonify({'error': 'Servidor sin CODIGO_REGISTRO'}), 500
 
-    if code == OWNER_CODE:
+    if str(code) == str(OWNER_CODE):
         session['owner'] = True
         return jsonify({'message': 'Acceso concedido'})
 
@@ -122,7 +123,7 @@ def require_owner():
 
 
 # ---------------------------------------------------
-# SECCIONES (CON DELETE AÑADIDO)
+# SECCIONES (OPTIMIZADO CON DECODE)
 # ---------------------------------------------------
 @app.route('/secciones', methods=['GET', 'POST'])
 def secciones():
@@ -138,12 +139,12 @@ def secciones():
             return jsonify({'error': 'Falta nombre'}), 400
 
         try:
-            cur.execute("INSERT INTO secciones(nombre) VALUES (?)", (nombre,))
+            cur.execute("INSERT INTO secciones(nombre) VALUES (?)", (nombre.strip(),))
             conn.commit()
         except sqlite3.IntegrityError:
             return jsonify({'error': 'Ya existe'}), 400
-
-        conn.close()
+        finally:
+            conn.close()
         return jsonify({'message': 'Sección agregada'})
 
     cur.execute("SELECT nombre FROM secciones ORDER BY id")
@@ -151,29 +152,32 @@ def secciones():
     conn.close()
     return jsonify(result)
 
-# NUEVA RUTA PARA ELIMINAR SECCIÓN
-@app.route('/secciones/<string:nombre>', methods=['DELETE'])
+
+@app.route('/secciones/<path:nombre>', methods=['DELETE'])
 def delete_seccion(nombre):
     not_owner = require_owner()
     if not_owner: return not_owner
+
+    # Decodificar caracteres como %20 (Espacios) de la URL
+    nombre_limpio = unquote(nombre).strip()
 
     conn = obtener_conexion()
     cur = conn.cursor()
     
     # Verificamos si hay productos usando esta sección
-    cur.execute("SELECT id FROM products WHERE seccion = ?", (nombre,))
+    cur.execute("SELECT id FROM products WHERE seccion = ?", (nombre_limpio,))
     if cur.fetchone():
         conn.close()
         return jsonify({'error': 'No puedes eliminar una sección que tiene productos asociados'}), 400
 
-    cur.execute("DELETE FROM secciones WHERE nombre = ?", (nombre,))
+    cur.execute("DELETE FROM secciones WHERE nombre = ?", (nombre_limpio,))
     conn.commit()
     conn.close()
     return jsonify({'message': 'Sección eliminada'})
 
 
 # ---------------------------------------------------
-# MARCAS (CON DELETE AÑADIDO)
+# MARCAS (OPTIMIZADO CON DECODE)
 # ---------------------------------------------------
 @app.route('/marcas', methods=['GET', 'POST'])
 def marcas():
@@ -187,7 +191,7 @@ def marcas():
         nombre = None
         imagen = None
 
-        if request.content_type.startswith('multipart/form-data'):
+        if request.content_type and request.content_type.startswith('multipart/form-data'):
             nombre = request.form.get('nombre')
             imagen_file = request.files.get('imagen')
             if imagen_file:
@@ -195,14 +199,14 @@ def marcas():
                 imagen_file.save(os.path.join(UPLOAD_FOLDER, filename))
                 imagen = filename
         else:
-            data = request.json
+            data = request.json or {}
             nombre = data.get('nombre')
             imagen = data.get('imagen')
 
         if not nombre:
             return jsonify({'error':'Falta nombre'}), 400
 
-        cur.execute("INSERT INTO marcas(nombre, imagen) VALUES (?, ?)", (nombre, imagen))
+        cur.execute("INSERT INTO marcas(nombre, imagen) VALUES (?, ?)", (nombre.strip(), imagen))
         conn.commit()
         conn.close()
 
@@ -218,35 +222,40 @@ def marcas():
 
     return jsonify(result)
 
-# NUEVA RUTA PARA ELIMINAR MARCA
-@app.route('/marcas/<string:nombre>', methods=['DELETE'])
+
+@app.route('/marcas/<path:nombre>', methods=['DELETE'])
 def delete_marca(nombre):
     not_owner = require_owner()
     if not_owner: return not_owner
+
+    # Decodificar espacios y tildes de la URL de la marca
+    nombre_limpio = unquote(nombre).strip()
 
     conn = obtener_conexion()
     cur = conn.cursor()
     
     # Buscamos si tiene imagen para borrarla del disco
-    cur.execute("SELECT imagen FROM marcas WHERE nombre = ?", (nombre,))
+    cur.execute("SELECT imagen FROM marcas WHERE nombre = ?", (nombre_limpio,))
     row = cur.fetchone()
     
-    cur.execute("DELETE FROM marcas WHERE nombre = ?", (nombre,))
+    cur.execute("DELETE FROM marcas WHERE nombre = ?", (nombre_limpio,))
     conn.commit()
     
     if row and row['imagen']:
         path = os.path.join(UPLOAD_FOLDER, row['imagen'])
         if os.path.exists(path):
-            os.remove(path)
+            try:
+                os.remove(path)
+            except Exception:
+                pass
             
     conn.close()
     return jsonify({'message': 'Marca eliminada'})
 
 
 # ---------------------------------------------------
-# SLIDES, PRODUCTOS, MENSAJES Y CATALOGO (SE MANTIENEN IGUAL)
+# SLIDES / BANNERS
 # ---------------------------------------------------
-
 @app.route('/slides', methods=['GET', 'POST'])
 def slides():
     conn = obtener_conexion()
@@ -256,7 +265,7 @@ def slides():
         not_owner = require_owner()
         if not_owner: return not_owner
 
-        if request.content_type.startswith('multipart/form-data'):
+        if request.content_type and request.content_type.startswith('multipart/form-data'):
             titulo = request.form.get('titulo')
             descripcion = request.form.get('descripcion')
             marca = request.form.get('marca')
@@ -271,7 +280,7 @@ def slides():
             imagen_file.save(os.path.join(UPLOAD_FOLDER, filename))
             imagen = filename
         else:
-            data = request.json
+            data = request.json or {}
             titulo = data.get('titulo')
             descripcion = data.get('descripcion')
             marca = data.get('marca')
@@ -299,7 +308,7 @@ def slides():
     return jsonify(result)
 
 
-@app.route('/slides/<int:id>', methods=['DELETE'])
+@app.route('/slides/<id>', methods=['DELETE'])
 def delete_slide(id):
     not_owner = require_owner()
     if not_owner: return not_owner
@@ -311,6 +320,7 @@ def delete_slide(id):
     row = cur.fetchone()
 
     if not row:
+        conn.close()
         return jsonify({'error': 'No encontrado'}), 404
 
     imagen = row['imagen']
@@ -321,11 +331,17 @@ def delete_slide(id):
 
     path = os.path.join(UPLOAD_FOLDER, imagen)
     if os.path.exists(path):
-        os.remove(path)
+        try:
+            os.remove(path)
+        except Exception:
+            pass
 
     return jsonify({'message':'Banner eliminado'})
 
 
+# ---------------------------------------------------
+# PRODUCTOS
+# ---------------------------------------------------
 @app.route('/product', methods=['POST'])
 def add_product():
     not_owner = require_owner()
@@ -357,7 +373,7 @@ def add_product():
     return jsonify({'message':'Producto agregado'})
 
 
-@app.route('/product/<int:id>', methods=['DELETE'])
+@app.route('/product/<id>', methods=['DELETE'])
 def delete_product(id):
     not_owner = require_owner()
     if not_owner: return not_owner
@@ -369,6 +385,7 @@ def delete_product(id):
     row = cur.fetchone()
 
     if not row:
+        conn.close()
         return jsonify({'error':'Producto no encontrado'}), 404
 
     imagen = row['imagen']
@@ -379,7 +396,10 @@ def delete_product(id):
 
     img_path = os.path.join(UPLOAD_FOLDER, imagen)
     if os.path.exists(img_path):
-        os.remove(img_path)
+        try:
+            os.remove(img_path)
+        except Exception:
+            pass
 
     return jsonify({'message':'Producto eliminado'})
 
@@ -398,6 +418,9 @@ def get_products():
     return jsonify(productos)
 
 
+# ---------------------------------------------------
+# MENSAJES INFORMATIVOS
+# ---------------------------------------------------
 @app.route('/mensajes', methods=['GET', 'POST'])
 def mensajes():
     conn = obtener_conexion()
@@ -407,7 +430,7 @@ def mensajes():
         not_owner = require_owner()
         if not_owner: return not_owner
 
-        data = request.json
+        data = request.json or {}
         texto = data.get('texto')
 
         if not texto:
@@ -438,9 +461,10 @@ def mensaje_ultimo():
 
 @app.route('/marcas/<path:marca>/secciones', methods=['GET'])
 def marca_secciones(marca):
+    marca_limpia = unquote(marca).strip()
     conn = obtener_conexion()
     cur = conn.cursor()
-    cur.execute("SELECT DISTINCT seccion FROM products WHERE marca=? ORDER BY seccion", (marca,))
+    cur.execute("SELECT DISTINCT seccion FROM products WHERE marca=? ORDER BY seccion", (marca_limpia,))
     result = [row['seccion'] for row in cur.fetchall()]
     conn.close()
     return jsonify(result)
@@ -460,11 +484,11 @@ def products_filter():
 
     if marca:
         where.append("marca = ?")
-        params.append(marca)
+        params.append(unquote(marca).strip())
 
     if seccion:
         where.append("seccion = ?")
-        params.append(seccion)
+        params.append(unquote(seccion).strip())
 
     if where:
         query += " WHERE " + " AND ".join(where)
@@ -481,6 +505,9 @@ def products_filter():
     return jsonify(result)
 
 
+# ---------------------------------------------------
+# ARCHIVOS ESTÁTICOS Y ENRUTAMIENTO
+# ---------------------------------------------------
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
@@ -500,7 +527,7 @@ def login():
 
 
 # ---------------------------------------------------
-# RUN
+# EJECUCIÓN
 # ---------------------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)
