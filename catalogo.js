@@ -4,11 +4,13 @@ async function cargarMensajeCatalogo() {
         const res = await fetch('/mensaje/ultimo');
         const data = await res.json();
         const msgDiv = document.getElementById('mensaje-superior');
-        if (data.mensaje) {
-            msgDiv.textContent = data.mensaje;
-            msgDiv.style.display = "block";
-        } else {
-            msgDiv.style.display = "none"; // Ocultar si no hay mensaje activo
+        if (msgDiv) {
+            if (data.mensaje) {
+                msgDiv.textContent = data.mensaje;
+                msgDiv.style.display = "block";
+            } else {
+                msgDiv.style.display = "none"; // Ocultar si no hay mensaje activo
+            }
         }
     } catch (err) {
         console.error("No se pudo cargar el mensaje en catálogo:", err);
@@ -116,7 +118,6 @@ function renderSlidesDyn(slides) {
     track.innerHTML = slides.map((slide, i) => {
         let imagen = slide.imagen?.trim() || "/uploads/placeholder.jpg";
 
-
         const titulo = slide.titulo?.trim() || "Sin título";
         const descripcion = slide.descripcion?.trim() || "Sin descripción";
         const marca = slide.marca?.trim() || "";
@@ -176,6 +177,7 @@ function normalizarTexto(texto) {
         .trim();
 }
 
+// RENDERIZADO AJUSTADO CON MÁXIMA SIMETRÍA VISUAL
 function renderProductos(productos, seccion = null, filtro = "", marca = null) {
     const list = document.getElementById("catalogo-list");
     if (!list) return;
@@ -204,27 +206,32 @@ function renderProductos(productos, seccion = null, filtro = "", marca = null) {
     }
 
     if (!filtrados.length) {
-        list.innerHTML = `<p style="text-align:center;color:#888;width:100vw;">No hay productos para mostrar.</p>`;
+        list.innerHTML = `<p style="text-align:center;color:#888;width:100%;grid-column: 1 / -1;padding:40px 0;">No hay productos para mostrar en esta categoría.</p>`;
         return;
     }
 
+    // Estructura optimizada para que el CSS (flex/grid) mantenga la simetría horizontal
     list.innerHTML = filtrados.map(p => `
         <div class="catalogo-card">
             <img src="${p.imagen}" alt="${p.titulo}" class="catalogo-img">
-            <div class="catalogo-title">${p.titulo}</div>
-            <div class="catalogo-section">${p.marca} - ${p.seccion}</div>
-            <div class="catalogo-desc">${p.descripcion}</div>
-            <div class="catalogo-price">$${p.precio}</div>
+            
+            <div>
+                <div class="catalogo-section">${p.marca}</div>
+                <div class="catalogo-title">${p.titulo}</div>
+                <div class="catalogo-desc">${p.descripcion ? p.descripcion.substring(0, 85) + '...' : ''}</div>
+                <div class="catalogo-price">$${parseFloat(p.precio).toLocaleString('es-CO')}</div>
+            </div>
+            
             <button class="catalogo-btn"
                 onclick="comprarProducto(
                     '${p.titulo}', 
                     '${p.precio}', 
-                    '${p.descripcion}', 
+                    '${p.descripcion || ""}', 
                     '${p.seccion}', 
                     '${p.marca}', 
                     '${p.imagen}'
                 )">
-                Comprar
+                Agregar al carrito
             </button>                    
         </div>
     `).join("");
@@ -270,251 +277,19 @@ async function renderNavMenu() {
     `;
 
     nav.innerHTML = html;
+
+    // Renderizar sección visual de marcas destacadas tipo burbuja en la Home
+    const marcasHome = document.getElementById("catalogo-marcas");
+    if (marcasHome && marcas.length > 0) {
+        marcasHome.innerHTML = marcas.map(m => `
+            <div class="marca-item-burbuja" data-marca="${m.nombre}" style="cursor:pointer; text-align:center;">
+                <img src="${m.imagen || '/imagenes/logo.jpg'}" alt="${m.nombre}" style="width:80px; height:80px; object-fit:cover; border-radius:50%; border:2px solid #eee; margin-bottom:8px; box-shadow:0 4px 10px rgba(0,0,0,0.02);">
+                <div style="font-size:0.85rem; font-weight:600; color:#2d2d6d;">${m.nombre}</div>
+            </div>
+        `).join("");
+    }
 }
 
 // ==========================
 // === VARIABLES GLOBALES ===
-// ==========================
-let productosGlobal = [];
-let seccionActual = null;
-let marcaActual = null;
-
-// ==========================
-// === CARRITO LOCALSTORAGE =
-// ==========================
-function getCarrito() {
-    return JSON.parse(localStorage.getItem("carrito")) || [];
-}
-
-function saveCarrito(carrito) {
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-}
-
-function actualizarIconoCarrito() {
-    const carrito = getCarrito();
-    const cartCount = document.getElementById("cart-count");
-    if (cartCount) {
-        cartCount.textContent = `(${carrito.length})`;
-    }
-}
-
-window.comprarProducto = function(titulo, precio, descripcion = "", seccion = "", marca = "", imagen = "") {
-    let carrito = getCarrito();
-    carrito.push({ titulo, precio, descripcion, seccion, marca, imagen });
-    saveCarrito(carrito);
-    actualizarIconoCarrito();
-};
-
-// ==========================
-// === REDIRECCIÓN CARRITO ==
-// ==========================
-document.addEventListener("DOMContentLoaded", () => {
-    actualizarIconoCarrito();
-
-    const btnCarrito = document.getElementById("btn-carrito");
-    if (btnCarrito) {
-        btnCarrito.addEventListener("click", () => {
-            window.location.href = "carrito.html";
-        });
-    }
-});
-
-// ==========================
-// === INICIALIZACIÓN =======
-// ==========================
-document.addEventListener("DOMContentLoaded", async () => {
-    await cargarMensajeCatalogo();
-    await renderNavMenu();
-    const slides = await fetchSlides();
-    renderSlidesDyn(slides);
-    productosGlobal = await fetchProductos();
-    renderProductos(productosGlobal);
-
-    // Búsqueda
-    const searchInput = document.getElementById("search-input");
-    if (searchInput) {
-        searchInput.addEventListener("input", function() {
-            renderProductos(productosGlobal, seccionActual, this.value, marcaActual);
-        });
-    }
-
-    // ============================
-    // === MENÚ LATERAL MÓVIL ====
-    // ============================
-    const menuToggle = document.getElementById('menu-toggle');
-    const catalogoNav = document.getElementById('catalogo-nav');
-    const navOverlay = document.getElementById('nav-overlay');
-
-    function openNav() {
-        catalogoNav.classList.add('active');
-        document.body.classList.add('nav-open');
-        if (navOverlay) navOverlay.classList.add('active');
-    }
-
-    function closeNav() {
-        catalogoNav.classList.remove('active');
-        document.body.classList.remove('nav-open');
-        if (navOverlay) navOverlay.classList.remove('active');
-
-        // Cierra todos los submenús
-        document.querySelectorAll('.has-submenu .submenu.show').forEach(open => {
-            open.classList.remove('show');
-            const tr = open.closest('.has-submenu')?.querySelector('span, a');
-            if (tr) tr.setAttribute('aria-expanded','false');
-        });
-    }
-
-    if (menuToggle) {
-        menuToggle.addEventListener('click', () => {
-            if (catalogoNav.classList.contains('active')) {
-                closeNav();
-            } else {
-                openNav();
-            }
-        });
-    }
-
-    if (navOverlay) navOverlay.addEventListener('click', closeNav);
-
-    // Acordeón móvil - Mejorado
-    catalogoNav.addEventListener('click', function(e) {
-        const trigger = e.target.closest('.has-submenu > span, .has-submenu > a');
-
-        if (trigger && window.innerWidth <= 900) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const parentLi = trigger.closest('.has-submenu');
-            const submenu = parentLi?.querySelector('.submenu');
-            
-            if (submenu) {
-                // Cerrar otros submenús del mismo nivel
-                const parentUl = parentLi.parentElement;
-                parentUl.querySelectorAll(':scope > .has-submenu > .submenu.show').forEach(open => {
-                    if (open !== submenu) {
-                        open.classList.remove('show');
-                        const triggerEl = open.closest('.has-submenu')?.querySelector('span, a');
-                        if (triggerEl) triggerEl.setAttribute('aria-expanded', 'false');
-                    }
-                });
-
-                // Toggle del submenu actual
-                const isOpen = submenu.classList.toggle('show');
-                trigger.setAttribute('aria-expanded', String(isOpen));
-
-                // Si es una marca y el submenu se abrió, cargar las secciones
-                if (isOpen && parentLi.classList.contains('marca-con-submenu')) {
-                    const marca = parentLi.dataset.marca;
-                    const subSecciones = parentLi.querySelector('.sub-secciones');
-                    
-                    if (subSecciones && parentLi.dataset.loaded !== "true") {
-                        fetch(`/marcas/${encodeURIComponent(marca)}/secciones`)
-                            .then(res => res.json())
-                            .then(secciones => {
-                                subSecciones.innerHTML = secciones.map(s => `
-                                    <li data-seccion="${s}">
-                                        <span class="seccion-item" data-marca="${marca}" data-seccion="${s}">${s}</span>
-                                    </li>
-                                `).join("");
-                                parentLi.dataset.loaded = "true";
-                            })
-                            .catch(err => console.error("Error cargando secciones:", err));
-                    }
-                }
-            }
-        }
-
-        // Cerrar menú al clickear en un item (sección, marca o enlace)
-        const itemClicked = e.target.closest('.seccion-item, a:not(.has-submenu > a)');
-        if (itemClicked && window.innerWidth <= 900) {
-            setTimeout(() => closeNav(), 150);
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeNav();
-    });
-
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 900) closeNav();
-    });
-
-    // ================================
-    // === HOVER SECCIONES PC (Desktop) ===
-    // ================================
-    document.addEventListener("mouseover", async (e) => {
-        if (window.innerWidth > 900) {
-            // Detectar hover sobre .marca-item (el span)
-            const marcaItem = e.target.closest(".marca-item");
-            if (marcaItem) {
-                const marcaLi = marcaItem.closest(".marca-con-submenu");
-                if (marcaLi && marcaLi.dataset.loaded !== "true") {
-                    const marca = marcaLi.dataset.marca;
-                    const subSecciones = marcaLi.querySelector(".sub-secciones");
-
-                    if (!subSecciones) return;
-
-                    try {
-                        const res = await fetch(`/marcas/${encodeURIComponent(marca)}/secciones`);
-                        if (!res.ok) return;
-                        const secciones = await res.json();
-
-                        subSecciones.innerHTML = secciones.map(s => `
-                            <li data-seccion="${s}">
-                                <span class="seccion-item" data-marca="${marca}" data-seccion="${s}">${s}</span>
-                            </li>
-                        `).join("");
-
-                        marcaLi.dataset.loaded = "true";
-                    } catch (err) {
-                        console.error("Error cargando secciones para marca:", marca, err);
-                    }
-                }
-            }
-        }
-    });
-
-    // ============================
-    // === CLICK FILTROS ==========
-    // ============================
-    document.addEventListener("click", (e) => {
-        // Filtrar por marca
-        const marcaEl = e.target.closest(".marca-item");
-        if (marcaEl) {
-            e.preventDefault();
-            const marca = marcaEl.dataset.marca;
-            
-            fetch(`/products/filter?marca=${encodeURIComponent(marca)}`)
-                .then(res => res.json())
-                .then(data => renderProductos(data))
-                .catch(err => console.error("Error filtrando por marca:", err));
-            
-            // Cerrar navegación si está abierta en móvil
-            if (window.innerWidth <= 900) {
-                setTimeout(() => closeNav(), 100);
-            }
-            return;
-        }
-
-        // Filtrar por sección
-        const secEl = e.target.closest(".seccion-item");
-        if (secEl) {
-            e.preventDefault();
-            const marca = secEl.dataset.marca;
-            const seccion = secEl.dataset.seccion;
-
-            let url = `/products/filter?seccion=${encodeURIComponent(seccion)}`;
-            if (marca) url += `&marca=${encodeURIComponent(marca)}`;
-
-            fetch(url)
-                .then(res => res.json())
-                .then(data => renderProductos(data))
-                .catch(err => console.error("Error filtrando por sección:", err));
-            
-            // Cerrar navegación si está abierta en móvil
-            if (window.innerWidth <= 900) {
-                setTimeout(() => closeNav(), 100);
-            }
-        }
-    });
-});
+// =================
