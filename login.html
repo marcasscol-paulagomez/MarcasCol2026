@@ -4,10 +4,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Login y Gestión - Marcas Col</title>
-	<link rel="stylesheet" href="/estilos/styles.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<!-- CORRECCIÓN DE RUTA CRÍTICA: Se quitó el '/' para que lea la carpeta real de GitHub -->
+	<link rel="stylesheet" href="estilos/styles.css">
 </head>
 <body>
+
+	<!-- MENSAJE SUPERIOR INTEGRADO AL ESTILO DE LA HOME -->
+	<div class="mensaje-superior">Panel de Administración Interno</div>
 
 	<!-- LOGIN PROPIETARIOS -->
 	<div class="container" id="login-container">
@@ -16,139 +19,137 @@
 		<form id="owner-login-form">
 			<div class="input-group">
 				<label for="owner-code">Código de acceso</label>
-				<input type="password" id="owner-code" name="code" placeholder="Ingresa el código que te dimos" required>
+				<input type="password" id="owner-code" name="code" placeholder="Ingresa tu código de seguridad" required>
 			</div>
 			<button type="submit" class="btn">Entrar</button>
 		</form>
-		<p class="form-help" style="margin-top:8px;">Si no tienes el código, comunícate con quien te entregó la página.</p>
+		<p class="form-help" style="margin-top:14px; font-size:0.85rem; color:#666; text-align:center;">Si no tienes el código, comunícate con el desarrollador de la página.</p>
 	</div>
 
-	<!-- ADMINISTRACIÓN -->
-	<div class="container" id="admin-dyn-container" style="margin-top:32px; display:none;">
+	<!-- ADMINISTRACIÓN GENERAL (PANEL DINÁMICO) -->
+	<div class="container" id="admin-dyn-container" style="margin-top:32px; display:none; max-width: 600px;">
 		
 		<!-- AGREGAR MENSAJE -->
-		<div class="form-title">Añadir Mensaje</div>
-		<p class="form-help">Este mensaje se mostrará en la parte superior del catálogo.</p>
+		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Añadir Mensaje</div>
+		<p class="form-help" style="font-size:0.88rem; color:#555; margin-bottom:12px;">Este mensaje se mostrará en la barra superior del catálogo.</p>
 		<form id="mensaje-form">
 			<div class="input-group">
-				<label for="mensaje-texto">Mensaje</label>
-				<textarea id="mensaje-texto" rows="3" required></textarea>
+				<label for="mensaje-texto">Mensaje Informativo</label>
+				<textarea id="mensaje-texto" rows="3" placeholder="Escribe el anuncio para tus clientes..." required></textarea>
 			</div>
 			<button type="submit" class="btn">Guardar Mensaje</button>
 			<div class="error-message" id="mensaje-error"></div>
 			<div class="success-message" id="mensaje-success" style="display:none;"></div>
 		</form>
-		<hr>
+		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
 		<!-- GESTIÓN DE MARCAS -->
-		<div class="form-title">Gestionar Marcas</div>
+		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Gestionar Marcas</div>
 		<form id="formulario-marca">
 			<div class="input-group">
 				<label for="marca-nombre">Nombre de la marca</label>
-				<input type="text" id="marca-nombre" required>
+				<input type="text" id="marca-nombre" placeholder="Ej. Difeel" required>
 			</div>
 			<div class="input-group">
-				<label for="marca-imagen">Imagen (opcional)</label>
-				<input type="file" id="marca-imagen" accept="image/*">
+				<label for="marca-imagen">Imagen de Marca (Opcional)</label>
+				<input type="file" id="marca-imagen" accept="image/*" style="border:none; background:transparent; padding:5px 0;">
 			</div>
 			<button type="submit" class="btn">Agregar Marca</button>
 			<div class="error-message" id="marca-error"></div>
 		</form>
-		<!-- Contenedor para borrar marcas -->
 		<div id="lista-marcas-admin" style="margin-top: 15px;"></div>
-		<hr>
+		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
 		<!-- GESTIÓN DE SECCIONES -->
-		<div class="form-title">Gestionar Secciones</div>
+		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Gestionar Secciones</div>
 		<form id="seccion-form">
 			<div class="input-group">
 				<label for="seccion-nombre">Nombre de la sección</label>
-				<input type="text" id="seccion-nombre" required>
+				<input type="text" id="seccion-nombre" placeholder="Ej. Cuidado Capilar" required>
 			</div>
 			<button type="submit" class="btn">Agregar Sección</button>
 			<div class="error-message" id="seccion-error"></div>
 		</form>
-		<!-- Contenedor para borrar secciones -->
 		<div id="lista-secciones-admin" style="margin-top: 15px;"></div>
-		<hr>
+		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
 		<!-- AGREGAR BANNER -->
-		<div class="form-title">Agregar Banner</div>
+		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Banner Principal</div>
 		<form id="formulario-banner">
 			<div class="input-group">
-				<label for="banner-titulo">Título</label>
-				<input type="text" id="banner-titulo" required>
+				<label for="banner-titulo">Título del Banner</label>
+				<input type="text" id="banner-titulo" placeholder="Ej. ¡Llegó el Tónico Rapunzel!" required>
 			</div>
 			<div class="input-group">
-				<label for="banner-descripcion">Descripción</label>
-				<input type="text" id="banner-descripcion">
+				<label for="banner-descripcion">Descripción Corta</label>
+				<input type="text" id="banner-descripcion" placeholder="Ej. Acelera el crecimiento de tu cabello">
 			</div>
 			<div class="input-group">
-				<label for="banner-marca">Marca</label>
-				<input type="text" id="banner-marca">
+				<label for="banner-marca">Marca Asociada</label>
+				<input type="text" id="banner-marca" placeholder="Ej. Marcas Col">
 			</div>
 			<div class="input-group">
-				<label for="banner-imagen">Imagen</label>
-				<input type="file" id="banner-imagen" accept="image/*" required>
+				<label for="banner-imagen">Imagen de Fondo (Gran tamaño)</label>
+				<input type="file" id="banner-imagen" accept="image/*" required style="border:none; background:transparent; padding:5px 0;">
 			</div>
 			<div class="input-group">
-				<label for="banner-boton-texto">Texto Botón</label>
-				<input type="text" id="banner-boton-texto">
+				<label for="banner-boton-texto">Texto del Botón</label>
+				<input type="text" id="banner-boton-texto" placeholder="Ej. COMPRAR AHORA">
 			</div>
 			<div class="input-group">
-				<label for="banner-boton-url">URL Botón</label>
-				<input type="text" id="banner-boton-url">
+				<label for="banner-boton-url">Enlace / URL del Botón</label>
+				<input type="text" id="banner-boton-url" placeholder="Ej. #catalogo-list">
 			</div>
 			<button type="submit" class="btn">Agregar Banner</button>
 			<div class="error-message" id="banner-error"></div>
 		</form>
-		<hr>
+		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
 		<!-- AGREGAR PRODUCTO -->
-		<div class="form-title">Agregar Producto</div>
+		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Producto al Catálogo</div>
 		<div class="error-message" id="product-error"></div>
 		<form id="product-form" enctype="multipart/form-data">
 			<div class="input-group">
-				<label for="product-titulo">Título</label>
-				<input type="text" id="product-titulo" name="titulo" required>
+				<label for="product-titulo">Título Comercial del Producto</label>
+				<input type="text" id="product-titulo" name="titulo" placeholder="Ej. Aceite de Castor Difeel 7.1oz" required>
 			</div>
 			<div class="input-group">
-				<label for="product-descripcion">Descripción</label>
-				<input type="text" id="product-descripcion" name="descripcion" required>
+				<label for="product-descripcion">Descripción y Beneficios</label>
+				<input type="text" id="product-descripcion" name="descripcion" placeholder="Ej. Estimula el crecimiento fuerte y sano" required>
 			</div>
 			<div class="input-group">
-				<label for="product-seccion">Sección</label>
-				<select id="product-seccion" name="seccion" required>
+				<label for="product-seccion">Asignar a Sección</label>
+				<select id="product-seccion" name="seccion" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; font-family:'Poppins',sans-serif; background:#f8fafc;">
 					<option value="">Selecciona una sección</option>
 				</select>
 			</div>
 			<div class="input-group">
-				<label for="product-marca">Marca</label>
-				<select id="product-marca" name="marca" required>
+				<label for="product-marca">Asignar a Marca</label>
+				<select id="product-marca" name="marca" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; font-family:'Poppins',sans-serif; background:#f8fafc;">
 					<option value="">Selecciona una marca</option>
 				</select>
 			</div>
 			<div class="input-group">
-				<label for="product-precio">Precio</label>
-				<input type="number" id="product-precio" name="precio" min="0" step="0.01" required>
+				<label for="product-precio">Precio de Venta ($)</label>
+				<input type="number" id="product-precio" name="precio" min="0" step="0.01" placeholder="Ej. 45000" required>
 			</div>
 			<div class="input-group">
-				<label for="product-imagen">Imagen</label>
-				<input type="file" id="product-imagen" name="imagen" accept="image/*" required>
+				<label for="product-imagen">Fotografía del Producto (Fondo claro)</label>
+				<input type="file" id="product-imagen" name="imagen" accept="image/*" required style="border:none; background:transparent; padding:5px 0;">
 			</div>
 			<button type="submit" class="btn">Guardar Producto</button>
 		</form>
 	</div>
 
-	<!-- CONTROLES ADMIN -->
-	<div class="admin-controls" id="admin-controls" style="display:none; max-width:900px; margin:18px auto; gap:12px; flex-wrap: wrap; justify-content: center;">
+	<!-- CONTROLES ADICIONALES DEL ADMINISTRADOR -->
+	<div class="admin-controls" id="admin-controls" style="display:none; max-width:900px; margin:25px auto; gap:12px; flex-wrap: wrap; justify-content: center;">
 		<button id="btn-show-products" class="btn small">Productos publicados</button>
 		<button id="btn-show-banners" class="btn small">Banners publicados</button>
 		<button id="btn-refresh-lists" class="btn small">Refrescar todo</button>
-		<button id="btn-logout" class="btn small" style="background:#c0392b;">Cerrar sesión</button>
+		<button id="btn-logout" class="btn small" style="background:#e63946;">Cerrar sesión administratora</button>
 	</div>
 
-	<!-- Listas de resultados -->
+	<!-- Listas dinámicas de edición vertical ordenada -->
 	<div id="products-list"></div>
 	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
 
