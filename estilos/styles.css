@@ -48,15 +48,11 @@ header, .catalogo-header {
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-/* Protegemos el logo principal de la tienda para que mantenga su proporción */
 header img.logo, 
 .catalogo-header img.logo {
     height: 40px !important;
     width: auto !important;
-    max-width: none !important;
     max-height: 40px !important;
-    border-radius: 0px !important;
-    box-shadow: none !important;
 }
 
 .search-bar, .catalogo-search-bar {
@@ -76,43 +72,11 @@ header img.logo,
 }
 
 /* ================================
-   CONTROL ABSOLUTO DE REDES SOCIALES (FOOTER)
-   ================================ */
-.footer-socials {
-    display: flex !important;
-    gap: 14px !important;
-    margin-top: 12px !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-}
-
-/* Bloqueo matemático definitivo: Ningún otro CSS podrá alterar el tamaño de estos iconos */
-.catalogo-footer .footer-socials img,
-.footer-footer .footer-socials img,
-.footer-col .footer-socials a img,
-.footer-socials a img,
-.footer-socials img {
-    width: 24px !important;
-    height: 24px !important;
-    max-width: 24px !important;
-    max-height: 24px !important;
-    min-width: 24px !important;
-    min-height: 24px !important;
-    display: inline-block !important;
-    object-fit: contain !important;
-    border-radius: 0px !important;
-    box-shadow: none !important;
-    border: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-/* ================================
-   CATÁLOGO PÚBLICO (GRILLA DE 4 COLUMNAS PARA PC)
+   CATÁLOGO PÚBLICO (GRILLA DE 4 COLUMNAS PC)
    ================================ */
 #catalogo-list, .catalogo-list {
     display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important; /* Fuerza las 4 columnas */
+    grid-template-columns: repeat(4, 1fr) !important;
     gap: 25px !important;
     margin: 40px auto 60px auto !important;
     width: 100% !important;
@@ -131,7 +95,7 @@ header img.logo,
     padding: 20px !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important; /* Alinea los botones al fondo */
+    justify-content: space-between !important;
     border: 1px solid #f0f0f0 !important;
     box-sizing: border-box !important;
 }
@@ -139,14 +103,12 @@ header img.logo,
 .catalogo-img {
     width: 100% !important;
     height: 210px !important;
-    object-fit: cover !important; /* Recorta la foto capilar estéticamente */
+    object-fit: cover !important;
     border-radius: 10px !important;
     margin-bottom: 14px !important;
 }
 
-.catalogo-title { font-size: 1.05rem !important; font-weight: 600; color: #222; margin-bottom: 6px; }
-.catalogo-section { color: #9390FF; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
-.catalogo-desc { color: #666; font-size: 0.88rem; margin-bottom: 12px; line-height: 1.4; }
+.catalogo-title { font-size: 1.05rem !important; font-weight: 600; color: #222; }
 .catalogo-price { color: #2d2d6d; font-weight: 700; font-size: 1.15rem; margin-bottom: 14px; }
 
 .catalogo-btn {
@@ -161,10 +123,9 @@ header img.logo,
     width: 100% !important;
     text-transform: uppercase;
 }
-.catalogo-btn:hover { background: #0074d9 !important; }
 
 /* ================================
-   ESTILOS DEL PANEL ADMIN (CONSERVADOS)
+   ESTILOS DEL PANEL ADMIN
    ================================ */
 #products-list {
     width: 100%;
@@ -173,65 +134,26 @@ header img.logo,
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 0 15px;
-    box-sizing: border-box;
 }
 .producto-item {
     display: flex;
     align-items: center;
     gap: 20px;
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     padding: 15px;
     border: 1px solid #eee;
+    border-radius: 12px;
 }
-.producto-imagen { 
-    width: 90px !important; 
-    height: 90px !important; 
-    object-fit: cover !important; 
-    border-radius: 8px !important; 
-}
-.producto-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.producto-titulo { font-size: 1.1rem; font-weight: bold; color: #2d2d6d; }
-.producto-descripcion { color: #666; font-size: 0.9rem; }
-.producto-price, .producto-precio { color: #1a1a4d; font-weight: bold; }
-
-/* Banners del Admin */
-#banners-list { display: flex; flex-direction: column; gap: 16px; align-items: center; }
-.banner-item {
-    display: flex;
-    align-items: center; gap: 16px; background: #fff;
-    border-radius: 12px; padding: 12px 14px; width: 100%; max-width: 900px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.06); box-sizing: border-box;
-}
-.banner-imagen { width: 140px !important; height: 80px !important; object-fit: cover !important; border-radius: 8px !important; }
-
-/* Formulario Login */
-.container {
-    max-width: 400px; margin: 60px auto; background: #fff; border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 32px 28px 24px 28px; box-sizing: border-box;
-}
-.form-title { font-size: 2rem; font-weight: bold; margin-bottom: 18px; color: #2d2d6d; text-align: center; }
-.input-group { margin-bottom: 18px; }
-.input-group label { display: block; margin-bottom: 6px; color: #444; }
-.input-group input { width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; }
-.btn { width: 100%; padding: 12px; background: #2d2d6d; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-sizing: border-box; }
-textarea { width: 100%; min-height: 80px; resize: vertical; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+.producto-imagen { width: 90px !important; height: 90px !important; object-fit: cover !important; }
 
 /* ================================
-   DISEÑO ADAPTABLE CELULARES (RESPONSIVE)
+   DISEÑO ADAPTABLE (MOVIL)
    ================================ */
 @media (max-width: 900px) {
     #catalogo-list, .catalogo-list {
-        grid-template-columns: repeat(2, 1fr) !important; /* 2 por fila exactos en móvil */
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 15px !important;
         padding: 0 12px !important;
-        min-height: auto !important;
     }
-    .catalogo-card { padding: 12px !important; }
     .catalogo-img { height: 145px !important; }
-    
-    .producto-item, .banner-item { flex-direction: column; align-items: flex-start; }
-    .producto-imagen, .banner-imagen { width: 100% !important; height: auto !important; max-height: 200px !important; }
 }
