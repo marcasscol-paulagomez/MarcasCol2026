@@ -366,7 +366,7 @@ if (formMensaje) {
         const res = await fetch(`${BASE_URL}/mensajes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            style: 'credentials: "include"',
+            credentials: 'include',
             body: JSON.stringify({ texto })
         });
         if (res.ok) {
