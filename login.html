@@ -4,15 +4,12 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Login y Gestión - Marcas Col</title>
-	<!-- Asegura la ruta de estilos limpia de tu repositorio -->
 	<link rel="stylesheet" href="estilos/styles.css">
 </head>
 <body>
 
-	<!-- MENSAJE SUPERIOR INTEGRADO AL ESTILO DE LA HOME -->
 	<div class="mensaje-superior">Panel de Administración Interno</div>
 
-	<!-- LOGIN PROPIETARIOS -->
 	<div class="container" id="login-container">
 		<div class="form-title">Acceso propietarios</div>
 		<div class="error-message" id="login-error"></div>
@@ -26,10 +23,8 @@
 		<p class="form-help" style="margin-top:14px; font-size:0.85rem; color:#666; text-align:center;">Si no tienes el código, comunícate con el desarrollador de la página.</p>
 	</div>
 
-	<!-- ADMINISTRACIÓN GENERAL (PANEL DINÁMICO) -->
 	<div class="container" id="admin-dyn-container" style="margin-top:32px; display:none; max-width: 600px;">
 		
-		<!-- AGREGAR MENSAJE -->
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Añadir Mensaje</div>
 		<p class="form-help" style="font-size:0.88rem; color:#555; margin-bottom:12px;">Este mensaje se mostrará en la barra superior del catálogo.</p>
 		<form id="mensaje-form">
@@ -43,7 +38,6 @@
 		</form>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
-		<!-- GESTIÓN DE MARCAS -->
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Gestionar Marcas</div>
 		<form id="formulario-marca">
 			<div class="input-group">
@@ -60,7 +54,6 @@
 		<div id="lista-marcas-admin" style="margin-top: 15px;"></div>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
-		<!-- GESTIÓN DE SECCIONES -->
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Gestionar Secciones</div>
 		<form id="seccion-form">
 			<div class="input-group">
@@ -73,7 +66,6 @@
 		<div id="lista-secciones-admin" style="margin-top: 15px;"></div>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
-		<!-- AGREGAR BANNER -->
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Banner Principal</div>
 		<form id="formulario-banner">
 			<div class="input-group">
@@ -94,12 +86,10 @@
 			</div>
 			<div class="input-group">
 				<label for="banner-boton-texto">Texto del Botón</label>
-				<!-- CORRECCIÓN DE ID: Ajustado para que script.js lo reconozca de inmediato -->
 				<input type="text" id="banner-boton-texto" placeholder="Ej. COMPRAR AHORA">
 			</div>
 			<div class="input-group">
 				<label for="banner-boton-url">Enlace / URL del Botón</label>
-				<!-- CORRECCIÓN DE ID: Sincronizado correctamente con tu archivo de procesos -->
 				<input type="text" id="banner-boton-url" placeholder="Ej. #catalogo-list">
 			</div>
 			<button type="submit" class="btn">Agregar Banner</button>
@@ -107,7 +97,6 @@
 		</form>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
-		<!-- AGREGAR PRODUCTO -->
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Producto al Catálogo</div>
 		<div class="error-message" id="product-error"></div>
 		<form id="product-form" enctype="multipart/form-data">
@@ -143,7 +132,6 @@
 		</form>
 	</div>
 
-	<!-- CONTROLES ADICIONALES DEL ADMINISTRADOR -->
 	<div class="admin-controls" id="admin-controls" style="display:none; max-width:900px; margin:25px auto; gap:12px; flex-wrap: wrap; justify-content: center;">
 		<button id="btn-show-products" class="btn small">Productos publicados</button>
 		<button id="btn-show-banners" class="btn small">Banners publicados</button>
@@ -151,23 +139,12 @@
 		<button id="btn-logout" class="btn small" style="background:#e63946;">Cerrar sesión administradora</button>
 	</div>
 
-	<!-- Listas dinámicas de edición vertical ordenada -->
 	<div id="products-list"></div>
 	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
 
-	<!-- CONEXIÓN PUENTE CON TU BACKEND EN RAILWAY -->
 	<script>
-		// Reemplaza de forma estricta este enlace con la URL de tu backend real en Railway
+		// Sincronización base para el archivo script.js
 		window.API_BASE = "https://tu-servidor-en-railway.railway.app";
-		
-		// Forzamos a que el sistema reconozca las rutas globales dinámicamente antes de cargar script.js
-		const originalFetch = window.fetch;
-		window.fetch = function(url, options) {
-			if (typeof url === 'string' && url.startsWith('/')) {
-				url = window.API_BASE + url;
-			}
-			return originalFetch(url, options);
-		};
 	</script>
 	<script src="script.js"></script>
 </body>
