@@ -111,13 +111,15 @@ function setupAdminControls() {
     if (btnProducts) {
         btnProducts.addEventListener('click', async () => {
             await fetchAndRenderProducts();
-            document.getElementById('products-list').scrollIntoView({ behavior: 'smooth' });
+            const pList = document.getElementById('products-list');
+            if (pList) pList.scrollIntoView({ behavior: 'smooth' });
         });
     }
     if (btnBanners) {
         btnBanners.addEventListener('click', async () => {
             await fetchAndRenderBanners();
-            document.getElementById('banners-list').scrollIntoView({ behavior: 'smooth' });
+            const bList = document.getElementById('banners-list');
+            if (bList) bList.scrollIntoView({ behavior: 'smooth' });
         });
     }
     if (btnRefresh) {
@@ -144,121 +146,139 @@ function setupAdminControls() {
 
 // ================= Formularios (POST) =================
 
-document.getElementById('formulario-marca').onsubmit = async function(e) {
-    e.preventDefault();
-    const nombre = document.getElementById('marca-nombre').value.trim();
-    const imagenInput = document.getElementById('marca-imagen');
-    const error = document.getElementById('marca-error');
-    error.textContent = '';
-    if (!nombre) return error.textContent = 'Nombre requerido';
+const formMarca = document.getElementById('formulario-marca');
+if (formMarca) {
+    formMarca.onsubmit = async function(e) {
+        e.preventDefault();
+        const nombre = document.getElementById('marca-nombre').value.trim();
+        const imagenInput = document.getElementById('marca-imagen');
+        const error = document.getElementById('marca-error');
+        if (error) error.textContent = '';
+        if (!nombre) return error ? error.textContent = 'Nombre requerido' : false;
 
-    const formData = new FormData();
-    formData.append('nombre', nombre);
-    if (imagenInput.files[0]) formData.append('imagen', imagenInput.files[0]);
+        const formData = new FormData();
+        formData.append('nombre', nombre);
+        if (imagenInput && imagenInput.files[0]) formData.append('imagen', imagenInput.files[0]);
 
-    const res = await fetch(`${BASE_URL}/marcas`, { method: 'POST', body: formData });
-    const data = await res.json();
-    if (!res.ok) error.textContent = data.error || 'Error';
-    else {
-        error.textContent = '¡Marca agregada!';
-        await poblarSelectMarcas();
-        await listarYBorrarMarcas();
-        document.getElementById('formulario-marca').reset();
-        setTimeout(() => { error.textContent = ''; }, 1200);
-    }
-};
+        const res = await fetch(`${BASE_URL}/marcas`, { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok) {
+            if (error) error.textContent = data.error || 'Error';
+        } else {
+            if (error) error.textContent = '¡Marca agregada!';
+            await poblarSelectMarcas();
+            await listarYBorrarMarcas();
+            formMarca.reset();
+            setTimeout(() => { if (error) error.textContent = ''; }, 1200);
+        }
+    };
+}
 
-document.getElementById('seccion-form').onsubmit = async function(e) {
-    e.preventDefault();
-    const nombre = document.getElementById('seccion-nombre').value.trim();
-    const error = document.getElementById('seccion-error');
-    error.textContent = '';
-    if (!nombre) return error.textContent = 'Nombre requerido';
+const formSeccion = document.getElementById('seccion-form');
+if (formSeccion) {
+    formSeccion.onsubmit = async function(e) {
+        e.preventDefault();
+        const nombre = document.getElementById('seccion-nombre').value.trim();
+        const error = document.getElementById('seccion-error');
+        if (error) error.textContent = '';
+        if (!nombre) return error ? error.textContent = 'Nombre requerido' : false;
 
-    const res = await fetch(`${BASE_URL}/secciones`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre })
-    });
+        const res = await fetch(`${BASE_URL}/secciones`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre })
+        });
 
-    const data = await res.json();
-    if (!res.ok) error.textContent = data.error || 'Error';
-    else {
-        error.textContent = '¡Sección agregada!';
-        await poblarSelectSecciones();
-        await listarYBorrarSecciones();
-        document.getElementById('seccion-nombre').value = '';
-        setTimeout(() => { error.textContent = ''; }, 1200);
-    }
-};
+        const data = await res.json();
+        if (!res.ok) {
+            if (error) error.textContent = data.error || 'Error';
+        } else {
+            if (error) error.textContent = '¡Sección agregada!';
+            await poblarSelectSecciones();
+            await listarYBorrarSecciones();
+            document.getElementById('seccion-nombre').value = '';
+            setTimeout(() => { if (error) error.textContent = ''; }, 1200);
+        }
+    };
+}
 
-document.getElementById('formulario-banner').onsubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('titulo', document.getElementById('banner-titulo').value.trim());
-    formData.append('descripcion', document.getElementById('banner-descripcion').value.trim());
-    formData.append('marca', document.getElementById('banner-marca').value.trim());
-    formData.append('imagen', document.getElementById('banner-imagen').files[0]);
-    formData.append('boton_texto', document.getElementById('banner-boton-texto').value.trim());
-    formData.append('boton_url', document.getElementById('banner-boton-url').value.trim());
+const formBanner = document.getElementById('formulario-banner');
+if (formBanner) {
+    formBanner.onsubmit = async function(e) {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('titulo', document.getElementById('banner-titulo').value.trim());
+        formData.append('descripcion', document.getElementById('banner-descripcion').value.trim());
+        formData.append('marca', document.getElementById('banner-marca').value.trim());
+        formData.append('imagen', document.getElementById('banner-imagen').files[0]);
+        formData.append('boton_texto', document.getElementById('banner-boton-texto').value.trim());
+        formData.append('boton_url', document.getElementById('banner-boton-url').value.trim());
 
-    const res = await fetch(`${BASE_URL}/slides`, { method: 'POST', body: formData });
-    if (res.ok) {
-        alert('¡Banner agregado!');
-        document.getElementById('formulario-banner').reset();
-        await fetchAndRenderBanners();
-    } else {
-        alert('Error al agregar banner');
-    }
-};
+        const res = await fetch(`${BASE_URL}/slides`, { method: 'POST', body: formData });
+        if (res.ok) {
+            alert('¡Banner agregado!');
+            formBanner.reset();
+            await fetchAndRenderBanners();
+        } else {
+            alert('Error al agregar banner');
+        }
+    };
+}
 
 // ================= Login Propietario =================
 
-document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const code = document.getElementById('owner-code').value;
-    const res = await fetch(`${BASE_URL}/owner-login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
-        credentials: 'include'
+const formLogin = document.getElementById('owner-login-form');
+if (formLogin) {
+    formLogin.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const code = document.getElementById('owner-code').value;
+        const res = await fetch(`${BASE_URL}/owner-login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code }),
+            credentials: 'include'
+        });
+
+        let data = {};
+        try { data = await res.json(); } catch (err) { }
+
+        const errDiv = document.getElementById('login-error');
+        if (res.ok) {
+            if (errDiv) errDiv.textContent = '';
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('admin-dyn-container').style.display = 'block';
+            setupAdminControls();
+            await fetchAndRenderProducts();
+        } else {
+            if (errDiv) errDiv.textContent = data.error || 'Código incorrecto';
+        }
     });
-
-    let data = {};
-    try { data = await res.json(); } catch (err) { }
-
-    if (res.ok) {
-        document.getElementById('login-error').textContent = '';
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('admin-dyn-container').style.display = 'block';
-        setupAdminControls();
-        await fetchAndRenderProducts();
-    } else {
-        document.getElementById('login-error').textContent = data.error || 'Código incorrecto';
-    }
-});
+}
 
 // ================= Guardar producto =================
 
-document.getElementById('product-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('titulo', document.getElementById('product-titulo').value);
-    formData.append('descripcion', document.getElementById('product-descripcion').value);
-    formData.append('seccion', document.getElementById('product-seccion').value);
-    formData.append('marca', document.getElementById('product-marca').value);
-    formData.append('precio', document.getElementById('product-precio').value);
-    formData.append('imagen', document.getElementById('product-imagen').files[0]);
+const formProduct = document.getElementById('product-form');
+if (formProduct) {
+    formProduct.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('titulo', document.getElementById('product-titulo').value);
+        formData.append('descripcion', document.getElementById('product-descripcion').value);
+        formData.append('seccion', document.getElementById('product-seccion').value);
+        formData.append('marca', document.getElementById('product-marca').value);
+        formData.append('precio', document.getElementById('product-precio').value);
+        formData.append('imagen', document.getElementById('product-imagen').files[0]);
 
-    const res = await fetch(`${BASE_URL}/product`, { method: 'POST', body: formData, credentials: 'include' });
-    if (res.ok) {
-        alert('Producto guardado exitosamente');
-        document.getElementById('product-form').reset();
-        await fetchAndRenderProducts();
-    } else {
-        alert('Error al guardar producto');
-    }
-});
+        const res = await fetch(`${BASE_URL}/product`, { method: 'POST', body: formData, credentials: 'include' });
+        if (res.ok) {
+            alert('Producto guardado exitosamente');
+            formProduct.reset();
+            await fetchAndRenderProducts();
+        } else {
+            alert('Error al guardar producto');
+        }
+    });
+}
 
 // ================= Renderizado de Listas (Productos y Banners) =================
 
@@ -318,7 +338,7 @@ async function eliminarBanner(id) {
     if (res.ok) { alert("Banner eliminado"); await fetchAndRenderBanners(); }
 }
 
-// ================= Carga Inicial =================
+// ================= Carga Inicial Protegida =================
 
 window.addEventListener('DOMContentLoaded', () => {
     poblarSelectMarcas();
@@ -330,7 +350,7 @@ async function cargarMensajeActivo() {
     try {
         const res = await fetch(`${BASE_URL}/mensaje/ultimo`);
         const data = await res.json();
-        const msgDiv = document.getElementById('mensaje-global');
+        const msgDiv = document.getElementById('mensaje-global') || document.getElementById('mensaje-superior');
         if (data.mensaje && msgDiv) {
             msgDiv.textContent = data.mensaje;
             msgDiv.style.display = "block";
@@ -338,17 +358,21 @@ async function cargarMensajeActivo() {
     } catch (err) { console.error("No se pudo cargar el mensaje:", err); }
 }
 
-document.getElementById('mensaje-form').onsubmit = async (e) => {
-    e.preventDefault();
-    const texto = document.getElementById('mensaje-texto').value.trim();
-    const res = await fetch(`${BASE_URL}/mensajes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ texto })
-    });
-    if (res.ok) {
-        alert('Mensaje guardado');
-        document.getElementById('mensaje-form').reset();
-        cargarMensajeActivo();
-    }
-};
+const formMensaje = document.getElementById('mensaje-form');
+if (formMensaje) {
+    formMensaje.onsubmit = async (e) => {
+        e.preventDefault();
+        const texto = document.getElementById('mensaje-texto').value.trim();
+        const res = await fetch(`${BASE_URL}/mensajes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            style: 'credentials: "include"',
+            body: JSON.stringify({ texto })
+        });
+        if (res.ok) {
+            alert('Mensaje guardado');
+            formMensaje.reset();
+            cargarMensajeActivo();
+        }
+    };
+}
