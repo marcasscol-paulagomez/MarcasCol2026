@@ -47,7 +47,7 @@
 			</div>
 			<button type="submit" class="btn">Agregar Marca</button>
 		</form>
-		<div id="lista-marcas-admin"></div>
+		<div id="lista-marcas-admin" style="margin-top: 15px;"></div>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Gestionar Secciones</div>
@@ -58,7 +58,7 @@
 			</div>
 			<button type="submit" class="btn">Agregar Sección</button>
 		</form>
-		<div id="lista-secciones-admin"></div>
+		<div id="lista-secciones-admin" style="margin-top: 15px;"></div>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Producto al Catálogo</div>
@@ -91,12 +91,17 @@
 		</form>
 	</div>
 
-	<div class="admin-controls" id="admin-controls" style="display:none; text-align:center; margin-bottom: 50px;">
+	<div class="admin-controls" id="admin-controls" style="display:none; text-align:center; margin-bottom: 50px; max-width:900px; margin:25px auto; gap:12px; justify-content: center;">
+		<button id="btn-show-products" class="btn small">Productos publicados</button>
+		<button id="btn-refresh-lists" class="btn small">Refrescar todo</button>
 		<button id="btn-logout" class="btn small" style="background:#e63946;">Cerrar sesión</button>
 	</div>
 
+	<div id="products-list"></div>
+	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
+
 	<script>
-		// URL PERFECTAMENTE LIMPIA DE RAILWAY (Sin el punto final)
+		// URL Unificada para la API
 		window.API_BASE = "https://marcascol-backend-production.up.railway.app";
 
 		document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
@@ -106,11 +111,11 @@
 			if(errorDiv) errorDiv.textContent = 'Conectando...';
 
 			try {
+				// Eliminamos restrictor de credenciales rígidas para evitar bloqueos CORS
 				const res = await fetch(`${window.API_BASE}/owner-login`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ code }),
-					credentials: 'include'
+					body: JSON.stringify({ code })
 				});
 
 				const data = await res.json();
@@ -118,21 +123,23 @@
 				if (res.ok) {
 					document.getElementById('login-container').style.display = 'none';
 					document.getElementById('admin-dyn-container').style.display = 'block';
-					document.getElementById('admin-controls').style.display = 'block';
+					document.getElementById('admin-controls').style.display = 'flex';
 					
-					// Ejecuta la carga de datos del script.js si ya cargó
+					// Disparamos la carga inicial de datos desde script.js de forma asíncrona segura
 					if (typeof setupAdminControls === 'function') {
 						setupAdminControls();
 					} else {
-						// Si el script externo no ha cargado, intentamos llamar las funciones base
 						if(typeof poblarSelectMarcas === 'function') poblarSelectMarcas();
 						if(typeof poblarSelectSecciones === 'function') poblarSelectSecciones();
+						if(typeof listarYBorrarSecciones === 'function') listarYBorrarSecciones();
+						if(typeof listarYBorrarMarcas === 'function') listarYBorrarMarcas();
 					}
 				} else {
 					errorDiv.textContent = data.error || 'Código incorrecto';
 				}
 			} catch(err) {
-				errorDiv.textContent = 'Error de conexión. Verifica que Railway esté activo.';
+				errorDiv.textContent = 'Error de conexión con el backend de Railway.';
+				console.error(err);
 			}
 		});
 	</script>
