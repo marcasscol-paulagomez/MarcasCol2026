@@ -4,7 +4,6 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Login y Gestión - Marcas Col</title>
-	<!-- Asegura la ruta de estilos limpia de tu repositorio -->
 	<link rel="stylesheet" href="estilos/styles.css">
 </head>
 <body>
@@ -12,21 +11,21 @@
 	<!-- MENSAJE SUPERIOR INTEGRADO AL ESTILO DE LA HOME -->
 	<div class="mensaje-superior" id="mensaje-superior">Panel de Administración Interno</div>
 
-	<!-- LOGIN PROPIETARIOS -->
-	<div class="container" id="login-container">
+	<!-- LOGIN PROPIETARIOS (VISIBLE POR DEFECTO) -->
+	<div class="container" id="login-container" style="display: block; margin-top: 80px;">
 		<div class="form-title">Acceso propietarios</div>
-		<div class="error-message" id="login-error"></div>
+		<div class="error-message" id="login-error" style="color: #e74c3c; text-align: center; margin-bottom: 10px; font-weight: 600;"></div>
 		<form id="owner-login-form">
 			<div class="input-group">
 				<label for="owner-code">Código de acceso</label>
-				<input type="password" id="owner-code" name="code" placeholder="Ingresa tu código de seguridad" required>
+				<input type="password" id="owner-code" name="code" placeholder="Ingresa tu código de seguridad" required style="width:100%; padding:12px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc; font-family:'Poppins',sans-serif;">
 			</div>
-			<button type="submit" class="btn">Entrar</button>
+			<button type="submit" class="btn" style="width: 100%; margin-top: 15px; padding: 12px; border-radius: 8px; font-weight: 600; text-transform: uppercase;">Entrar</button>
 		</form>
 		<p class="form-help" style="margin-top:14px; font-size:0.85rem; color:#666; text-align:center;">Si no tienes el código, comunícate con el desarrollador de la página.</p>
 	</div>
 
-	<!-- ADMINISTRACIÓN GENERAL (PANEL DINÁMICO) -->
+	<!-- ADMINISTRACIÓN GENERAL (PANEL DINÁMICO - OCULTO HASTA LOGEARSE) -->
 	<div class="container" id="admin-dyn-container" style="margin-top:32px; display:none; max-width: 600px;">
 		
 		<!-- AGREGAR MENSAJE -->
@@ -35,7 +34,7 @@
 		<form id="mensaje-form">
 			<div class="input-group">
 				<label for="mensaje-texto">Mensaje Informativo</label>
-				<textarea id="mensaje-texto" rows="3" placeholder="Escribe el anuncio para tus clientes..." required></textarea>
+				<textarea id="mensaje-texto" rows="3" placeholder="Escribe el anuncio para tus clientes..." required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; font-family:'Poppins',sans-serif; background:#f8fafc;"></textarea>
 			</div>
 			<button type="submit" class="btn">Guardar Mensaje</button>
 			<div class="error-message" id="mensaje-error"></div>
@@ -48,7 +47,7 @@
 		<form id="formulario-marca">
 			<div class="input-group">
 				<label for="marca-nombre">Nombre de la marca</label>
-				<input type="text" id="marca-nombre" placeholder="Ej. Difeel" required>
+				<input type="text" id="marca-nombre" placeholder="Ej. Difeel" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="marca-imagen">Imagen de Marca (Opcional)</label>
@@ -65,7 +64,7 @@
 		<form id="seccion-form">
 			<div class="input-group">
 				<label for="seccion-nombre">Nombre de la sección</label>
-				<input type="text" id="seccion-nombre" placeholder="Ej. Productos Destacados" required>
+				<input type="text" id="seccion-nombre" placeholder="Ej. Productos Destacados" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<button type="submit" class="btn">Agregar Sección</button>
 			<div class="error-message" id="seccion-error"></div>
@@ -78,15 +77,15 @@
 		<form id="formulario-banner">
 			<div class="input-group">
 				<label for="banner-titulo">Título del Banner</label>
-				<input type="text" id="banner-titulo" placeholder="Ej. ¡Llegó el Tónico Rapunzel!" required>
+				<input type="text" id="banner-titulo" placeholder="Ej. ¡Llegó el Tónico Rapunzel!" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="banner-descripcion">Descripción Corta</label>
-				<input type="text" id="banner-descripcion" placeholder="Ej. Acelera el crecimiento de tu cabello">
+				<input type="text" id="banner-descripcion" placeholder="Ej. Acelera el crecimiento de tu cabello" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="banner-marca">Marca Asociada</label>
-				<input type="text" id="banner-marca" placeholder="Ej. Marcas Col">
+				<input type="text" id="banner-marca" placeholder="Ej. Marcas Col" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="banner-imagen">Imagen de Fondo (Gran tamaño)</label>
@@ -94,11 +93,11 @@
 			</div>
 			<div class="input-group">
 				<label for="banner-boton-texto">Texto del Botón</label>
-				<input type="text" id="banner-boton-texto" placeholder="Ej. COMPRAR AHORA">
+				<input type="text" id="banner-boton-texto" placeholder="Ej. COMPRAR AHORA" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="banner-boton-url">Enlace / URL del Botón</label>
-				<input type="text" id="banner-boton-url" placeholder="Ej. #catalogo-list">
+				<input type="text" id="banner-boton-url" placeholder="Ej. #catalogo-list" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<button type="submit" class="btn">Agregar Banner</button>
 			<div class="error-message" id="banner-error"></div>
@@ -111,11 +110,11 @@
 		<form id="product-form" enctype="multipart/form-data">
 			<div class="input-group">
 				<label for="product-titulo">Título Comercial del Producto</label>
-				<input type="text" id="product-titulo" name="titulo" placeholder="Ej. Aceite de Castor Difeel 7.1oz" required>
+				<input type="text" id="product-titulo" name="titulo" placeholder="Ej. Aceite de Castor Difeel 7.1oz" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="product-descripcion">Descripción y Beneficios</label>
-				<input type="text" id="product-descripcion" name="descripcion" placeholder="Ej. Estimula el crecimiento fuerte y sano" required>
+				<input type="text" id="product-descripcion" name="descripcion" placeholder="Ej. Estimula el crecimiento fuerte y sano" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="product-seccion">Asignar a Sección</label>
@@ -131,7 +130,7 @@
 			</div>
 			<div class="input-group">
 				<label for="product-precio">Precio de Venta ($)</label>
-				<input type="number" id="product-precio" name="precio" min="0" step="0.01" placeholder="Ej. 45000" required>
+				<input type="number" id="product-precio" name="precio" min="0" step="0.01" placeholder="Ej. 45000" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="product-imagen">Fotografía del Producto (Fondo claro)</label>
@@ -153,19 +152,47 @@
 	<div id="products-list"></div>
 	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
 
-	<!-- INTEGRACIÓN INYECTADA DE CONEXIÓN SEGURO RAILWAY -->
+	<!-- CONTROL AUTÓNOMO INYECTADO PARA DETENER CONGELAMIENTOS -->
 	<script>
-		// Cambia estrictamente esta URL con la de tu servidor real de Railway para que guarde tus cambios
-		window.API_BASE = "https://tu-servidor-en-railway.railway.app";
+		// Dirección base unificada del backend en Railway
+		window.API_BASE = "https://marcascol-backend-production.up.railway.app"; 
 
-		// Escudo protector: Genera un elemento simulado en memoria para que script.js no rompa la página al buscar la Home
-		if (!document.getElementById('mensaje-global')) {
-			const falsoDiv = document.createElement('div');
-			falsoDiv.id = 'mensaje-global';
-			falsoDiv.style.display = 'none';
-			document.body.appendChild(falsoDiv);
-		}
+		// LÓGICA DIRECTA DE LOGIN (Sin depender de archivos externos para renderizar la vista)
+		document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
+			e.preventDefault();
+			const code = document.getElementById('owner-code').value;
+			const errorDiv = document.getElementById('login-error');
+			if(errorDiv) errorDiv.textContent = '';
+
+			try {
+				const res = await fetch(`${window.API_BASE}/owner-login`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ code }),
+					credentials: 'include'
+				});
+
+				let data = {};
+				try { data = await res.json(); } catch(err) {}
+
+				if (res.ok) {
+					document.getElementById('login-container').style.display = 'none';
+					document.getElementById('admin-dyn-container').style.display = 'block';
+					
+					// Una vez adentro, cargamos de forma segura el script de control secundario
+					if (typeof setupAdminControls === 'function') {
+						setupAdminControls();
+					}
+				} else {
+					if(errorDiv) errorDiv.textContent = data.error || 'Código de seguridad incorrecto';
+				}
+			} catch(err) {
+				if(errorDiv) errorDiv.textContent = 'Error de conexión con el servidor Railway';
+				console.error(err);
+			}
+		});
 	</script>
+	<!-- El script global se carga al final y ya no interrumpe el renderizado del formulario visual -->
 	<script src="script.js"></script>
 </body>
 </html>
