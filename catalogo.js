@@ -1,7 +1,12 @@
+// ==========================================================
+// CONFIGURACIÓN DE CONEXIÓN DINÁMICA CON EL SERVIDOR RAILWAY
+// ==========================================================
+const BASE_URL = window.API_BASE || "";
+
 // ================== Mostrar mensaje superior ==================
 async function cargarMensajeCatalogo() {
     try {
-        const res = await fetch('/mensaje/ultimo');
+        const res = await fetch(`${BASE_URL}/mensaje/ultimo`);
         const data = await res.json();
         const msgDiv = document.getElementById('mensaje-superior');
         if (msgDiv) {
@@ -9,7 +14,7 @@ async function cargarMensajeCatalogo() {
                 msgDiv.textContent = data.mensaje;
                 msgDiv.style.display = "block";
             } else {
-                msgDiv.style.display = "none"; // Ocultar si no hay mensaje activo
+                msgDiv.style.display = "none";
             }
         }
     } catch (err) {
@@ -72,9 +77,7 @@ function inicializarSlider() {
 
     dots.forEach((d, i) => d.onclick = () => { showSlide(i); auto(); });
 
-    window.addEventListener("resize", () => {
-        ajustarAnchos();
-    });
+    window.addEventListener("resize", ajustarAnchos);
 
     slides = Array.from(slider.querySelectorAll(".slider-slide"));
     ajustarAnchos();
@@ -83,83 +86,29 @@ function inicializarSlider() {
 }
 
 // ============================
-// === FETCH SECCIONES ========
+// === FETCH SECCIONES Y DATOS VIA API_BASE ========
 // ============================
 async function fetchSecciones() {
-    const res = await fetch("/secciones");
+    const res = await fetch(`${BASE_URL}/secciones`);
     if (!res.ok) return [];
     return await res.json();
 }
 
-// ===========================
-// === FETCH SLIDES ==========
-// ===========================
 async function fetchSlides() {
-    const res = await fetch("/slides");
+    const res = await fetch(`${BASE_URL}/slides`);
     if (!res.ok) return [];
     return await res.json();
 }
 
-function renderSlidesDyn(slides) {
-    let slider = document.getElementById("catalogo-slider");
-    if (!slider) return;
-
-    slider.innerHTML = `
-        <button class="slider-arrow slider-arrow-left" aria-label="Anterior">&#10094;</button>
-        <div class="slider-track"></div>
-        <button class="slider-arrow slider-arrow-right" aria-label="Siguiente">&#10095;</button>
-        <div class="slider-dots"></div>
-    `;
-
-    const track = slider.querySelector(".slider-track");
-    const dots = slider.querySelector(".slider-dots");
-    if (!track || !dots) return;
-
-    track.innerHTML = slides.map((slide, i) => {
-        let imagen = slide.imagen?.trim() || "/uploads/placeholder.jpg";
-
-        const titulo = slide.titulo?.trim() || "Sin título";
-        const descripcion = slide.descripcion?.trim() || "Sin descripción";
-        const marca = slide.marca?.trim() || "";
-
-        return `
-            <div class="slider-slide${i === 0 ? " active" : ""}">
-                <div class="slider-bg" style="background-image:url('${imagen}')"></div>
-                <div class="slider-content">
-                    <h2>${titulo}</h2>
-                    <p>${descripcion}</p>
-                    ${marca ? `<div class="slider-brand">${marca}</div>` : ""}
-                    ${slide.boton_texto
-                        ? `<button class="slider-btn" onclick="window.open('${slide.boton_url || "#"}','_blank')">${slide.boton_texto}</button>`
-                        : ""}
-                </div>
-                <img src="${imagen}" alt="${marca || titulo}" class="slider-img">
-            </div>
-        `;
-    }).join("");
-
-    dots.innerHTML = slides.map((_, i) =>
-        `<span class="dot${i === 0 ? " active" : ""}"></span>`
-    ).join("");
-
-    inicializarSlider();
-}
-
-// ===========================
-// === FETCH MARCAS ==========
-// ===========================
 async function fetchMarcas() {
-    const res = await fetch("/marcas");
+    const res = await fetch(`${BASE_URL}/marcas`);
     if (!res.ok) return [];
     return await res.json();
 }
 
-// ==============================
-// === PRODUCTOS DINÁMICOS ======
-// ==============================
 async function fetchProductos() {
     try {
-        const res = await fetch("/products");
+        const res = await fetch(`${BASE_URL}/products`);
         if (!res.ok) return [];
         return await res.json();
     } catch (err) {
@@ -168,7 +117,6 @@ async function fetchProductos() {
     }
 }
 
-// Normalizador para acentos, mayúsculas y espacios
 function normalizarTexto(texto) {
     return (texto || "")
         .toLowerCase()
@@ -177,12 +125,19 @@ function normalizarTexto(texto) {
         .trim();
 }
 
-// RENDERIZADO AJUSTADO CON MÁXIMA SIMETRÍA VISUAL
+// ==========================================================
+// RENDERIZADO AJUSTADO CON FILTRO AUTOMÁTICO DE DESTACADOS
+// ==========================================================
 function renderProductos(productos, seccion = null, filtro = "", marca = null) {
     const list = document.getElementById("catalogo-list");
     if (!list) return;
 
     let filtrados = productos;
+
+    // Si la página carga limpia (sin clicks), forzamos a mostrar "Productos Destacados"
+    if (!seccion && !filtro && !marca) {
+        seccion = "Productos Destacados";
+    }
 
     if (seccion) {
         filtrados = filtrados.filter(p =>
@@ -206,31 +161,21 @@ function renderProductos(productos, seccion = null, filtro = "", marca = null) {
     }
 
     if (!filtrados.length) {
-        list.innerHTML = `<p style="text-align:center;color:#888;width:100%;grid-column: 1 / -1;padding:40px 0;">No hay productos para mostrar en esta categoría.</p>`;
+        list.innerHTML = `<p style="text-align:center;color:#888;width:100%;grid-column: 1 / -1;padding:40px 0;font-family:'Poppins',sans-serif;">No hay productos cargados en esta categoría actualmente.</p>`;
         return;
     }
 
-    // Estructura optimizada para que el CSS (flex/grid) mantenga la simetría horizontal
     list.innerHTML = filtrados.map(p => `
         <div class="catalogo-card">
             <img src="${p.imagen}" alt="${p.titulo}" class="catalogo-img">
-            
             <div>
                 <div class="catalogo-section">${p.marca}</div>
                 <div class="catalogo-title">${p.titulo}</div>
                 <div class="catalogo-desc">${p.descripcion ? p.descripcion.substring(0, 85) + '...' : ''}</div>
                 <div class="catalogo-price">$${parseFloat(p.precio).toLocaleString('es-CO')}</div>
             </div>
-            
             <button class="catalogo-btn"
-                onclick="comprarProducto(
-                    '${p.titulo}', 
-                    '${p.precio}', 
-                    '${p.descripcion || ""}', 
-                    '${p.seccion}', 
-                    '${p.marca}', 
-                    '${p.imagen}'
-                )">
+                onclick="comprarProducto('${p.titulo}', '${p.precio}', '${p.descripcion || ""}', '${p.seccion}', '${p.marca}', '${p.imagen}')">
                 Agregar al carrito
             </button>                    
         </div>
@@ -247,21 +192,17 @@ async function renderNavMenu() {
     const nav = document.getElementById("catalogo-secciones");
     if (!nav) return;
 
-    // Menú Secciones global
     let html = `
       <li class="has-submenu">
         <span aria-expanded="false">Secciones</span>
         <ul class="submenu">
           ${secciones.map(s => `
-            <li>
-              <span class="seccion-item" data-seccion="${s}">${s}</span>
-            </li>
+            <li><span class="seccion-item" data-seccion="${s}">${s}</span></li>
           `).join("")}
         </ul>
       </li>
     `;
 
-    // Menú Marcas con sub-secciones
     html += `
       <li class="has-submenu">
         <span aria-expanded="false">Marcas</span>
@@ -278,18 +219,34 @@ async function renderNavMenu() {
 
     nav.innerHTML = html;
 
-    // Renderizar sección visual de marcas destacadas tipo burbuja en la Home
     const marcasHome = document.getElementById("catalogo-marcas");
     if (marcasHome && marcas.length > 0) {
         marcasHome.innerHTML = marcas.map(m => `
             <div class="marca-item-burbuja" data-marca="${m.nombre}" style="cursor:pointer; text-align:center;">
-                <img src="${m.imagen || '/imagenes/logo.jpg'}" alt="${m.nombre}" style="width:80px; height:80px; object-fit:cover; border-radius:50%; border:2px solid #eee; margin-bottom:8px; box-shadow:0 4px 10px rgba(0,0,0,0.02);">
+                <img src="${m.imagen || 'imagenes/logo.jpg'}" alt="${m.nombre}" style="width:80px; height:80px; object-fit:cover; border-radius:50%; border:2px solid #eee; margin-bottom:8px;">
                 <div style="font-size:0.85rem; font-weight:600; color:#2d2d6d;">${m.nombre}</div>
             </div>
         `).join("");
     }
 }
 
-// ==========================
-// === VARIABLES GLOBALES ===
-// =================
+// ==========================================================
+// PROCESO DE INICIALIZACIÓN DE LA HOME AL CARGAR LA PÁGINA
+// ==========================================================
+let productosGlobales = [];
+
+async function inicializarTienda() {
+    await cargarMensajeCatalogo();
+    await renderNavMenu();
+    
+    // Traemos los banners dinámicos
+    const slides = await fetchSlides();
+    if (slides.length > 0) renderSlidesDyn(slides);
+
+    // Traemos todos los productos desde Railway y los cargamos en la Home
+    productosGlobales = await fetchProductos();
+    renderProductos(productosGlobales); // Renderizado inicial (Destacados automáticos)
+}
+
+// Escuchamos la carga completa del HTML para disparar la tienda
+window.addEventListener('DOMContentLoaded', inicializarTienda);
