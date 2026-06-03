@@ -25,6 +25,42 @@ async function cargarMensajeCatalogo() {
 // ================================
 // === SLIDER / BANNER PRINCIPAL ===
 // ================================
+function renderSlidesDyn(slidesData) {
+    const slider = document.getElementById("catalogo-slider");
+    if (!slider) return;
+
+    // Construcción de la estructura interna del slider dinámico
+    let trackHtml = '<div class="slider-track">';
+    let dotsHtml = '<div class="slider-dots">';
+
+    slidesData.forEach((slide, index) => {
+        trackHtml += `
+            <div class="slider-slide ${index === 0 ? 'active' : ''}">
+                <img src="${slide.imagen}" alt="${slide.titulo}">
+                <div class="slider-content">
+                    <span class="slider-tag">${slide.marca || 'Marcas Col'}</span>
+                    <h2>${slide.titulo}</h2>
+                    <p>${slide.descripcion || ''}</p>
+                    ${slide.boton_texto ? `<a href="${slide.boton_url || '#catalogo-list'}" class="slider-btn">${slide.boton_texto}</a>` : ''}
+                </div>
+            </div>
+        `;
+        dotsHtml += `<span class="dot ${index === 0 ? 'active' : ''}"></span>`;
+    });
+
+    trackHtml += '</div>';
+    dotsHtml += '</div>';
+
+    // Flechas de navegación
+    const arrowsHtml = `
+        <button class="slider-arrow slider-arrow-left" aria-label="Anterior">‹</button>
+        <button class="slider-arrow slider-arrow-right" aria-label="Siguiente">›</button>
+    `;
+
+    slider.innerHTML = trackHtml + arrowsHtml + dotsHtml;
+    inicializarSlider();
+}
+
 function inicializarSlider() {
     let idx = 0;
     let timer = null;
@@ -78,8 +114,6 @@ function inicializarSlider() {
     dots.forEach((d, i) => d.onclick = () => { showSlide(i); auto(); });
 
     window.addEventListener("resize", ajustarAnchos);
-
-    slides = Array.from(slider.querySelectorAll(".slider-slide"));
     ajustarAnchos();
     showSlide(0);
     auto();
@@ -194,10 +228,10 @@ async function renderNavMenu() {
 
     let html = `
       <li class="has-submenu">
-        <span aria-expanded="false">Secciones</span>
+        <span aria-expanded="false" style="cursor:pointer;">Secciones</span>
         <ul class="submenu">
           ${secciones.map(s => `
-            <li><span class="seccion-item" data-seccion="${s}">${s}</span></li>
+            <li><span class="seccion-item" data-seccion="${s}" style="cursor:pointer;">${s}</span></li>
           `).join("")}
         </ul>
       </li>
@@ -205,12 +239,11 @@ async function renderNavMenu() {
 
     html += `
       <li class="has-submenu">
-        <span aria-expanded="false">Marcas</span>
+        <span aria-expanded="false" style="cursor:pointer;">Marcas</span>
         <ul class="submenu">
           ${marcas.map(m => `
-            <li class="has-submenu marca-con-submenu" data-marca="${m.nombre}" data-loaded="false">
-              <span class="marca-item" data-marca="${m.nombre}" aria-expanded="false">${m.nombre}</span>
-              <ul class="submenu sub-secciones"></ul>
+            <li class="marca-con-submenu" data-marca="${m.nombre}">
+              <span class="marca-item" data-marca="${m.nombre}" style="cursor:pointer;">${m.nombre}</span>
             </li>
           `).join("")}
         </ul>
@@ -218,6 +251,23 @@ async function renderNavMenu() {
     `;
 
     nav.innerHTML = html;
+
+    // Asignación de clics a elementos del menú dinámico
+    document.querySelectorAll(".seccion-item").forEach(item => {
+        item.addEventListener("click", (e) => {
+            const sec = e.target.getAttribute("data-seccion");
+            renderProductos(productosGlobales, sec, "", null);
+            document.getElementById("catalogo-list").scrollIntoView({ behavior: "smooth" });
+        });
+    });
+
+    document.querySelectorAll(".marca-item").forEach(item => {
+        item.addEventListener("click", (e) => {
+            const m = e.target.getAttribute("data-marca");
+            renderProductos(productosGlobales, null, "", m);
+            document.getElementById("catalogo-list").scrollIntoView({ behavior: "smooth" });
+        });
+    });
 
     const marcasHome = document.getElementById("catalogo-marcas");
     if (marcasHome && marcas.length > 0) {
@@ -227,7 +277,25 @@ async function renderNavMenu() {
                 <div style="font-size:0.85rem; font-weight:600; color:#2d2d6d;">${m.nombre}</div>
             </div>
         `).join("");
+
+        // Clic en las burbujas de marcas de la Home
+        marcasHome.querySelectorAll(".marca-item-burbuja").forEach(burbuja => {
+            burbuja.addEventListener("click", (e) => {
+                const m = e.currentTarget.getAttribute("data-marca");
+                renderProductos(productosGlobales, null, "", m);
+                document.getElementById("catalogo-list").scrollIntoView({ behavior: "smooth" });
+            });
+        });
     }
+}
+
+// Configuración de la barra de búsqueda en tiempo real
+const searchInput = document.getElementById("search-input");
+if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+        const valor = e.target.value;
+        renderProductos(productosGlobales, null, valor, null);
+    });
 }
 
 // ==========================================================
