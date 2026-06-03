@@ -1,10 +1,15 @@
+// ==========================================================
+// CONFIGURACIÓN DE CONEXIÓN DINÁMICA CON EL SERVIDOR RAILWAY
+// ==========================================================
+const BASE_URL = window.API_BASE || "";
+
 // ================= Poblar selects dinámicos =================
 
 async function poblarSelectMarcas() {
     const select = document.getElementById('product-marca');
     if (!select) return;
     try {
-        const res = await fetch('/marcas');
+        const res = await fetch(`${BASE_URL}/marcas`);
         if (!res.ok) return;
         const marcas = await res.json();
         select.innerHTML = '<option value="">Selecciona una marca</option>';
@@ -21,7 +26,7 @@ async function poblarSelectSecciones() {
     const select = document.getElementById('product-seccion');
     if (!select) return;
     try {
-        const res = await fetch('/secciones');
+        const res = await fetch(`${BASE_URL}/secciones`);
         if (!res.ok) return;
         const secciones = await res.json();
         select.innerHTML = '<option value="">Selecciona una sección</option>';
@@ -37,14 +42,14 @@ async function poblarSelectSecciones() {
 // ================= Gestión de Visualización y Eliminación de Listas =================
 
 async function listarYBorrarSecciones() {
-    const listaDiv = document.getElementById('lista-secciones-admin');
-    if (!listaDiv) return;
+    const listDiv = document.getElementById('lista-secciones-admin');
+    if (!listDiv) return;
     try {
-        const res = await fetch('/secciones');
+        const res = await fetch(`${BASE_URL}/secciones`);
         const secciones = await res.json();
-        listaDiv.innerHTML = '<h4 style="margin: 15px 0 10px 0; color: #333;">Secciones actuales (Click para borrar):</h4>';
+        listDiv.innerHTML = '<h4 style="margin: 15px 0 10px 0; color: #333;">Secciones actuales (Click para borrar):</h4>';
         secciones.forEach(sec => {
-            listaDiv.innerHTML += `
+            listDiv.innerHTML += `
                 <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:8px 12px; margin-bottom:5px; border:1px solid #eee; border-radius:4px;">
                     <span style="font-weight:500;">${sec}</span>
                     <button onclick="eliminarSeccion('${sec}')" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; font-size:0.8rem;">❌ Eliminar</button>
@@ -54,14 +59,14 @@ async function listarYBorrarSecciones() {
 }
 
 async function listarYBorrarMarcas() {
-    const listaDiv = document.getElementById('lista-marcas-admin');
-    if (!listaDiv) return;
+    const listDiv = document.getElementById('lista-marcas-admin');
+    if (!listDiv) return;
     try {
-        const res = await fetch('/marcas');
+        const res = await fetch(`${BASE_URL}/marcas`);
         const marcas = await res.json();
-        listaDiv.innerHTML = '<h4 style="margin: 15px 0 10px 0; color: #333;">Marcas actuales (Click para borrar):</h4>';
+        listDiv.innerHTML = '<h4 style="margin: 15px 0 10px 0; color: #333;">Marcas actuales (Click para borrar):</h4>';
         marcas.forEach(m => {
-            listaDiv.innerHTML += `
+            listDiv.innerHTML += `
                 <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:8px 12px; margin-bottom:5px; border:1px solid #eee; border-radius:4px;">
                     <span style="font-weight:500;">${m.nombre}</span>
                     <button onclick="eliminarMarca('${m.nombre}')" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; font-size:0.8rem;">❌ Eliminar</button>
@@ -72,7 +77,7 @@ async function listarYBorrarMarcas() {
 
 async function eliminarSeccion(nombre) {
     if (!confirm(`¿Estás segura de eliminar la sección "${nombre}"?`)) return;
-    const res = await fetch(`/secciones/${encodeURIComponent(nombre)}`, { method: 'DELETE' });
+    const res = await fetch(`${BASE_URL}/secciones/${encodeURIComponent(nombre)}`, { method: 'DELETE' });
     if (res.ok) { 
         alert("Sección eliminada"); 
         await poblarSelectSecciones(); 
@@ -82,7 +87,7 @@ async function eliminarSeccion(nombre) {
 
 async function eliminarMarca(nombre) {
     if (!confirm(`¿Estás segura de eliminar la marca "${nombre}"?`)) return;
-    const res = await fetch(`/marcas/${encodeURIComponent(nombre)}`, { method: 'DELETE' });
+    const res = await fetch(`${BASE_URL}/marcas/${encodeURIComponent(nombre)}`, { method: 'DELETE' });
     if (res.ok) { 
         alert("Marca eliminada"); 
         await poblarSelectMarcas(); 
@@ -130,7 +135,7 @@ function setupAdminControls() {
     if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
             try {
-                await fetch('/owner-logout', { method: 'POST', credentials: 'include' });
+                await fetch(`${BASE_URL}/owner-logout`, { method: 'POST', credentials: 'include' });
             } catch (err) { console.warn('Error during logout', err); }
             window.location.reload();
         });
@@ -151,7 +156,7 @@ document.getElementById('formulario-marca').onsubmit = async function(e) {
     formData.append('nombre', nombre);
     if (imagenInput.files[0]) formData.append('imagen', imagenInput.files[0]);
 
-    const res = await fetch('/marcas', { method: 'POST', body: formData });
+    const res = await fetch(`${BASE_URL}/marcas`, { method: 'POST', body: formData });
     const data = await res.json();
     if (!res.ok) error.textContent = data.error || 'Error';
     else {
@@ -170,7 +175,7 @@ document.getElementById('seccion-form').onsubmit = async function(e) {
     error.textContent = '';
     if (!nombre) return error.textContent = 'Nombre requerido';
 
-    const res = await fetch('/secciones', {
+    const res = await fetch(`${BASE_URL}/secciones`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre })
@@ -197,7 +202,7 @@ document.getElementById('formulario-banner').onsubmit = async function(e) {
     formData.append('boton_texto', document.getElementById('banner-boton-texto').value.trim());
     formData.append('boton_url', document.getElementById('banner-boton-url').value.trim());
 
-    const res = await fetch('/slides', { method: 'POST', body: formData });
+    const res = await fetch(`${BASE_URL}/slides`, { method: 'POST', body: formData });
     if (res.ok) {
         alert('¡Banner agregado!');
         document.getElementById('formulario-banner').reset();
@@ -212,7 +217,7 @@ document.getElementById('formulario-banner').onsubmit = async function(e) {
 document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const code = document.getElementById('owner-code').value;
-    const res = await fetch('/owner-login', {
+    const res = await fetch(`${BASE_URL}/owner-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
@@ -245,7 +250,7 @@ document.getElementById('product-form').addEventListener('submit', async functio
     formData.append('precio', document.getElementById('product-precio').value);
     formData.append('imagen', document.getElementById('product-imagen').files[0]);
 
-    const res = await fetch('/product', { method: 'POST', body: formData, credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/product`, { method: 'POST', body: formData, credentials: 'include' });
     if (res.ok) {
         alert('Producto guardado exitosamente');
         document.getElementById('product-form').reset();
@@ -258,7 +263,7 @@ document.getElementById('product-form').addEventListener('submit', async functio
 // ================= Renderizado de Listas (Productos y Banners) =================
 
 async function fetchAndRenderProducts() {
-    const res = await fetch('/products', { credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/products`, { credentials: 'include' });
     if (!res.ok) return;
     const products = await res.json();
     const list = document.getElementById('products-list');
@@ -280,7 +285,7 @@ async function fetchAndRenderProducts() {
 }
 
 async function fetchAndRenderBanners() {
-    const res = await fetch('/slides', { credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/slides`, { credentials: 'include' });
     if (!res.ok) return;
     const slides = await res.json();
     const container = document.getElementById('banners-list');
@@ -303,13 +308,13 @@ async function fetchAndRenderBanners() {
 
 async function eliminarProducto(id) {
     if (!confirm("¿Eliminar este producto?")) return;
-    const res = await fetch(`/product/${id}`, { method: 'DELETE', credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/product/${id}`, { method: 'DELETE', credentials: 'include' });
     if (res.ok) { alert("Producto eliminado"); await fetchAndRenderProducts(); }
 }
 
 async function eliminarBanner(id) {
     if (!confirm("¿Eliminar este banner?")) return;
-    const res = await fetch(`/slides/${id}`, { method: 'DELETE', credentials: 'include' });
+    const res = await fetch(`${BASE_URL}/slides/${id}`, { method: 'DELETE', credentials: 'include' });
     if (res.ok) { alert("Banner eliminado"); await fetchAndRenderBanners(); }
 }
 
@@ -323,7 +328,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 async function cargarMensajeActivo() {
     try {
-        const res = await fetch('/mensaje/ultimo');
+        const res = await fetch(`${BASE_URL}/mensaje/ultimo`);
         const data = await res.json();
         const msgDiv = document.getElementById('mensaje-global');
         if (data.mensaje && msgDiv) {
@@ -336,7 +341,7 @@ async function cargarMensajeActivo() {
 document.getElementById('mensaje-form').onsubmit = async (e) => {
     e.preventDefault();
     const texto = document.getElementById('mensaje-texto').value.trim();
-    const res = await fetch('/mensajes', {
+    const res = await fetch(`${BASE_URL}/mensajes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ texto })
