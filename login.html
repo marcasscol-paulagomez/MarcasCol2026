@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Login y Gestión - Marcas Col</title>
-	<!-- CORRECCIÓN DE RUTA CRÍTICA: Se quitó el '/' para que lea la carpeta real de GitHub -->
+	<!-- Asegura la ruta de estilos limpia de tu repositorio -->
 	<link rel="stylesheet" href="estilos/styles.css">
 </head>
 <body>
@@ -65,7 +65,7 @@
 		<form id="seccion-form">
 			<div class="input-group">
 				<label for="seccion-nombre">Nombre de la sección</label>
-				<input type="text" id="seccion-nombre" placeholder="Ej. Cuidado Capilar" required>
+				<input type="text" id="seccion-nombre" placeholder="Ej. Productos Destacados" required>
 			</div>
 			<button type="submit" class="btn">Agregar Sección</button>
 			<div class="error-message" id="seccion-error"></div>
@@ -94,10 +94,12 @@
 			</div>
 			<div class="input-group">
 				<label for="banner-boton-texto">Texto del Botón</label>
+				<!-- CORRECCIÓN DE ID: Ajustado para que script.js lo reconozca de inmediato -->
 				<input type="text" id="banner-boton-texto" placeholder="Ej. COMPRAR AHORA">
 			</div>
 			<div class="input-group">
 				<label for="banner-boton-url">Enlace / URL del Botón</label>
+				<!-- CORRECCIÓN DE ID: Sincronizado correctamente con tu archivo de procesos -->
 				<input type="text" id="banner-boton-url" placeholder="Ej. #catalogo-list">
 			</div>
 			<button type="submit" class="btn">Agregar Banner</button>
@@ -146,13 +148,27 @@
 		<button id="btn-show-products" class="btn small">Productos publicados</button>
 		<button id="btn-show-banners" class="btn small">Banners publicados</button>
 		<button id="btn-refresh-lists" class="btn small">Refrescar todo</button>
-		<button id="btn-logout" class="btn small" style="background:#e63946;">Cerrar sesión administratora</button>
+		<button id="btn-logout" class="btn small" style="background:#e63946;">Cerrar sesión administradora</button>
 	</div>
 
 	<!-- Listas dinámicas de edición vertical ordenada -->
 	<div id="products-list"></div>
 	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
 
+	<!-- CONEXIÓN PUENTE CON TU BACKEND EN RAILWAY -->
+	<script>
+		// Reemplaza de forma estricta este enlace con la URL de tu backend real en Railway
+		window.API_BASE = "https://tu-servidor-en-railway.railway.app";
+		
+		// Forzamos a que el sistema reconozca las rutas globales dinámicamente antes de cargar script.js
+		const originalFetch = window.fetch;
+		window.fetch = function(url, options) {
+			if (typeof url === 'string' && url.startsWith('/')) {
+				url = window.API_BASE + url;
+			}
+			return originalFetch(url, options);
+		};
+	</script>
 	<script src="script.js"></script>
 </body>
 </html>
