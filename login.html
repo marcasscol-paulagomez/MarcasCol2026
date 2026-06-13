@@ -58,7 +58,7 @@
 			</div>
 			<button type="submit" class="btn">Agregar Sección</button>
 		</form>
-		<div id="lista-secciones-admin" style="margin-top: 15px;"></div>
+		<div id="lista-secciones-admin"></div>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Banner Principal</div>
@@ -154,6 +154,7 @@
 					document.getElementById('admin-dyn-container').style.display = 'block';
 					document.getElementById('admin-controls').style.display = 'flex';
 					
+					// Ejecuta script.js solo si está presente y bien cargado en el navegador
 					if (typeof setupAdminControls === 'function') {
 						setupAdminControls();
 					} else {
