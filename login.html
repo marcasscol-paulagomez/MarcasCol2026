@@ -69,23 +69,23 @@
 			</div>
 			<div class="input-group">
 				<label for="banner-descripcion">Descripción Corta</label>
-				<input type="text" id="banner-descripcion" placeholder="Ej. Acelera el crecimiento de tu cabello" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
+				<input type="text" id="banner-descripcion" placeholder="Descripción..." style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
 				<label for="banner-marca">Marca Asociada</label>
 				<input type="text" id="banner-marca" placeholder="Ej. Marcas Col" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
-				<label for="banner-imagen">Imagen de Fondo (Gran tamaño)</label>
-				<input type="file" id="banner-imagen" accept="image/*" required style="border:none; background:transparent; padding:5px 0;">
+				<label for="banner-imagen">Imagen de Fondo</label>
+				<input type="file" id="banner-imagen" accept="image/*" required>
 			</div>
 			<div class="input-group">
 				<label for="banner-boton-texto">Texto del Botón</label>
-				<input type="text" id="banner-boton-texto" placeholder="Ej. COMPRAR AHORA" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
+				<input type="text" id="banner-boton-texto" placeholder="COMPRAR AHORA" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<div class="input-group">
-				<label for="banner-boton-url">Enlace / URL del Botón</label>
-				<input type="text" id="banner-boton-url" placeholder="Ej. #catalogo-list" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
+				<label for="banner-boton-url">Enlace del Botón</label>
+				<input type="text" id="banner-boton-url" placeholder="#catalogo-list" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
 			</div>
 			<button type="submit" class="btn">Agregar Banner</button>
 		</form>
@@ -154,13 +154,9 @@
 					document.getElementById('admin-dyn-container').style.display = 'block';
 					document.getElementById('admin-controls').style.display = 'flex';
 					
+					// Disparamos las funciones de carga solo si el archivo externo está reparado, si no, las ignoramos de forma segura
 					if (typeof setupAdminControls === 'function') {
 						setupAdminControls();
-					} else {
-						if(typeof poblarSelectMarcas === 'function') poblarSelectMarcas();
-						if(typeof poblarSelectSecciones === 'function') poblarSelectSecciones();
-						if(typeof listarYBorrarSecciones === 'function') listarYBorrarSecciones();
-						if(typeof listarYBorrarMarcas === 'function') listarYBorrarMarcas();
 					}
 				} else {
 					errorDiv.textContent = data.error || 'Código incorrecto';
@@ -171,6 +167,5 @@
 			}
 		});
 	</script>
-	<script src="script.js"></script>
 </body>
 </html>
