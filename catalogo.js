@@ -1,21 +1,14 @@
-// ==========================================================
-// CONFIGURACIÓN DE CONEXIÓN DINÁMICA CON EL SERVIDOR RAILWAY
-// ==========================================================
-const BASE_URL = window.API_BASE || "https://marcasscol-backend-production.up.railway.app";
-
 // ================== Mostrar mensaje superior ==================
 async function cargarMensajeCatalogo() {
     try {
-        const res = await fetch(`${BASE_URL}/mensaje/ultimo`);
+        const res = await fetch('/mensaje/ultimo');
         const data = await res.json();
         const msgDiv = document.getElementById('mensaje-superior');
-        if (msgDiv) {
-            if (data.mensaje) {
-                msgDiv.textContent = data.mensaje;
-                msgDiv.style.display = "block";
-            } else {
-                msgDiv.style.display = "none";
-            }
+        if (data.mensaje) {
+            msgDiv.textContent = data.mensaje;
+            msgDiv.style.display = "block";
+        } else {
+            msgDiv.style.display = "none"; // Ocultar si no hay mensaje activo
         }
     } catch (err) {
         console.error("No se pudo cargar el mensaje en catálogo:", err);
@@ -25,42 +18,6 @@ async function cargarMensajeCatalogo() {
 // ================================
 // === SLIDER / BANNER PRINCIPAL ===
 // ================================
-function renderSlidesDyn(slidesData) {
-    const slider = document.getElementById("catalogo-slider");
-    if (!slider) return;
-
-    // Construcción de la estructura interna del slider dinámico
-    let trackHtml = '<div class="slider-track">';
-    let dotsHtml = '<div class="slider-dots">';
-
-    slidesData.forEach((slide, index) => {
-        trackHtml += `
-            <div class="slider-slide ${index === 0 ? 'active' : ''}">
-                <img src="${slide.imagen}" alt="${slide.titulo}">
-                <div class="slider-content">
-                    <span class="slider-tag">${slide.marca || 'Marcas Col'}</span>
-                    <h2>${slide.titulo}</h2>
-                    <p>${slide.descripcion || ''}</p>
-                    ${slide.boton_texto ? `<a href="${slide.boton_url || '#catalogo-list'}" class="slider-btn">${slide.boton_texto}</a>` : ''}
-                </div>
-            </div>
-        `;
-        dotsHtml += `<span class="dot ${index === 0 ? 'active' : ''}"></span>`;
-    });
-
-    trackHtml += '</div>';
-    dotsHtml += '</div>';
-
-    // Flechas de navegación
-    const arrowsHtml = `
-        <button class="slider-arrow slider-arrow-left" aria-label="Anterior">‹</button>
-        <button class="slider-arrow slider-arrow-right" aria-label="Siguiente">›</button>
-    `;
-
-    slider.innerHTML = trackHtml + arrowsHtml + dotsHtml;
-    inicializarSlider();
-}
-
 function inicializarSlider() {
     let idx = 0;
     let timer = null;
@@ -113,36 +70,95 @@ function inicializarSlider() {
 
     dots.forEach((d, i) => d.onclick = () => { showSlide(i); auto(); });
 
-    window.addEventListener("resize", ajustarAnchos);
+    window.addEventListener("resize", () => {
+        ajustarAnchos();
+    });
+
+    slides = Array.from(slider.querySelectorAll(".slider-slide"));
     ajustarAnchos();
     showSlide(0);
     auto();
 }
 
 // ============================
-// === FETCH SECCIONES Y DATOS VIA API_BASE ========
+// === FETCH SECCIONES ========
 // ============================
 async function fetchSecciones() {
-    const res = await fetch(`${BASE_URL}/secciones`);
+    const res = await fetch("/secciones");
     if (!res.ok) return [];
     return await res.json();
 }
 
+// ===========================
+// === FETCH SLIDES ==========
+// ===========================
 async function fetchSlides() {
-    const res = await fetch(`${BASE_URL}/slides`);
+    const res = await fetch("/slides");
     if (!res.ok) return [];
     return await res.json();
 }
 
+function renderSlidesDyn(slides) {
+    let slider = document.getElementById("catalogo-slider");
+    if (!slider) return;
+
+    slider.innerHTML = `
+        <button class="slider-arrow slider-arrow-left" aria-label="Anterior">&#10094;</button>
+        <div class="slider-track"></div>
+        <button class="slider-arrow slider-arrow-right" aria-label="Siguiente">&#10095;</button>
+        <div class="slider-dots"></div>
+    `;
+
+    const track = slider.querySelector(".slider-track");
+    const dots = slider.querySelector(".slider-dots");
+    if (!track || !dots) return;
+
+    track.innerHTML = slides.map((slide, i) => {
+        let imagen = slide.imagen?.trim() || "/uploads/placeholder.jpg";
+
+
+        const titulo = slide.titulo?.trim() || "Sin título";
+        const descripcion = slide.descripcion?.trim() || "Sin descripción";
+        const marca = slide.marca?.trim() || "";
+
+        return `
+            <div class="slider-slide${i === 0 ? " active" : ""}">
+                <div class="slider-bg" style="background-image:url('${imagen}')"></div>
+                <div class="slider-content">
+                    <h2>${titulo}</h2>
+                    <p>${descripcion}</p>
+                    ${marca ? `<div class="slider-brand">${marca}</div>` : ""}
+                    ${slide.boton_texto
+                        ? `<button class="slider-btn" onclick="window.open('${slide.boton_url || "#"}','_blank')">${slide.boton_texto}</button>`
+                        : ""}
+                </div>
+                <img src="${imagen}" alt="${marca || titulo}" class="slider-img">
+            </div>
+        `;
+    }).join("");
+
+    dots.innerHTML = slides.map((_, i) =>
+        `<span class="dot${i === 0 ? " active" : ""}"></span>`
+    ).join("");
+
+    inicializarSlider();
+}
+
+// ===========================
+// === FETCH MARCAS ==========
+// ===========================
 async function fetchMarcas() {
-    const res = await fetch(`${BASE_URL}/marcas`);
+    const res = await fetch("/marcas");
     if (!res.ok) return [];
     return await res.json();
 }
 
+// ==============================
+// === PRODUCTOS DINÁMICOS ======
+// ==============================
 async function fetchProductos() {
     try {
-        const res = await fetch(`${BASE_URL}/products`);
+        const res = await fetch("/products");
         if (!res.ok) return [];
         return await res.json();
     } catch (err) {
@@ -151,6 +167,7 @@ async function fetchProductos() {
     }
 }
 
+// Normalizador para acentos, mayúsculas y espacios
 function normalizarTexto(texto) {
     return (texto || "")
         .toLowerCase()
@@ -159,33 +176,22 @@ function normalizarTexto(texto) {
         .trim();
 }
 
-// ==========================================================
-// RENDERIZADO AJUSTADO CON COHERENCIA TOTAL DE SECCIONES
-// ==========================================================
 function renderProductos(productos, seccion = null, filtro = "", marca = null) {
     const list = document.getElementById("catalogo-list");
     if (!list) return;
 
     let filtrados = productos;
 
-    // Título dinámico principal de la grilla
-    const tituloSeccionH2 = document.querySelector(".titulo-seccion:last-of-type") || document.querySelector(".titulo-seccion");
-
-    // Sincronización de filtros dinámicos sin pisar las secciones creadas en el login
     if (seccion) {
         filtrados = filtrados.filter(p =>
             normalizarTexto(p.seccion) === normalizarTexto(seccion)
         );
-        if (tituloSeccionH2) tituloSeccionH2.textContent = seccion;
-    } else if (!filtro && !marca) {
-        if (tituloSeccionH2) tituloSeccionH2.textContent = "Nuestra Colección Completa";
     }
 
     if (marca) {
         filtrados = filtrados.filter(p =>
             normalizarTexto(p.marca) === normalizarTexto(marca)
         );
-        if (tituloSeccionH2) tituloSeccionH2.textContent = `Productos de la marca: ${marca}`;
     }
 
     if (filtro) {
@@ -195,26 +201,30 @@ function renderProductos(productos, seccion = null, filtro = "", marca = null) {
             normalizarTexto(p.marca).includes(f) ||
             normalizarTexto(p.seccion).includes(f)
         );
-        if (tituloSeccionH2) tituloSeccionH2.textContent = `Resultados de búsqueda: "${filtro}"`;
     }
 
     if (!filtrados.length) {
-        list.innerHTML = `<p style="text-align:center;color:#888;width:100%;grid-column: 1 / -1;padding:40px 0;font-family:'Poppins',sans-serif;">No hay productos cargados en esta categoría actualmente.</p>`;
+        list.innerHTML = `<p style="text-align:center;color:#888;width:100vw;">No hay productos para mostrar.</p>`;
         return;
     }
 
     list.innerHTML = filtrados.map(p => `
         <div class="catalogo-card">
             <img src="${p.imagen}" alt="${p.titulo}" class="catalogo-img">
-            <div style="padding: 15px 15px 0 15px;">
-                <div class="catalogo-section">${p.marca}</div>
-                <div class="catalogo-title">${p.titulo}</div>
-                <div class="catalogo-desc">${p.descripcion ? p.descripcion.substring(0, 85) + '...' : ''}</div>
-                <div class="catalogo-price">$${parseFloat(p.precio).toLocaleString('es-CO')}</div>
-            </div>
+            <div class="catalogo-title">${p.titulo}</div>
+            <div class="catalogo-section">${p.marca} - ${p.seccion}</div>
+            <div class="catalogo-desc">${p.descripcion}</div>
+            <div class="catalogo-price">$${p.precio}</div>
             <button class="catalogo-btn"
-                onclick="comprarProducto('${p.titulo}', '${p.precio}', '${p.descripcion || ""}', '${p.seccion}', '${p.marca}', '${p.imagen}')">
-                Agregar al carrito
+                onclick="comprarProducto(
+                    '${p.titulo}', 
+                    '${p.precio}', 
+                    '${p.descripcion}', 
+                    '${p.seccion}', 
+                    '${p.marca}', 
+                    '${p.imagen}'
+                )">
+                Comprar
             </button>                    
         </div>
     `).join("");
@@ -230,25 +240,29 @@ async function renderNavMenu() {
     const nav = document.getElementById("catalogo-secciones");
     if (!nav) return;
 
+    // Menú Secciones global
     let html = `
       <li class="has-submenu">
-        <span aria-expanded="false" style="cursor:pointer;">Secciones</span>
+        <span aria-expanded="false">Secciones</span>
         <ul class="submenu">
-          <li><span class="seccion-item" data-seccion="" style="cursor:pointer; font-weight: bold;">Ver Todo</span></li>
           ${secciones.map(s => `
-            <li><span class="seccion-item" data-seccion="${s}" style="cursor:pointer;">${s}</span></li>
+            <li>
+              <span class="seccion-item" data-seccion="${s}">${s}</span>
+            </li>
           `).join("")}
         </ul>
       </li>
     `;
 
+    // Menú Marcas con sub-secciones
     html += `
       <li class="has-submenu">
-        <span aria-expanded="false" style="cursor:pointer;">Marcas</span>
+        <span aria-expanded="false">Marcas</span>
         <ul class="submenu">
           ${marcas.map(m => `
-            <li class="marca-con-submenu" data-marca="${m.nombre}">
-              <span class="marca-item" data-marca="${m.nombre}" style="cursor:pointer;">${m.nombre}</span>
+            <li class="has-submenu marca-con-submenu" data-marca="${m.nombre}" data-loaded="false">
+              <span class="marca-item" data-marca="${m.nombre}" aria-expanded="false">${m.nombre}</span>
+              <ul class="submenu sub-secciones"></ul>
             </li>
           `).join("")}
         </ul>
@@ -256,27 +270,251 @@ async function renderNavMenu() {
     `;
 
     nav.innerHTML = html;
+}
 
-    // Asignación de clics corregida a elementos del menú dinámico
-    document.querySelectorAll(".seccion-item").forEach(item => {
-        item.addEventListener("click", (e) => {
-            const sec = e.target.getAttribute("data-seccion");
-            renderProductos(productosGlobales, sec || null, "", null);
-            document.getElementById("catalogo-list").scrollIntoView({ behavior: "smooth" });
+// ==========================
+// === VARIABLES GLOBALES ===
+// ==========================
+let productosGlobal = [];
+let seccionActual = null;
+let marcaActual = null;
+
+// ==========================
+// === CARRITO LOCALSTORAGE =
+// ==========================
+function getCarrito() {
+    return JSON.parse(localStorage.getItem("carrito")) || [];
+}
+
+function saveCarrito(carrito) {
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+
+function actualizarIconoCarrito() {
+    const carrito = getCarrito();
+    const cartCount = document.getElementById("cart-count");
+    if (cartCount) {
+        cartCount.textContent = `(${carrito.length})`;
+    }
+}
+
+window.comprarProducto = function(titulo, precio, descripcion = "", seccion = "", marca = "", imagen = "") {
+    let carrito = getCarrito();
+    carrito.push({ titulo, precio, descripcion, seccion, marca, imagen });
+    saveCarrito(carrito);
+    actualizarIconoCarrito();
+};
+
+// ==========================
+// === REDIRECCIÓN CARRITO ==
+// ==========================
+document.addEventListener("DOMContentLoaded", () => {
+    actualizarIconoCarrito();
+
+    const btnCarrito = document.getElementById("btn-carrito");
+    if (btnCarrito) {
+        btnCarrito.addEventListener("click", () => {
+            window.location.href = "carrito.html";
         });
+    }
+});
+
+// ==========================
+// === INICIALIZACIÓN =======
+// ==========================
+document.addEventListener("DOMContentLoaded", async () => {
+    await cargarMensajeCatalogo();
+    await renderNavMenu();
+    const slides = await fetchSlides();
+    renderSlidesDyn(slides);
+    productosGlobal = await fetchProductos();
+    renderProductos(productosGlobal);
+
+    // Búsqueda
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", function() {
+            renderProductos(productosGlobal, seccionActual, this.value, marcaActual);
+        });
+    }
+
+    // ============================
+    // === MENÚ LATERAL MÓVIL ====
+    // ============================
+    const menuToggle = document.getElementById('menu-toggle');
+    const catalogoNav = document.getElementById('catalogo-nav');
+    const navOverlay = document.getElementById('nav-overlay');
+
+    function openNav() {
+        catalogoNav.classList.add('active');
+        document.body.classList.add('nav-open');
+        if (navOverlay) navOverlay.classList.add('active');
+    }
+
+    function closeNav() {
+        catalogoNav.classList.remove('active');
+        document.body.classList.remove('nav-open');
+        if (navOverlay) navOverlay.classList.remove('active');
+
+        // Cierra todos los submenús
+        document.querySelectorAll('.has-submenu .submenu.show').forEach(open => {
+            open.classList.remove('show');
+            const tr = open.closest('.has-submenu')?.querySelector('span, a');
+            if (tr) tr.setAttribute('aria-expanded','false');
+        });
+    }
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            if (catalogoNav.classList.contains('active')) {
+                closeNav();
+            } else {
+                openNav();
+            }
+        });
+    }
+
+    if (navOverlay) navOverlay.addEventListener('click', closeNav);
+
+    // Acordeón móvil - Mejorado
+    catalogoNav.addEventListener('click', function(e) {
+        const trigger = e.target.closest('.has-submenu > span, .has-submenu > a');
+
+        if (trigger && window.innerWidth <= 900) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const parentLi = trigger.closest('.has-submenu');
+            const submenu = parentLi?.querySelector('.submenu');
+            
+            if (submenu) {
+                // Cerrar otros submenús del mismo nivel
+                const parentUl = parentLi.parentElement;
+                parentUl.querySelectorAll(':scope > .has-submenu > .submenu.show').forEach(open => {
+                    if (open !== submenu) {
+                        open.classList.remove('show');
+                        const triggerEl = open.closest('.has-submenu')?.querySelector('span, a');
+                        if (triggerEl) triggerEl.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                // Toggle del submenu actual
+                const isOpen = submenu.classList.toggle('show');
+                trigger.setAttribute('aria-expanded', String(isOpen));
+
+                // Si es una marca y el submenu se abrió, cargar las secciones
+                if (isOpen && parentLi.classList.contains('marca-con-submenu')) {
+                    const marca = parentLi.dataset.marca;
+                    const subSecciones = parentLi.querySelector('.sub-secciones');
+                    
+                    if (subSecciones && parentLi.dataset.loaded !== "true") {
+                        fetch(`/marcas/${encodeURIComponent(marca)}/secciones`)
+                            .then(res => res.json())
+                            .then(secciones => {
+                                subSecciones.innerHTML = secciones.map(s => `
+                                    <li data-seccion="${s}">
+                                        <span class="seccion-item" data-marca="${marca}" data-seccion="${s}">${s}</span>
+                                    </li>
+                                `).join("");
+                                parentLi.dataset.loaded = "true";
+                            })
+                            .catch(err => console.error("Error cargando secciones:", err));
+                    }
+                }
+            }
+        }
+
+        // Cerrar menú al clickear en un item (sección, marca o enlace)
+        const itemClicked = e.target.closest('.seccion-item, a:not(.has-submenu > a)');
+        if (itemClicked && window.innerWidth <= 900) {
+            setTimeout(() => closeNav(), 150);
+        }
     });
 
-    document.querySelectorAll(".marca-item").forEach(item => {
-        item.addEventListener("click", (e) => {
-            const m = e.target.getAttribute("data-marca");
-            renderProductos(productosGlobales, null, "", m);
-            document.getElementById("catalogo-list").scrollIntoView({ behavior: "smooth" });
-        });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeNav();
     });
 
-    const marcasHome = document.getElementById("catalogo-marcas");
-    if (marcasHome && marcas.length > 0) {
-        marcasHome.innerHTML = marcas.map(m => `
-            <div class="marca-item-burbuja" data-marca="${m.nombre}" style="cursor:pointer; text-align:center;">
-                <img src="${m.imagen || 'imagenes/logo.jpg'}" alt="${m.nombre}" style="width:80px; height:80px; object-fit:cover; border-radius:50%; border:2px solid #eee; margin-bottom:8px;">
-                <div style="font-size:
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 900) closeNav();
+    });
+
+    // ================================
+    // === HOVER SECCIONES PC (Desktop) ===
+    // ================================
+    document.addEventListener("mouseover", async (e) => {
+        if (window.innerWidth > 900) {
+            // Detectar hover sobre .marca-item (el span)
+            const marcaItem = e.target.closest(".marca-item");
+            if (marcaItem) {
+                const marcaLi = marcaItem.closest(".marca-con-submenu");
+                if (marcaLi && marcaLi.dataset.loaded !== "true") {
+                    const marca = marcaLi.dataset.marca;
+                    const subSecciones = marcaLi.querySelector(".sub-secciones");
+
+                    if (!subSecciones) return;
+
+                    try {
+                        const res = await fetch(`/marcas/${encodeURIComponent(marca)}/secciones`);
+                        if (!res.ok) return;
+                        const secciones = await res.json();
+
+                        subSecciones.innerHTML = secciones.map(s => `
+                            <li data-seccion="${s}">
+                                <span class="seccion-item" data-marca="${marca}" data-seccion="${s}">${s}</span>
+                            </li>
+                        `).join("");
+
+                        marcaLi.dataset.loaded = "true";
+                    } catch (err) {
+                        console.error("Error cargando secciones para marca:", marca, err);
+                    }
+                }
+            }
+        }
+    });
+
+    // ============================
+    // === CLICK FILTROS ==========
+    // ============================
+    document.addEventListener("click", (e) => {
+        // Filtrar por marca
+        const marcaEl = e.target.closest(".marca-item");
+        if (marcaEl) {
+            e.preventDefault();
+            const marca = marcaEl.dataset.marca;
+            
+            fetch(`/products/filter?marca=${encodeURIComponent(marca)}`)
+                .then(res => res.json())
+                .then(data => renderProductos(data))
+                .catch(err => console.error("Error filtrando por marca:", err));
+            
+            // Cerrar navegación si está abierta en móvil
+            if (window.innerWidth <= 900) {
+                setTimeout(() => closeNav(), 100);
+            }
+            return;
+        }
+
+        // Filtrar por sección
+        const secEl = e.target.closest(".seccion-item");
+        if (secEl) {
+            e.preventDefault();
+            const marca = secEl.dataset.marca;
+            const seccion = secEl.dataset.seccion;
+
+            let url = `/products/filter?seccion=${encodeURIComponent(seccion)}`;
+            if (marca) url += `&marca=${encodeURIComponent(marca)}`;
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => renderProductos(data))
+                .catch(err => console.error("Error filtrando por sección:", err));
+            
+            // Cerrar navegación si está abierta en móvil
+            if (window.innerWidth <= 900) {
+                setTimeout(() => closeNav(), 100);
+            }
+        }
+    });
+});
