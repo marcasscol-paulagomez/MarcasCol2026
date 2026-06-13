@@ -1,7 +1,7 @@
 // ==========================================================
 // CONFIGURACIÓN DE CONEXIÓN DINÁMICA CON EL SERVIDOR RAILWAY
 // ==========================================================
-const BASE_URL = window.API_BASE || "";
+const BASE_URL = window.API_BASE || "https://marcasscol-backend-production.up.railway.app";
 
 // ================== Mostrar mensaje superior ==================
 async function cargarMensajeCatalogo() {
@@ -160,7 +160,7 @@ function normalizarTexto(texto) {
 }
 
 // ==========================================================
-// RENDERIZADO AJUSTADO CON FILTRO AUTOMÁTICO DE DESTACADOS
+// RENDERIZADO AJUSTADO CON COHERENCIA TOTAL DE SECCIONES
 // ==========================================================
 function renderProductos(productos, seccion = null, filtro = "", marca = null) {
     const list = document.getElementById("catalogo-list");
@@ -168,21 +168,24 @@ function renderProductos(productos, seccion = null, filtro = "", marca = null) {
 
     let filtrados = productos;
 
-    // Si la página carga limpia (sin clicks), forzamos a mostrar "Productos Destacados"
-    if (!seccion && !filtro && !marca) {
-        seccion = "Productos Destacados";
-    }
+    // Título dinámico principal de la grilla
+    const tituloSeccionH2 = document.querySelector(".titulo-seccion:last-of-type") || document.querySelector(".titulo-seccion");
 
+    // Sincronización de filtros dinámicos sin pisar las secciones creadas en el login
     if (seccion) {
         filtrados = filtrados.filter(p =>
             normalizarTexto(p.seccion) === normalizarTexto(seccion)
         );
+        if (tituloSeccionH2) tituloSeccionH2.textContent = seccion;
+    } else if (!filtro && !marca) {
+        if (tituloSeccionH2) tituloSeccionH2.textContent = "Nuestra Colección Completa";
     }
 
     if (marca) {
         filtrados = filtrados.filter(p =>
             normalizarTexto(p.marca) === normalizarTexto(marca)
         );
+        if (tituloSeccionH2) tituloSeccionH2.textContent = `Productos de la marca: ${marca}`;
     }
 
     if (filtro) {
@@ -192,6 +195,7 @@ function renderProductos(productos, seccion = null, filtro = "", marca = null) {
             normalizarTexto(p.marca).includes(f) ||
             normalizarTexto(p.seccion).includes(f)
         );
+        if (tituloSeccionH2) tituloSeccionH2.textContent = `Resultados de búsqueda: "${filtro}"`;
     }
 
     if (!filtrados.length) {
@@ -202,7 +206,7 @@ function renderProductos(productos, seccion = null, filtro = "", marca = null) {
     list.innerHTML = filtrados.map(p => `
         <div class="catalogo-card">
             <img src="${p.imagen}" alt="${p.titulo}" class="catalogo-img">
-            <div>
+            <div style="padding: 15px 15px 0 15px;">
                 <div class="catalogo-section">${p.marca}</div>
                 <div class="catalogo-title">${p.titulo}</div>
                 <div class="catalogo-desc">${p.descripcion ? p.descripcion.substring(0, 85) + '...' : ''}</div>
@@ -230,6 +234,7 @@ async function renderNavMenu() {
       <li class="has-submenu">
         <span aria-expanded="false" style="cursor:pointer;">Secciones</span>
         <ul class="submenu">
+          <li><span class="seccion-item" data-seccion="" style="cursor:pointer; font-weight: bold;">Ver Todo</span></li>
           ${secciones.map(s => `
             <li><span class="seccion-item" data-seccion="${s}" style="cursor:pointer;">${s}</span></li>
           `).join("")}
@@ -252,11 +257,11 @@ async function renderNavMenu() {
 
     nav.innerHTML = html;
 
-    // Asignación de clics a elementos del menú dinámico
+    // Asignación de clics corregida a elementos del menú dinámico
     document.querySelectorAll(".seccion-item").forEach(item => {
         item.addEventListener("click", (e) => {
             const sec = e.target.getAttribute("data-seccion");
-            renderProductos(productosGlobales, sec, "", null);
+            renderProductos(productosGlobales, sec || null, "", null);
             document.getElementById("catalogo-list").scrollIntoView({ behavior: "smooth" });
         });
     });
@@ -274,47 +279,4 @@ async function renderNavMenu() {
         marcasHome.innerHTML = marcas.map(m => `
             <div class="marca-item-burbuja" data-marca="${m.nombre}" style="cursor:pointer; text-align:center;">
                 <img src="${m.imagen || 'imagenes/logo.jpg'}" alt="${m.nombre}" style="width:80px; height:80px; object-fit:cover; border-radius:50%; border:2px solid #eee; margin-bottom:8px;">
-                <div style="font-size:0.85rem; font-weight:600; color:#2d2d6d;">${m.nombre}</div>
-            </div>
-        `).join("");
-
-        // Clic en las burbujas de marcas de la Home
-        marcasHome.querySelectorAll(".marca-item-burbuja").forEach(burbuja => {
-            burbuja.addEventListener("click", (e) => {
-                const m = e.currentTarget.getAttribute("data-marca");
-                renderProductos(productosGlobales, null, "", m);
-                document.getElementById("catalogo-list").scrollIntoView({ behavior: "smooth" });
-            });
-        });
-    }
-}
-
-// Configuración de la barra de búsqueda en tiempo real
-const searchInput = document.getElementById("search-input");
-if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-        const valor = e.target.value;
-        renderProductos(productosGlobales, null, valor, null);
-    });
-}
-
-// ==========================================================
-// PROCESO DE INICIALIZACIÓN DE LA HOME AL CARGAR LA PÁGINA
-// ==========================================================
-let productosGlobales = [];
-
-async function inicializarTienda() {
-    await cargarMensajeCatalogo();
-    await renderNavMenu();
-    
-    // Traemos los banners dinámicos
-    const slides = await fetchSlides();
-    if (slides.length > 0) renderSlidesDyn(slides);
-
-    // Traemos todos los productos desde Railway y los cargamos en la Home
-    productosGlobales = await fetchProductos();
-    renderProductos(productosGlobales); // Renderizado inicial (Destacados automáticos)
-}
-
-// Escuchamos la carga completa del HTML para disparar la tienda
-window.addEventListener('DOMContentLoaded', inicializarTienda);
+                <div style="font-size:
