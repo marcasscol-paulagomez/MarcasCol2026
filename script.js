@@ -1,13 +1,22 @@
+// ==========================================================
+// CONFIGURACIÓN BASE DE RED - MARCAS COL
+// ==========================================================
+window.API_BASE = 
+  "https://marcasscol-backend-production.up.railway.app";
+
 // ================= Poblar selects dinámicos =================
 
 async function poblarSelectMarcas() {
     const select = document.getElementById('product-marca');
     if (!select) return;
     try {
-        const res = await fetch('/marcas');
+        const res = await fetch(
+            `${window.API_BASE}/marcas`
+        );
         if (!res.ok) return;
         const marcas = await res.json();
-        select.innerHTML = '<option value="">Selecciona una marca</option>';
+        select.innerHTML = 
+          '<option value="">Selecciona una marca</option>';
         marcas.forEach(marca => {
             const opt = document.createElement('option');
             opt.value = marca.nombre;
@@ -21,10 +30,13 @@ async function poblarSelectSecciones() {
     const select = document.getElementById('product-seccion');
     if (!select) return;
     try {
-        const res = await fetch('/secciones');
+        const res = await fetch(
+            `${window.API_BASE}/secciones`
+        );
         if (!res.ok) return;
         const secciones = await res.json();
-        select.innerHTML = '<option value="">Selecciona una sección</option>';
+        select.innerHTML = 
+          '<option value="">Selecciona una sección</option>';
         secciones.forEach(sec => {
             const opt = document.createElement('option');
             opt.value = sec;
@@ -34,60 +46,112 @@ async function poblarSelectSecciones() {
     } catch { /* ignorar */ }
 }
 
-// ================= Gestión de Eliminación (NUEVO) =================
+// ================= Gestión de Eliminación =================
 
 async function listarYBorrarSecciones() {
-    const listaDiv = document.getElementById('lista-secciones-admin');
+    const listaDiv = document.getElementById(
+        'lista-secciones-admin'
+    );
     if (!listaDiv) return;
     try {
-        const res = await fetch('/secciones');
+        const res = await fetch(
+            `${window.API_BASE}/secciones`
+        );
         const secciones = await res.json();
-        listaDiv.innerHTML = '<h4 style="margin: 15px 0 10px 0; color: #333;">Secciones actuales (Click para borrar):</h4>';
+        listaDiv.innerHTML = 
+          '<h4 style="margin:15px 0 10px 0; ' +
+          'color:#333;">Secciones actuales:</h4>';
         secciones.forEach(sec => {
             listaDiv.innerHTML += `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:8px 12px; margin-bottom:5px; border:1px solid #eee; border-radius:4px;">
+                <div style="display:flex; 
+                            justify-content:space-between; 
+                            align-items:center; 
+                            background:#f9f9f9; 
+                            padding:8px 12px; 
+                            margin-bottom:5px; 
+                            border:1px solid #eee; 
+                            border-radius:4px;">
                     <span style="font-weight:500;">${sec}</span>
-                    <button onclick="eliminarSeccion('${sec}')" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; font-size:0.8rem;">❌ Eliminar</button>
+                    <button onclick="eliminarSeccion('${sec}')" 
+                            style="background:#e74c3c; 
+                                   color:white; 
+                                   border:none; 
+                                   padding:4px 8px; 
+                                   border-radius:3px; 
+                                   cursor:pointer; 
+                                   font-size:0.8rem;">❌ Eliminar</button>
                 </div>`;
         });
-    } catch (e) { console.error("Error listando secciones", e); }
+    } catch (e) { 
+        console.error("Error listando secciones", e); 
+    }
 }
 
 async function listarYBorrarMarcas() {
-    const listaDiv = document.getElementById('lista-marcas-admin');
+    const listaDiv = document.getElementById(
+        'lista-marcas-admin'
+    );
     if (!listaDiv) return;
     try {
-        const res = await fetch('/marcas');
+        const res = await fetch(
+            `${window.API_BASE}/marcas`
+        );
         const marcas = await res.json();
-        listaDiv.innerHTML = '<h4 style="margin: 15px 0 10px 0; color: #333;">Marcas actuales (Click para borrar):</h4>';
+        listaDiv.innerHTML = 
+          '<h4 style="margin:15px 0 10px 0; ' +
+          'color:#333;">Marcas actuales:</h4>';
         marcas.forEach(m => {
             listaDiv.innerHTML += `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:8px 12px; margin-bottom:5px; border:1px solid #eee; border-radius:4px;">
+                <div style="display:flex; 
+                            justify-content:space-between; 
+                            align-items:center; 
+                            background:#f9f9f9; 
+                            padding:8px 12px; 
+                            margin-bottom:5px; 
+                            border:1px solid #eee; 
+                            border-radius:4px;">
                     <span style="font-weight:500;">${m.nombre}</span>
-                    <button onclick="eliminarMarca('${m.nombre}')" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; font-size:0.8rem;">❌ Eliminar</button>
+                    <button onclick="eliminarMarca('${m.nombre}')" 
+                            style="background:#e74c3c; 
+                                   color:white; 
+                                   border:none; 
+                                   padding:4px 8px; 
+                                   border-radius:3px; 
+                                   cursor:pointer; 
+                                   font-size:0.8rem;">❌ Eliminar</button>
                 </div>`;
         });
-    } catch (e) { console.error("Error listando marcas", e); }
+    } catch (e) { 
+        console.error("Error listando marcas", e); 
+    }
 }
 
 async function eliminarSeccion(nombre) {
-    if (!confirm(`¿Estás segura de eliminar la sección "${nombre}"?`)) return;
-    const res = await fetch(`/secciones/${encodeURIComponent(nombre)}`, { method: 'DELETE' });
+    if (!confirm(`¿Eliminar sección "${nombre}"?`)) return;
+    const url = 
+      `${window.API_BASE}/secciones/${encodeURIComponent(nombre)}`;
+    const res = await fetch(url, { method: 'DELETE' });
     if (res.ok) { 
         alert("Sección eliminada"); 
         await poblarSelectSecciones(); 
         await listarYBorrarSecciones(); 
-    } else { alert("No se pudo eliminar. Revisa si hay productos usándola."); }
+    } else { 
+        alert("No se pudo eliminar. Revisa si hay productos usándola."); 
+    }
 }
 
 async function eliminarMarca(nombre) {
-    if (!confirm(`¿Estás segura de eliminar la marca "${nombre}"?`)) return;
-    const res = await fetch(`/marcas/${encodeURIComponent(nombre)}`, { method: 'DELETE' });
+    if (!confirm(`¿Eliminar marca "${nombre}"?`)) return;
+    const url = 
+      `${window.API_BASE}/marcas/${encodeURIComponent(nombre)}`;
+    const res = await fetch(url, { method: 'DELETE' });
     if (res.ok) { 
         alert("Marca eliminada"); 
         await poblarSelectMarcas(); 
         await listarYBorrarMarcas(); 
-    } else { alert("No se pudo eliminar."); }
+    } else { 
+        alert("No se pudo eliminar."); 
+    }
 }
 
 // ================= Configuración Panel Admin =================
@@ -106,13 +170,15 @@ function setupAdminControls() {
     if (btnProducts) {
         btnProducts.addEventListener('click', async () => {
             await fetchAndRenderProducts();
-            document.getElementById('products-list').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('products-list')
+                .scrollIntoView({ behavior: 'smooth' });
         });
     }
     if (btnBanners) {
         btnBanners.addEventListener('click', async () => {
             await fetchAndRenderBanners();
-            document.getElementById('banners-list').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('banners-list')
+                .scrollIntoView({ behavior: 'smooth' });
         });
     }
     if (btnRefresh) {
@@ -128,8 +194,13 @@ function setupAdminControls() {
     if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
             try {
-                await fetch('/owner-logout', { method: 'POST', credentials: 'include' });
-            } catch (err) { console.warn('Error during logout', err); }
+                await fetch(`${window.API_BASE}/owner-logout`, { 
+                    method: 'POST', 
+                    credentials: 'include' 
+                });
+            } catch (err) { 
+                console.warn('Error during logout', err); 
+            }
             window.location.reload();
         });
     }
@@ -147,9 +218,14 @@ document.getElementById('formulario-marca').onsubmit = async function(e) {
 
     const formData = new FormData();
     formData.append('nombre', nombre);
-    if (imagenInput.files[0]) formData.append('imagen', imagenInput.files[0]);
+    if (imagenInput.files[0]) {
+        formData.append('imagen', imagenInput.files[0]);
+    }
 
-    const res = await fetch('/marcas', { method: 'POST', body: formData });
+    const res = await fetch(`${window.API_BASE}/marcas`, { 
+        method: 'POST', 
+        body: formData 
+    });
     const data = await res.json();
     if (!res.ok) error.textContent = data.error || 'Error';
     else {
@@ -168,7 +244,7 @@ document.getElementById('seccion-form').onsubmit = async function(e) {
     error.textContent = '';
     if (!nombre) return error.textContent = 'Nombre requerido';
 
-    const res = await fetch('/secciones', {
+    const res = await fetch(`${window.API_BASE}/secciones`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre })
@@ -187,11 +263,13 @@ document.getElementById('seccion-form').onsubmit = async function(e) {
 
 // ================= Login Propietario =================
 
-document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
+document.getElementById('owner-login-form').addEventListener(
+    'submit', async function(e) {
     e.preventDefault();
     const code = document.getElementById('owner-code').value;
-    const res = await fetch('/owner-login', {
+    const res = await fetch(`${window.API_BASE}/owner-login`, {
         method: 'POST',
+        mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
         credentials: 'include'
@@ -207,23 +285,35 @@ document.getElementById('owner-login-form').addEventListener('submit', async fun
         setupAdminControls();
         await fetchAndRenderProducts();
     } else {
-        document.getElementById('login-error').textContent = data.error || 'Código incorrecto';
+        document.getElementById('login-error').textContent = 
+            data.error || 'Código incorrecto';
     }
 });
 
-// ================= Resto de Funciones (Productos, Banners, Mensajes) =================
+// ================= Resto de Funciones =================
 
-document.getElementById('product-form').addEventListener('submit', async function(e) {
+document.getElementById('product-form').addEventListener(
+    'submit', async function(e) {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('titulo', document.getElementById('product-titulo').value);
-    formData.append('descripcion', document.getElementById('product-descripcion').value);
-    formData.append('seccion', document.getElementById('product-seccion').value);
-    formData.append('marca', document.getElementById('product-marca').value);
-    formData.append('precio', document.getElementById('product-precio').value);
-    formData.append('imagen', document.getElementById('product-imagen').files[0]);
+    formData.append('titulo', 
+        document.getElementById('product-titulo').value);
+    formData.append('descripcion', 
+        document.getElementById('product-descripcion').value);
+    formData.append('seccion', 
+        document.getElementById('product-seccion').value);
+    formData.append('marca', 
+        document.getElementById('product-marca').value);
+    formData.append('precio', 
+        document.getElementById('product-precio').value);
+    formData.append('imagen', 
+        document.getElementById('product-imagen').files[0]);
 
-    const res = await fetch('/product', { method: 'POST', body: formData, credentials: 'include' });
+    const res = await fetch(`${window.API_BASE}/product`, { 
+        method: 'POST', 
+        body: formData, 
+        credentials: 'include' 
+    });
     if (res.ok) {
         alert('Producto guardado exitosamente');
         document.getElementById('product-form').reset();
@@ -234,31 +324,44 @@ document.getElementById('product-form').addEventListener('submit', async functio
 });
 
 async function fetchAndRenderProducts() {
-    const res = await fetch('/products', { credentials: 'include' });
+    const res = await fetch(
+        `${window.API_BASE}/products`, 
+        { credentials: 'include' }
+    );
     if (!res.ok) return;
     const products = await res.json();
     const list = document.getElementById('products-list');
     if (!products.length) {
-        list.innerHTML = '<p class="no-products">No hay productos publicados.</p>';
+        list.innerHTML = 
+          '<p class="no-products">No hay productos.</p>';
         return;
     }
     list.innerHTML = products.map(p => `
         <div class="producto-item">
             <img src="${p.imagen}" alt="${p.titulo}" class="producto-imagen">
             <div class="producto-info">
-                <div class="producto-titulo">${p.titulo} <span class="product-section">(${p.seccion})</span></div>
+                <div class="producto-titulo">${p.titulo} 
+                    <span class="product-section">(${p.seccion})</span>
+                </div>
                 <div class="producto-descripcion">${p.descripcion}</div>
                 <div class="producto-precio">$${p.precio}</div>
             </div>
-            <button class="btn-eliminar" onclick="eliminarProducto(${p.id})">Eliminar Producto</button>
+            <button class="btn-eliminar" 
+                    onclick="eliminarProducto(${p.id})">Eliminar</button>
         </div>
     `).join('');
 }
 
 async function eliminarProducto(id) {
     if (!confirm("¿Eliminar este producto?")) return;
-    const res = await fetch(`/product/${id}`, { method: 'DELETE', credentials: 'include' });
-    if (res.ok) { alert("Producto eliminado"); await fetchAndRenderProducts(); }
+    const res = await fetch(
+        `${window.API_BASE}/product/${id}`, 
+        { method: 'DELETE', credentials: 'include' }
+    );
+    if (res.ok) { 
+        alert("Producto eliminado"); 
+        await fetchAndRenderProducts(); 
+    }
 }
 
 // Banners, Mensajes y Carga Inicial
@@ -270,13 +373,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
 async function cargarMensajeActivo() {
     try {
-        const res = await fetch('/mensaje/ultimo');
+        const res = await fetch(
+            `${window.API_BASE}/mensaje/ultimo`
+        );
         const data = await res.json();
         if (data.mensaje) {
             const msgDiv = document.getElementById('mensaje-global');
-            if (msgDiv) { msgDiv.textContent = data.mensaje; msgDiv.style.display = "block"; }
+            if (msgDiv) { 
+                msgDiv.textContent = data.mensaje; 
+                msgDiv.style.display = "block"; 
+            }
         }
-    } catch (err) { console.error("No se pudo cargar el mensaje:", err); }
+    } catch (err) { 
+        console.error("No se pudo cargar el mensaje:", err); 
+    }
 }
-
-// (Otras funciones de Banner y Mensaje se mantienen igual según tu código previo)
