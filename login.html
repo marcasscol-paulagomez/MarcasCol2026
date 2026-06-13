@@ -7,7 +7,6 @@
 	<link rel="stylesheet" href="estilos/styles.css">
 </head>
 <body>
-
 	<div class="mensaje-superior" id="mensaje-superior">Panel de Administración Interno</div>
 
 	<div class="container" id="login-container" style="display: block; margin-top: 80px;">
@@ -20,158 +19,68 @@
 			</div>
 			<button type="submit" class="btn" style="width: 100%; margin-top: 15px; padding: 12px; border-radius: 8px; font-weight: 600; text-transform: uppercase;">Entrar</button>
 		</form>
-		<p class="form-help" style="margin-top:14px; font-size:0.85rem; color:#666; text-align:center;">Si no tienes el código, comunícate con el desarrollador de la página.</p>
 	</div>
 
 	<div class="container" id="admin-dyn-container" style="margin-top:32px; display:none; max-width: 600px;">
-		
-		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Añadir Mensaje</div>
+		<div class="form-title">Añadir Mensaje</div>
 		<form id="mensaje-form">
-			<div class="input-group">
-				<label for="mensaje-texto">Mensaje Informativo</label>
-				<textarea id="mensaje-texto" rows="3" placeholder="Escribe el anuncio para tus clientes..." required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; font-family:'Poppins',sans-serif; background:#f8fafc;"></textarea>
-			</div>
+			<textarea id="mensaje-texto" rows="2" placeholder="Anuncio..." required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px;"></textarea>
 			<button type="submit" class="btn">Guardar Mensaje</button>
 		</form>
-		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
+		<hr style="border:0; height:1px; background:#eee; margin:20px 0;">
 
-		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Gestionar Marcas</div>
+		<div class="form-title">Gestionar Marcas</div>
 		<form id="formulario-marca">
-			<div class="input-group">
-				<label for="marca-nombre">Nombre de la marca</label>
-				<input type="text" id="marca-nombre" placeholder="Ej. Difeel" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
-			<div class="input-group">
-				<label for="marca-imagen">Imagen de Marca</label>
-				<input type="file" id="marca-imagen" accept="image/*" style="border:none; background:transparent; padding:5px 0;">
-			</div>
+			<input type="text" id="marca-nombre" placeholder="Ej. Difeel" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #e0e0e0; border-radius:8px;">
+			<input type="file" id="marca-imagen" accept="image/*">
 			<button type="submit" class="btn">Agregar Marca</button>
 		</form>
-		<div id="lista-marcas-admin" style="margin-top: 15px;"></div>
-		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
+		<div id="lista-marcas-admin"></div>
+		<hr style="border:0; height:1px; background:#eee; margin:20px 0;">
 
-		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Gestionar Secciones</div>
+		<div class="form-title">Gestionar Secciones</div>
 		<form id="seccion-form">
-			<div class="input-group">
-				<label for="seccion-nombre">Nombre de la sección</label>
-				<input type="text" id="seccion-nombre" placeholder="Ej. Productos Destacados" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
+			<input type="text" id="seccion-nombre" placeholder="Ej. Productos Destacados" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #e0e0e0; border-radius:8px;">
 			<button type="submit" class="btn">Agregar Sección</button>
 		</form>
 		<div id="lista-secciones-admin"></div>
-		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
+		<hr style="border:0; height:1px; background:#eee; margin:20px 0;">
 
-		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Banner Principal</div>
+		<div class="form-title">Agregar Banner</div>
 		<form id="formulario-banner">
-			<div class="input-group">
-				<label for="banner-titulo">Título del Banner</label>
-				<input type="text" id="banner-titulo" placeholder="Ej. ¡Llegó el Tónico Rapunzel!" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
-			<div class="input-group">
-				<label for="banner-descripcion">Descripción Corta</label>
-				<input type="text" id="banner-descripcion" placeholder="Descripción..." style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
-			<div class="input-group">
-				<label for="banner-marca">Marca Asociada</label>
-				<input type="text" id="banner-marca" placeholder="Ej. Marcas Col" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
-			<div class="input-group">
-				<label for="banner-imagen">Imagen de Fondo</label>
-				<input type="file" id="banner-imagen" accept="image/*" required>
-			</div>
-			<div class="input-group">
-				<label for="banner-boton-texto">Texto del Botón</label>
-				<input type="text" id="banner-boton-texto" placeholder="COMPRAR AHORA" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
-			<div class="input-group">
-				<label for="banner-boton-url">Enlace del Botón</label>
-				<input type="text" id="banner-boton-url" placeholder="#catalogo-list" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
+			<input type="text" id="banner-titulo" placeholder="Título..." required style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;">
+			<input type="text" id="banner-descripcion" placeholder="Descripción..." style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;">
+			<input type="text" id="banner-marca" placeholder="Marca..." style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;">
+			<input type="file" id="banner-imagen" accept="image/*" required style="margin-bottom:5px;">
+			<input type="text" id="banner-boton-texto" placeholder="Texto botón..." style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;">
+			<input type="text" id="banner-boton-url" placeholder="URL botón..." style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #e0e0e0; border-radius:8px;">
 			<button type="submit" class="btn">Agregar Banner</button>
 		</form>
-		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
+		<hr style="border:0; height:1px; background:#eee; margin:20px 0;">
 
-		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Producto al Catálogo</div>
+		<div class="form-title">Agregar Producto</div>
 		<form id="product-form" enctype="multipart/form-data">
-			<div class="input-group">
-				<label for="product-titulo">Título del Producto</label>
-				<input type="text" id="product-titulo" name="titulo" placeholder="Ej. Aceite de Castor" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
-			<div class="input-group">
-				<label for="product-descripcion">Descripción</label>
-				<input type="text" id="product-descripcion" name="descripcion" placeholder="Beneficios..." required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
-			<div class="input-group">
-				<label for="product-seccion">Sección</label>
-				<select id="product-seccion" name="seccion" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;"></select>
-			</div>
-			<div class="input-group">
-				<label for="product-marca">Marca</label>
-				<select id="product-marca" name="marca" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;"></select>
-			</div>
-			<div class="input-group">
-				<label for="product-precio">Precio ($)</label>
-				<input type="number" id="product-precio" name="precio" placeholder="45000" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
-			</div>
-			<div class="input-group">
-				<label for="product-imagen">Imagen</label>
-				<input type="file" id="product-imagen" name="imagen" accept="image/*" required>
-			</div>
+			<input type="text" id="product-titulo" placeholder="Título..." required style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;">
+			<input type="text" id="product-descripcion" placeholder="Descripción..." required style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;">
+			<select id="product-seccion" required style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;"></select>
+			<select id="product-marca" required style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;"></select>
+			<input type="number" id="product-precio" placeholder="Precio..." required style="width:100%; padding:10px; margin-bottom:5px; border:1px solid #e0e0e0; border-radius:8px;">
+			<input type="file" id="product-imagen" accept="image/*" required style="margin-bottom:10px;">
 			<button type="submit" class="btn">Guardar Producto</button>
 		</form>
 	</div>
 
-	<div class="admin-controls" id="admin-controls" style="display:none; text-align:center; margin-bottom: 50px; max-width:900px; margin:25px auto; gap:12px; justify-content: center;">
-		<button id="btn-show-products" class="btn small">Productos publicados</button>
-		<button id="btn-show-banners" class="btn small">Banners publicados</button>
-		<button id="btn-refresh-lists" class="btn small">Refrescar todo</button>
-		<button id="btn-logout" class="btn small" style="background:#e63946;">Cerrar sesión</button>
+	<div class="admin-controls" id="admin-controls" style="display:none; text-align:center; margin-top:20px; gap:10px; justify-content:center;">
+		<button id="btn-show-products" class="btn small">Productos</button>
+		<button id="btn-show-banners" class="btn small">Banners</button>
+		<button id="btn-refresh-lists" class="btn small">Refrescar</button>
+		<button id="btn-logout" class="btn small" style="background:#e63946;">Salir</button>
 	</div>
 
 	<div id="products-list"></div>
-	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
+	<div id="banners-list"></div>
 
-	<script>
-		window.API_BASE = "https://marcasscol-backend-production.up.railway.app";
-
-		document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
-			e.preventDefault();
-			const code = document.getElementById('owner-code').value;
-			const errorDiv = document.getElementById('login-error');
-			if(errorDiv) errorDiv.textContent = 'Conectando...';
-
-			try {
-				const res = await fetch(`${window.API_BASE}/owner-login`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ code: code })
-				});
-
-				const data = await res.json();
-
-				if (res.ok) {
-					document.getElementById('login-container').style.display = 'none';
-					document.getElementById('admin-dyn-container').style.display = 'block';
-					document.getElementById('admin-controls').style.display = 'flex';
-					
-					// Ejecuta script.js solo si está presente y bien cargado en el navegador
-					if (typeof setupAdminControls === 'function') {
-						setupAdminControls();
-					} else {
-						if(typeof poblarSelectMarcas === 'function') poblarSelectMarcas();
-						if(typeof poblarSelectSecciones === 'function') poblarSelectSecciones();
-						if(typeof listarYBorrarSecciones === 'function') listarYBorrarSecciones();
-						if(typeof listarYBorrarMarcas === 'function') listarYBorrarMarcas();
-					}
-				} else {
-					errorDiv.textContent = data.error || 'Código incorrecto';
-				}
-			} catch(err) {
-				errorDiv.textContent = 'Error de conexión con el backend de Railway.';
-				console.error(err);
-			}
-		});
-	</script>
+	<script src="admin-login.js"></script>
 	<script src="script.js"></script>
 </body>
 </html>
