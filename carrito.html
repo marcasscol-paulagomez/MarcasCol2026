@@ -6,67 +6,345 @@
     <title>Tu Carrito - Marcas Col</title>
     <link rel="stylesheet" href="estilos/styles.css">
     <link rel="stylesheet" href="estilos/carrito.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script type="text/javascript" 
+            src="https://checkout.epayco.co/checkout.js"></script>
 </head>
-<body style="background-color: #f8fafc; margin: 0; padding: 0;">
+<body style="background-color: #f8fafc; 
+             margin: 0; 
+             padding: 0;">
 
-<header class="cart-header-simple" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 15px 0;">
-    <div class="container-header" style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
-        <a href="index.html" class="back-link" style="text-decoration: none; color: #1e1b4b; font-weight: 500; font-size: 0.95rem; font-family: 'Poppins', sans-serif;">
-            <i class="fa-solid fa-chevron-left" style="font-size: 0.8rem; margin-right: 5px;"></i> Seguir comprando
+<header class="cart-header-simple" 
+        style="background: #ffffff; 
+               border-bottom: 1px solid #e2e8f0; 
+               padding: 15px 0;">
+    <div class="container-header" 
+         style="max-width: 1200px; 
+                margin: 0 auto; 
+                padding: 0 20px; 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center;">
+        <a href="index.html" 
+           class="back-link" 
+           style="text-decoration: none; 
+                  color: #1e1b4b; 
+                  font-weight: 500; 
+                  font-size: 0.95rem; 
+                  font-family: 'Poppins', sans-serif;">
+            <i class="fa-solid fa-chevron-left" 
+               style="font-size: 0.8rem; 
+                      margin-right: 5px;"></i> Seguir comprando
         </a>
-        <img src="imagenes/logo.jpg" alt="Marcas Col" class="logo-mini" style="height: 40px; border-radius: 4px;">
+        <img src="imagenes/logo.jpg" 
+             alt="Marcas Col" 
+             class="logo-mini" 
+             style="height: 40px; 
+                    border-radius: 4px;">
         <div style="width: 100px;" class="hide-mobile"></div>
     </div>
 </header>
 
-<main class="carrito-container-page" style="max-width: 1200px; margin: 40px auto; padding: 0 20px; font-family: 'Poppins', sans-serif;">
-    <div class="grid-layout" style="display: flex; flex-wrap: wrap; gap: 30px;">
+<main class="carrito-container-page" 
+      style="max-width: 1200px; 
+             margin: 40px auto; 
+             padding: 0 20px; 
+             font-family: 'Poppins', sans-serif;">
+    <div class="grid-layout" 
+         style="display: flex; 
+                flex-wrap: wrap; 
+                gap: 30px;">
         
-        <section class="carrito-productos-wrapper" style="flex: 1; min-width: 320px; background: #ffffff; border-radius: 8px; padding: 25px; border: 1px solid #e2e8f0;">
-            <h2 style="font-size: 1.3rem; color: #1e1b4b; margin-top: 0; margin-bottom: 20px; font-weight: 600; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Productos en tu carrito</h2>
+        <section class="carrito-productos-wrapper" 
+                 style="flex: 1; 
+                        min-width: 320px; 
+                        background: #ffffff; 
+                        border-radius: 8px; 
+                        padding: 25px; 
+                        border: 1px solid #e2e8f0;">
+            <h2 style="font-size: 1.3rem; 
+                       color: #1e1b4b; 
+                       margin-top: 0; 
+                       margin-bottom: 20px; 
+                       font-weight: 600; 
+                       border-bottom: 1px solid #f1f5f9; 
+                       padding-bottom: 10px;">Productos en tu carrito</h2>
             <div id="carrito-list">
-                <p style="text-align:center; padding:40px 0; color:#94a3b8; font-size: 0.95rem;">Cargando tus productos...</p>
+                <p style="text-align:center; 
+                          padding:40px 0; 
+                          color:#94a3b8; 
+                          font-size: 0.95rem;">Cargando tus productos...</p>
             </div>
         </section>
 
-        <aside class="carrito-resumen-wrapper" style="width: 100%; max-width: 400px; background: #ffffff; border-radius: 8px; padding: 25px; border: 1px solid #e2e8f0; box-sizing: border-box;">
-            <h3 class="carrito-resumen-titulo" style="font-size: 1.2rem; font-weight: 600; color: #1e1b4b; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Resumen de tu Pedido</h3>
+        <aside class="carrito-resumen-wrapper" 
+               style="width: 100%; 
+                      max-width: 400px; 
+                      background: #ffffff; 
+                      border-radius: 8px; 
+                      padding: 25px; 
+                      border: 1px solid #e2e8f0; 
+                      box-sizing: border-box;">
+            <h3 class="carrito-resumen-titulo" 
+                style="font-size: 1.2rem; 
+                       font-weight: 600; 
+                       color: #1e1b4b; 
+                       margin-top: 0; 
+                       margin-bottom: 20px; 
+                       border-bottom: 1px solid #f1f5f9; 
+                       padding-bottom: 10px;">Resumen de tu Pedido</h3>
             
-            <div class="resumen-linea" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; color: #475569;">
+            <div class="resumen-linea" 
+                 style="display: flex; 
+                        justify-content: space-between; 
+                        margin-bottom: 12px; 
+                        font-size: 0.95rem; 
+                        color: #475569;">
                 <span>Subtotal (<span id="resumen-cantidad">0 productos</span>)</span>
-                <span id="subtotal-val" style="font-weight: 500; color: #0f172a;">$0</span>
+                <span id="subtotal-val" 
+                      style="font-weight: 500; 
+                             color: #0f172a;">$0</span>
             </div>
-            <div class="resumen-linea" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; color: #475569;">
+            <div class="resumen-linea" 
+                 style="display: flex; 
+                        justify-content: space-between; 
+                        margin-bottom: 12px; 
+                        font-size: 0.95rem; 
+                        color: #475569;">
                 <span>Envío</span>
-                <span style="color: #475569; font-weight: 500; font-size: 0.9rem;">Por acordar con la tienda</span>
+                <span style="color: #475569; 
+                             font-weight: 500; 
+                             font-size: 0.9rem;">Por acordar con la tienda</span>
             </div>
             
-            <div class="resumen-linea total" style="display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 15px; margin-top: 15px; font-size: 1.2rem; font-weight: 700; color: #1e1b4b; margin-bottom: 25px;">
+            <div class="resumen-linea total" 
+                 style="display: flex; 
+                        justify-content: space-between; 
+                        border-top: 1px dashed #e2e8f0; 
+                        padding-top: 15px; 
+                        margin-top: 15px; 
+                        font-size: 1.2rem; 
+                        font-weight: 700; 
+                        color: #1e1b4b; 
+                        margin-bottom: 25px;">
                 <span>Total a pagar</span>
-                <span id="total-val" style="color: #0f172a;">$0</span>
+                <span id="total-val" 
+                      style="color: #0f172a;">$0</span>
             </div>
 
-            <div class="checkout-form-container" style="border-top: 1px solid #f1f5f9; padding-top: 20px;">
-                <h4 style="font-size: 1rem; color: #1e1b4b; margin-top: 0; margin-bottom: 15px; font-weight: 600;">Datos para el despacho</h4>
-                <form id="checkout-form" onsubmit="abrirCheckoutEpayco(); return false;">
+            <div class="checkout-form-container" 
+                 style="border-top: 1px solid #f1f5f9; 
+                        padding-top: 20px;">
+                <h4 style="font-size: 1rem; 
+                           color: #1e1b4b; 
+                           margin-top: 0; 
+                           margin-bottom: 15px; 
+                           font-weight: 600;">Datos para el despacho</h4>
+                <form id="checkout-form" 
+                      onsubmit="abrirCheckoutEpayco(); return false;">
                     
-                    <div class="carrito-input-group" style="margin-bottom: 14px;">
-                        <label for="nombre" style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 5px;">Nombre completo</label>
-                        <input type="text" id="nombre" class="carrito-field" placeholder="Ej: Juan Pérez" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; font-size: 0.9rem; box-sizing: border-box;">
+                    <div class="carrito-input-group" 
+                         style="margin-bottom: 14px;">
+                        <label for="nombre" 
+                               style="display: block; 
+                                      font-size: 0.8rem; 
+                                      font-weight: 600; 
+                                      color: #475569; 
+                                      margin-bottom: 5px;">Nombre completo</label>
+                        <input type="text" 
+                               id="nombre" 
+                               class="carrito-field" 
+                               placeholder="Ej: Juan Pérez" 
+                               required 
+                               style="width: 100%; 
+                                      padding: 10px 12px; 
+                                      border: 1px solid #cbd5e1; 
+                                      border-radius: 6px; 
+                                      background-color: #f8fafc; 
+                                      font-size: 0.9rem; 
+                                      box-sizing: border-box;">
                     </div>
                     
-                    <div class="carrito-input-group" style="margin-bottom: 14px;">
-                        <label for="documento" style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 5px;">Documento de identidad (CC/NIT)</label>
-                        <input type="text" id="documento" class="carrito-field" placeholder="Número de identificación" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; font-size: 0.9rem; box-sizing: border-box;">
+                    <div class="carrito-input-group" 
+                         style="margin-bottom: 14px;">
+                        <label for="documento" 
+                               style="display: block; 
+                                      font-size: 0.8rem; 
+                                      font-weight: 600; 
+                                      color: #475569; 
+                                      margin-bottom: 5px;">Documento (CC/NIT)</label>
+                        <input type="text" 
+                               id="documento" 
+                               class="carrito-field" 
+                               placeholder="Número de identificación" 
+                               required 
+                               style="width: 100%; 
+                                      padding: 10px 12px; 
+                                      border: 1px solid #cbd5e1; 
+                                      border-radius: 6px; 
+                                      background-color: #f8fafc; 
+                                      font-size: 0.9rem; 
+                                      box-sizing: border-box;">
                     </div>
                     
-                    <div class="form-row-grid" style="display: flex; gap: 10px; margin-bottom: 14px;">
-                        <div class="carrito-input-group" style="flex: 1;">
-                            <label for="departamento" style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 5px;">Departamento</label>
-                            <input type="text" id="departamento" class="carrito-field" placeholder="Ej: Antioquia" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; font-size: 0.9rem; box-sizing: border-box;">
+                    <div class="form-row-grid" 
+                         style="display: flex; 
+                                gap: 10px; 
+                                margin-bottom: 14px;">
+                        <div class="carrito-input-group" 
+                             style="flex: 1;">
+                            <label for="departamento" 
+                                   style="display: block; 
+                                          font-size: 0.8rem; 
+                                          font-weight: 600; 
+                                          color: #475569; 
+                                          margin-bottom: 5px;">Departamento</label>
+                            <input type="text" 
+                                   id="departamento" 
+                                   class="carrito-field" 
+                                   placeholder="Ej: Antioquia" 
+                                   required 
+                                   style="width: 100%; 
+                                          padding: 10px 12px; 
+                                          border: 1px solid #cbd5e1; 
+                                          border-radius: 6px; 
+                                          background-color: #f8fafc; 
+                                          font-size: 0.9rem; 
+                                          box-sizing: border-box;">
                         </div>
-                        <div class="carrito-input-group" style="flex: 1;">
-                            <label for="municipio" style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 5px;">Ciudad / Municipio</label>
-                            <input type="text" id="municipio" class="carrito-field" placeholder="Ej: Medellín" required
+                        <div class="carrito-input-group" 
+                             style="flex: 1;">
+                            <label for="municipio" 
+                                   style="display: block; 
+                                          font-size: 0.8rem; 
+                                          font-weight: 600; 
+                                          color: #475569; 
+                                          margin-bottom: 5px;">Municipio</label>
+                            <input type="text" 
+                                   id="municipio" 
+                                   class="carrito-field" 
+                                   placeholder="Ej: Medellín" 
+                                   required 
+                                   style="width: 100%; 
+                                          padding: 10px 12px; 
+                                          border: 1px solid #cbd5e1; 
+                                          border-radius: 6px; 
+                                          background-color: #f8fafc; 
+                                          font-size: 0.9rem; 
+                                          box-sizing: border-box;">
+                        </div>
+                    </div>
+                    
+                    <div class="carrito-input-group" 
+                         style="margin-bottom: 14px;">
+                        <label for="direccion" 
+                               style="display: block; 
+                                      font-size: 0.8rem; 
+                                      font-weight: 600; 
+                                      color: #475569; 
+                                      margin-bottom: 5px;">Dirección de entrega</label>
+                        <input type="text" 
+                               id="direccion" 
+                               class="carrito-field" 
+                               placeholder="Calle, número, barrio" 
+                               required 
+                               style="width: 100%; 
+                                      padding: 10px 12px; 
+                                      border: 1px solid #cbd5e1; 
+                                      border-radius: 6px; 
+                                      background-color: #f8fafc; 
+                                      font-size: 0.9rem; 
+                                      box-sizing: border-box;">
+                    </div>
+                    
+                    <div class="carrito-input-group" 
+                         style="margin-bottom: 14px;">
+                        <label for="adicional" 
+                               style="display: block; 
+                                      font-size: 0.8rem; 
+                                      font-weight: 600; 
+                                      color: #475569; 
+                                      margin-bottom: 5px;">Datos adicionales</label>
+                        <input type="text" 
+                               id="adicional" 
+                               class="carrito-field" 
+                               placeholder="Apto, torre, conjunto" 
+                               style="width: 100%; 
+                                      padding: 10px 12px; 
+                                      border: 1px solid #cbd5e1; 
+                                      border-radius: 6px; 
+                                      background-color: #f8fafc; 
+                                      font-size: 0.9rem; 
+                                      box-sizing: border-box;">
+                    </div>
+                    
+                    <div class="carrito-input-group" 
+                         style="margin-bottom: 20px;">
+                        <label for="telefono" 
+                               style="display: block; 
+                                      font-size: 0.8rem; 
+                                      font-weight: 600; 
+                                      color: #475569; 
+                                      margin-bottom: 5px;">Celular / WhatsApp</label>
+                        <input type="text" 
+                               id="telefono" 
+                               class="carrito-field" 
+                               placeholder="Ej: 3144352536" 
+                               required 
+                               style="width: 100%; 
+                                      padding: 10px 12px; 
+                                      border: 1px solid #cbd5e1; 
+                                      border-radius: 6px; 
+                                      background-color: #f8fafc; 
+                                      font-size: 0.9rem; 
+                                      box-sizing: border-box;">
+                    </div>
+
+                    <button type="submit" 
+                            class="btn-pagar-carrito" 
+                            style="width: 100%; 
+                                   background: #1e1b4b; 
+                                   color: #ffffff; 
+                                   border: none; 
+                                   padding: 12px; 
+                                   border-radius: 6px; 
+                                   font-size: 0.95rem; 
+                                   font-weight: 600; 
+                                   cursor: pointer; 
+                                   text-transform: uppercase; 
+                                   letter-spacing: 0.5px; 
+                                   transition: background 0.2s;">
+                        Proceder al pago seguro
+                    </button>
+                </form>
+            </div>
+
+            <div class="secure-info" 
+                 style="text-align: center; 
+                        margin-top: 20px; 
+                        border-top: 1px solid #f1f5f9; 
+                        padding-top: 15px;">
+                <p style="font-size: 0.8rem; 
+                          color: #64748b; 
+                          margin-bottom: 10px; 
+                          margin-top: 0;">
+                    <i class="fa-solid fa-lock" 
+                       style="color:#64748b; 
+                              margin-right: 4px;"></i> Conexión segura
+                </p>
+                <img src="https://369969691f4ad9213588-cf7563eead367d75333c72683ee069ef.ssl.cf2.rackcdn.com/epayco/pagos_procesados_por_epayco_2.png" 
+                     alt="ePayco" 
+                     style="max-width: 100%; 
+                            height: auto; 
+                            opacity: 0.75; 
+                            filter: grayscale(100%);">
+            </div>
+        </aside>
+
+    </div>
+</main>
+
+<script src="carrito.js"></script>
+</body>
+</html>
