@@ -1,294 +1,372 @@
-/* ================================
-   FUENTES Y CONFIGURACIÓN BASE
-   ================================ */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-html, body {
-    height: 100%;
-    min-height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9ff;
-    font-family: 'Poppins', Arial, sans-serif;
-    overflow-x: hidden;
-}
-body {
+/* Lista de productos responsiva */
+/* La lista de productos ocupa todo el ancho de la pantalla */
+#products-list {
+    width: 100vw;
+    max-width: 100vw;
+    margin: 40px 0 0 0;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-}
-main { flex: 1 0 auto; }
-
-/* ================================
-   MENSAJE SUPERIOR
-   ================================ */
-.mensaje-superior {
-    width: 100%;
-    text-align: center;
-    background: #f3e8ff; 
-    color: #9390FF;
-    font-size: 1.1rem;
-    font-weight: 600;
-    padding: 10px 0;
-    border-bottom: 1px solid #ddd;
+    gap: 28px;
+    align-items: center;
+    padding: 0;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%);
     box-sizing: border-box;
+}
+.producto-item {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(45,45,109,0.10);
+    padding: 22px 24px;
+    transition: box-shadow 0.2s, transform 0.2s;
+    width: 100%;
+    max-width: 700px;
+    border: 1.5px solid #f0f0f0;
+    position: relative;
+}
+.producto-item:hover {
+    box-shadow: 0 8px 32px rgba(45,45,109,0.18);
+    transform: translateY(-2px) scale(1.01);
+}
+.producto-imagen {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+    border: 2px solid #e0e0e0;
+    background: #fafaff;
+}
+.producto-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.producto-titulo {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #2d2d6d;
+    margin-bottom: 2px;
+    word-break: break-word;
     letter-spacing: 0.5px;
 }
+.product-section {
+    color: #0074d9;
+    font-size: 1em;
+    margin-left: 8px;
+    font-weight: 500;
+}
+.producto-descripcion {
+    color: #444;
+    font-size: 1.05em;
+    margin-bottom: 2px;
+    word-break: break-word;
+}
+.producto-precio {
+    color: #1a1a4d;
+    font-weight: bold;
+    font-size: 1.15em;
+    margin-top: 2px;
+}
+@media (max-width: 900px) {
+    #products-list {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0;
+    }
+    .producto-item {
+        gap: 16px;
+        padding: 16px 8px;
+        max-width: 98vw;
+    }
+    .producto-imagen {
+        width: 80px;
+        height: 80px;
+    }
+}
+@media (max-width: 600px) {
+    .producto-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 4px;
+        gap: 10px;
+        max-width: 99vw;
+    }
+    .producto-imagen {
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        margin: 0 auto;
+        display: block;
+    }
+    .producto-info {
+        width: 100%;
+        gap: 4px;
+    }
+    .producto-titulo {
+        font-size: 1.1rem;
+    }
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9ff;
+    margin: 0;
+    padding: 0;
+}
 
-/* ================================
-   ENCABEZADO (HEADER)
-   ================================ */
-header, .catalogo-header {
+    /* Encabezado */
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 30px;
     background-color: white;
     position: relative;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-header img.logo, .catalogo-header img.logo {
-    height: 40px !important;
-    width: auto !important;
+header img.logo {
+    height: 40px;
 }
-.search-bar, .catalogo-search-bar {
+
+.search-bar {
     flex: 1;
     margin: 0 20px;
     position: relative;
-    max-width: 400px;
 }
-.search-bar input, .catalogo-search-bar input {
+
+.search-bar input {
     width: 100%;
-    padding: 10px 44px 10px 15px;
+    padding: 10px 40px 10px 15px;
     border: none;
     border-radius: 25px;
     background-color: #f0f0f0;
     font-size: 14px;
-    outline: none;
 }
 
-/* ================================
-   SLIDER / BANNER PRINCIPAL
-   ================================ */
-.catalogo-slider {
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    height: 450px;
-    background: #E3C5FF;
-    overflow: hidden;
-    margin-bottom: 32px;
+.search-bar i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: gray;
 }
-.slider-track {
+
+.icons {
     display: flex;
-    height: 100%;
-    transition: transform 0.6s cubic-bezier(.77,0,.18,1);
+    gap: 15px;
+    font-size: 22px;
+    color: #6d6d6d;
 }
-.slider-slide {
-    min-width: 100%;
-    max-width: 100%;
-    height: 100%;
+
+/* Categorías */
+.categorias {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 8%;
-    box-sizing: border-box;
-    gap: 30px;
-    position: relative;
-}
-.slider-slide img.slider-img, .catalogo-slider img {
-    position: relative;
-    height: 80% !important;
-    max-height: 400px !important;
-    width: auto !important;
-    object-fit: contain !important;
-    display: block;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
 }
 
-/* ================================
-   CONTROL ABSOLUTO DE REDES SOCIALES (FOOTER)
-   ================================ */
-.footer-socials {
-    display: flex !important;
-    gap: 12px !important;
-    margin-top: 12px !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-}
-.footer-socials img, .footer-socials a img, .catalogo-footer .footer-socials img {
-    width: 24px !important;
-    height: 24px !important;
-    max-width: 24px !important;
-    max-height: 24px !important;
-    min-width: 24px !important;
-    min-height: 24px !important;
-    display: inline-block !important;
-    object-fit: contain !important;
-    border-radius: 0px !important;
-    box-shadow: none !important;
-    border: none !important;
-    margin: 0 !important;
+.categorias button {
+    background-color: #a6f7ff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: #0074d9;
+    cursor: pointer;
+    font-size: 16px;
 }
 
-/* ================================
-   CATÁLOGO PÚBLICO (GRILLA DE 4 COLUMNAS PARA PC)
-   ================================ */
-.catalogo-list {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 25px !important;
-    margin: 40px auto 60px auto !important;
-    width: 100% !important;
-    max-width: 1200px !important;
-    padding: 0 20px !important;
-    box-sizing: border-box !important;
-    min-height: 350px !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-.catalogo-card {
-    background: #ffffff !important;
-    border-radius: 14px !important;
-    box-shadow: 0 4px 15px rgba(45,45,109,0.04) !important;
-    padding: 20px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    border: 1px solid #f0f0f0 !important;
-    box-sizing: border-box !important;
-}
-.catalogo-img {
-    width: 100% !important;
-    height: 210px !important;
-    object-fit: cover !important;
-    border-radius: 10px !important;
-    margin-bottom: 14px !important;
-}
-.catalogo-title { font-size: 1.05rem !important; font-weight: 600; color: #222; margin-bottom: 6px; }
-.catalogo-price { color: #2d2d6d; font-weight: 700; font-size: 1.15rem; margin-bottom: 14px; }
-.catalogo-btn {
-    background: #9390FF !important;
-    color: #fff !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 12px !important;
-    font-size: 0.95rem !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    width: 100% !important;
-    text-transform: uppercase;
-}
-.catalogo-btn:hover { background: #0074d9 !important; }
-
-/* ================================
-   ESTILOS CORREGIDOS DEL PANEL ADMIN
-   (Fuerza visualización vertical limpia tipo lista para gestionar)
-   ================================ */
-#products-list {
-    display: flex !important; /* Anula el grid tosco en el admin */
-    flex-direction: column !important;
-    width: 100% !important;
-    max-width: 800px !important;
-    margin: 30px auto !important;
-    gap: 20px !important;
-    padding: 0 15px !important;
-    box-sizing: border-box !important;
-}
-.producto-item {
-    display: flex !important;
-    flex-direction: row !important; /* Mantiene la fila horizontal limpia de edición */
-    align-items: center !important;
-    gap: 20px !important;
-    background: #fff !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
-    padding: 15px !important;
-    border: 1px solid #eee !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-.producto-imagen { 
-    width: 90px !important; 
-    height: 90px !important; 
-    object-fit: cover !important; 
-    border-radius: 8px !important; 
-}
-.producto-info { 
-    flex: 1 !important; 
-    display: flex !important; 
-    flex-direction: column !important; 
-    gap: 4px !important; 
-}
-.producto-titulo { font-size: 1.1rem !important; font-weight: bold !important; color: #2d2d6d !important; margin: 0 !important; }
-.producto-descripcion { color: #666 !important; font-size: 0.9rem !important; margin: 0 !important; }
-.producto-price, .producto-precio { color: #1a1a4d !important; font-weight: bold !important; font-size: 1rem !important; margin: 0 !important; }
-
-/* Controles de Administración */
-.admin-controls {
-    display: flex !important;
-    gap: 10px !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin-bottom: 12px !important;
+    /* Productos */
+.productos {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    margin: 30px 20px;
 }
 
-/* Banners del Admin */
-#banners-list { 
-    display: flex !important; 
-    flex-direction: column !important; 
-    gap: 16px !important; 
-    align-items: center !important; 
-    width: 100% !important;
+.productos img {
+    max-width: 150px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
 }
-.banner-item {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important; 
-    gap: 16px !important; 
-    background: #fff !important;
-    border-radius: 12px !important; 
-    padding: 12px 14px !important; 
-    width: 100% !important; 
-    max-width: 800px !important;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.06) !important; 
-    box-sizing: border-box !important;
-}
-.banner-imagen { width: 140px !important; height: 80px !important; object-fit: cover !important; border-radius: 8px !important; }
 
-/* CAJA DE LOGIN ESTILIZADA (LOGIN.HTML) */
+
 .container {
-    display: block !important;
-    max-width: 400px !important; 
-    margin: 60px auto !important; 
-    background: #fff !important; 
-    border-radius: 16px !important;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important; 
-    padding: 32px 28px 24px 28px !important; 
-    box-sizing: border-box !important;
+	max-width: 400px;
+	margin: 60px auto;
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+	padding: 32px 28px 24px 28px;
 }
-.form-title { font-size: 2rem !important; font-weight: bold !important; margin-bottom: 18px !important; color: #2d2d6d !important; text-align: center !important; }
-.input-group { margin-bottom: 18px !important; display: block !important; }
-.input-group label { display: block !important; margin-bottom: 6px !important; color: #444 !important; text-align: left !important; }
-.input-group input { width: 100% !important; padding: 10px !important; border: 1px solid #e0e0e0 !important; border-radius: 8px !important; box-sizing: border-box !important; }
-.btn { width: 100% !important; padding: 12px !important; background: #2d2d6d !important; color: #fff !important; border: none !important; border-radius: 8px !important; font-weight: bold !important; cursor: pointer !important; box-sizing: border-box !important; }
-textarea { width: 100% !important; min-height: 80px !important; resize: vertical !important; padding: 8px !important; border: 1px solid #ccc !important; border-radius: 6px !important; box-sizing: border-box !important; }
+.form-title {
+	font-size: 2rem;
+	font-weight: bold;
+	margin-bottom: 18px;
+	color: #2d2d6d;
+	text-align: center;
+}
+.input-group {
+	margin-bottom: 18px;
+}
+.input-group label {
+	display: block;
+	margin-bottom: 6px;
+	color: #444;
+}
+.input-group input {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	font-size: 1rem;
+}
+.btn {
+	width: 100%;
+	padding: 12px;
+	background: #2d2d6d;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: bold;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.btn:hover {
+	background: #1a1a4d;
+}
+.toggle-link {
+	display: block;
+	margin-top: 16px;
+	text-align: center;
+	color: #2d2d6d;
+	cursor: pointer;
+	text-decoration: underline;
+}
+.error-message {
+	color: #d32f2f;
+	text-align: center;
+	margin-bottom: 10px;
+}
 
-/* ================================
-   DISEÑO ADAPTABLE CELULARES (RESPONSIVE)
-   ================================ */
-@media (max-width: 900px) {
-    .catalogo-list {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 15px !important;
-        padding: 0 12px !important;
-    }
-    .catalogo-card { padding: 12px !important; }
-    .catalogo-img { height: 145px !important; }
-    
-    #products-list { padding: 0 10px !important; }
-    .producto-item, .banner-item { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
-    .producto-imagen { width: 100% !important; height: auto !important; max-height: 200px !important; }
-    .banner-imagen { width: 100% !important; height: auto !important; max-height: 150px !important; }
+.success-message {
+    color: #155724;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.password-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.password-wrapper input {
+	width: 100%;
+	padding-right: 40px; /* espacio para el ícono */
+}
+
+.password-wrapper .toggle-password {
+	position: absolute;
+	right: 12px;
+	cursor: pointer;
+	color: #666;
+	font-size: 16px;
+}
+.password-wrapper .toggle-password:hover {
+	color: #2d2d6d;
+}
+
+/* Aplica a todos los textareas */
+textarea {
+  width: 100%;           /* ocupa todo el ancho del contenedor */
+  min-height: 80px;      /* altura mínima */
+  resize: vertical;      /* solo permitir redimensionar en vertical */
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+/* Opcional: para que se vea igual en todos los navegadores */
+textarea:focus {
+  outline: none;
+  border-color: #3b3b98; /* azul oscuro */
+  box-shadow: 0 0 4px rgba(59,59,152,0.5);
+}
+
+.btn-eliminar {
+    background-color: #e63946;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    margin-top: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-eliminar:hover {
+    background-color: #d62828;
+}
+
+/* Admin control buttons */
+.admin-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.btn.small {
+    width: auto;
+    padding: 8px 12px;
+    background: #2d2d6d;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+.btn.small:hover { background: #1a1a4d }
+
+/* Banners list */
+#banners-list { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.banner-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px 14px;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+.banner-imagen { width: 140px; height: 80px; object-fit: cover; border-radius: 8px; }
+.banner-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px }
+.banner-titulo { font-weight: 700; color: #2d2d6d }
+.banner-desc { color: #666 }
+.banner-marca { color: #0074d9; font-weight: 600 }
+
+@media (max-width: 600px) {
+    .banner-item { flex-direction: column; align-items: flex-start }
+    .banner-imagen { width: 100%; height: auto; max-height: 240px }
+}
+
+html, body {
+  overflow-x: hidden;
 }
