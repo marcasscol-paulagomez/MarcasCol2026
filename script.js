@@ -1,7 +1,7 @@
 // ==========================================================
 // CONFIGURACIÓN DE CONEXIÓN DINÁMICA CON EL SERVIDOR RAILWAY
 // ==========================================================
-const BASE_URL = window.API_BASE || "";
+const BASE_URL = window.API_BASE || "https://marcasscol-backend-production.up.railway.app";
 
 // ================= Poblar selects dinámicos =================
 
@@ -137,7 +137,7 @@ function setupAdminControls() {
     if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
             try {
-                await fetch(`${BASE_URL}/owner-logout`, { method: 'POST', credentials: 'include' });
+                await fetch(`${BASE_URL}/owner-logout`, { method: 'POST' });
             } catch (err) { console.warn('Error during logout', err); }
             window.location.reload();
         });
@@ -208,171 +208,3 @@ if (formBanner) {
         e.preventDefault();
         const formData = new FormData();
         formData.append('titulo', document.getElementById('banner-titulo').value.trim());
-        formData.append('descripcion', document.getElementById('banner-descripcion').value.trim());
-        formData.append('marca', document.getElementById('banner-marca').value.trim());
-        formData.append('imagen', document.getElementById('banner-imagen').files[0]);
-        formData.append('boton_texto', document.getElementById('banner-boton-texto').value.trim());
-        formData.append('boton_url', document.getElementById('banner-boton-url').value.trim());
-
-        const res = await fetch(`${BASE_URL}/slides`, { method: 'POST', body: formData });
-        if (res.ok) {
-            alert('¡Banner agregado!');
-            formBanner.reset();
-            await fetchAndRenderBanners();
-        } else {
-            alert('Error al agregar banner');
-        }
-    };
-}
-
-// ================= Login Propietario =================
-
-const formLogin = document.getElementById('owner-login-form');
-if (formLogin) {
-    formLogin.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const code = document.getElementById('owner-code').value;
-        const res = await fetch(`${BASE_URL}/owner-login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code }),
-            credentials: 'include'
-        });
-
-        let data = {};
-        try { data = await res.json(); } catch (err) { }
-
-        const errDiv = document.getElementById('login-error');
-        if (res.ok) {
-            if (errDiv) errDiv.textContent = '';
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('admin-dyn-container').style.display = 'block';
-            setupAdminControls();
-            await fetchAndRenderProducts();
-        } else {
-            if (errDiv) errDiv.textContent = data.error || 'Código incorrecto';
-        }
-    });
-}
-
-// ================= Guardar producto =================
-
-const formProduct = document.getElementById('product-form');
-if (formProduct) {
-    formProduct.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('titulo', document.getElementById('product-titulo').value);
-        formData.append('descripcion', document.getElementById('product-descripcion').value);
-        formData.append('seccion', document.getElementById('product-seccion').value);
-        formData.append('marca', document.getElementById('product-marca').value);
-        formData.append('precio', document.getElementById('product-precio').value);
-        formData.append('imagen', document.getElementById('product-imagen').files[0]);
-
-        const res = await fetch(`${BASE_URL}/product`, { method: 'POST', body: formData, credentials: 'include' });
-        if (res.ok) {
-            alert('Producto guardado exitosamente');
-            formProduct.reset();
-            await fetchAndRenderProducts();
-        } else {
-            alert('Error al guardar producto');
-        }
-    });
-}
-
-// ================= Renderizado de Listas (Productos y Banners) =================
-
-async function fetchAndRenderProducts() {
-    const res = await fetch(`${BASE_URL}/products`, { credentials: 'include' });
-    if (!res.ok) return;
-    const products = await res.json();
-    const list = document.getElementById('products-list');
-    if (!list) return;
-    if (!products.length) {
-        list.innerHTML = '<p class="no-products" style="text-align:center; padding:20px;">No hay productos publicados.</p>';
-        return;
-    }
-    list.innerHTML = products.map(p => `
-        <div class="producto-item" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; display:flex; align-items:center; border-radius:8px;">
-            <img src="${p.imagen}" alt="${p.titulo}" style="width:70px; height:70px; object-fit:cover; margin-right:15px; border-radius:5px;">
-            <div style="flex:1;">
-                <div style="font-weight:bold;">${p.titulo} <span style="font-size:0.8rem; color:#666;">(${p.seccion})</span></div>
-                <div style="font-size:0.9rem;">$${p.precio}</div>
-            </div>
-            <button class="btn-eliminar" onclick="eliminarProducto(${p.id})" style="background:#e74c3c; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Eliminar</button>
-        </div>
-    `).join('');
-}
-
-async function fetchAndRenderBanners() {
-    const res = await fetch(`${BASE_URL}/slides`, { credentials: 'include' });
-    if (!res.ok) return;
-    const slides = await res.json();
-    const container = document.getElementById('banners-list');
-    if (!container) return;
-    if (!slides.length) {
-        container.innerHTML = '<p style="text-align:center; padding:20px;">No hay banners publicados.</p>';
-        return;
-    }
-    container.innerHTML = slides.map(s => `
-        <div class="banner-item" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; display:flex; align-items:center; border-radius:8px;">
-            <img src="${s.imagen}" style="width:100px; height:50px; object-fit:cover; margin-right:15px; border-radius:5px;">
-            <div style="flex:1;">
-                <div style="font-weight:bold;">${s.titulo}</div>
-                <div style="font-size:0.8rem; color:#666;">${s.marca}</div>
-            </div>
-            <button class="btn-eliminar" onclick="eliminarBanner(${s.id})" style="background:#e74c3c; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Eliminar</button>
-        </div>
-    `).join('');
-}
-
-async function eliminarProducto(id) {
-    if (!confirm("¿Eliminar este producto?")) return;
-    const res = await fetch(`${BASE_URL}/product/${id}`, { method: 'DELETE', credentials: 'include' });
-    if (res.ok) { alert("Producto eliminado"); await fetchAndRenderProducts(); }
-}
-
-async function eliminarBanner(id) {
-    if (!confirm("¿Eliminar este banner?")) return;
-    const res = await fetch(`${BASE_URL}/slides/${id}`, { method: 'DELETE', credentials: 'include' });
-    if (res.ok) { alert("Banner eliminado"); await fetchAndRenderBanners(); }
-}
-
-// ================= Carga Inicial Protegida =================
-
-window.addEventListener('DOMContentLoaded', () => {
-    poblarSelectMarcas();
-    poblarSelectSecciones();
-    cargarMensajeActivo();
-});
-
-async function cargarMensajeActivo() {
-    try {
-        const res = await fetch(`${BASE_URL}/mensaje/ultimo`);
-        const data = await res.json();
-        const msgDiv = document.getElementById('mensaje-global') || document.getElementById('mensaje-superior');
-        if (data.mensaje && msgDiv) {
-            msgDiv.textContent = data.mensaje;
-            msgDiv.style.display = "block";
-        }
-    } catch (err) { console.error("No se pudo cargar el mensaje:", err); }
-}
-
-const formMensaje = document.getElementById('mensaje-form');
-if (formMensaje) {
-    formMensaje.onsubmit = async (e) => {
-        e.preventDefault();
-        const texto = document.getElementById('mensaje-texto').value.trim();
-        const res = await fetch(`${BASE_URL}/mensajes`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ texto })
-        });
-        if (res.ok) {
-            alert('Mensaje guardado');
-            formMensaje.reset();
-            cargarMensajeActivo();
-        }
-    };
-}
