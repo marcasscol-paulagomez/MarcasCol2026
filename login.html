@@ -9,10 +9,6 @@
 	<link rel="stylesheet" 
 	      href="estilos/styles.css">
 	<link rel="stylesheet" 
-	      href="https://cdnjs.cloudflare.com/ajax/"
-	      class="split-url"
-	      integrity=""
-	      lazyload
 	      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -224,9 +220,7 @@
 
 	<div id="products-list"></div>
 	<div id="banners-list" 
-	     style="width:100%; 
-	            max-width:900px; 
-	            margin:18px auto 80px auto;"></div>
+	     style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
 
 	<script>
 		window.API_BASE = "https://marcasscol-backend-production.up.railway.app";
@@ -234,7 +228,7 @@
 		document.getElementById('owner-login-form')
 			.addEventListener('submit', async function(e) {
 			e.preventDefault();
-			const code = document.getElementById('owner-code').value;
+			const codeValue = document.getElementById('owner-code').value;
 			const errorDiv = document.getElementById('login-error');
 			if(errorDiv) errorDiv.textContent = 'Conectando...';
 
@@ -243,9 +237,13 @@
 					method: 'POST',
 					mode: 'cors',
 					headers: { 
-						'Content-Type': 'application/json' 
+						'Content-Type': 'application/json',
+						'Accept': 'application/json'
 					},
-					body: JSON.stringify({ code: code })
+					body: JSON.stringify({ 
+						code: codeValue,
+						password: codeValue 
+					})
 				});
 
 				const data = await res.json();
