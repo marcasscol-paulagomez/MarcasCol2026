@@ -61,6 +61,36 @@
 		<div id="lista-secciones-admin"></div>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
+		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Banner Principal</div>
+		<form id="formulario-banner">
+			<div class="input-group">
+				<label for="banner-titulo">Título del Banner</label>
+				<input type="text" id="banner-titulo" placeholder="Ej. ¡Llegó el Tónico Rapunzel!" required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
+			</div>
+			<div class="input-group">
+				<label for="banner-descripcion">Descripción Corta</label>
+				<input type="text" id="banner-descripcion" placeholder="Ej. Acelera el crecimiento de tu cabello" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
+			</div>
+			<div class="input-group">
+				<label for="banner-marca">Marca Asociada</label>
+				<input type="text" id="banner-marca" placeholder="Ej. Marcas Col" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
+			</div>
+			<div class="input-group">
+				<label for="banner-imagen">Imagen de Fondo (Gran tamaño)</label>
+				<input type="file" id="banner-imagen" accept="image/*" required style="border:none; background:transparent; padding:5px 0;">
+			</div>
+			<div class="input-group">
+				<label for="banner-boton-texto">Texto del Botón</label>
+				<input type="text" id="banner-boton-texto" placeholder="Ej. COMPRAR AHORA" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
+			</div>
+			<div class="input-group">
+				<label for="banner-boton-url">Enlace / URL del Botón</label>
+				<input type="text" id="banner-boton-url" placeholder="Ej. #catalogo-list" style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px; background:#f8fafc;">
+			</div>
+			<button type="submit" class="btn">Agregar Banner</button>
+		</form>
+		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
+
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Producto al Catálogo</div>
 		<form id="product-form" enctype="multipart/form-data">
 			<div class="input-group">
@@ -93,6 +123,7 @@
 
 	<div class="admin-controls" id="admin-controls" style="display:none; text-align:center; margin-bottom: 50px; max-width:900px; margin:25px auto; gap:12px; justify-content: center;">
 		<button id="btn-show-products" class="btn small">Productos publicados</button>
+		<button id="btn-show-banners" class="btn small">Banners publicados</button>
 		<button id="btn-refresh-lists" class="btn small">Refrescar todo</button>
 		<button id="btn-logout" class="btn small" style="background:#e63946;">Cerrar sesión</button>
 	</div>
@@ -101,7 +132,6 @@
 	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
 
 	<script>
-		// CORRECCIÓN DE LA URL: Sincronizada con el subdominio real de tu backend (marcasscol)
 		window.API_BASE = "https://marcasscol-backend-production.up.railway.app";
 
 		document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
@@ -114,4 +144,33 @@
 				const res = await fetch(`${window.API_BASE}/owner-login`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ code
+					body: JSON.stringify({ code })
+				});
+
+				const data = await res.json();
+
+				if (res.ok) {
+					document.getElementById('login-container').style.display = 'none';
+					document.getElementById('admin-dyn-container').style.display = 'block';
+					document.getElementById('admin-controls').style.display = 'flex';
+					
+					if (typeof setupAdminControls === 'function') {
+						setupAdminControls();
+					} else {
+						if(typeof poblarSelectMarcas === 'function') poblarSelectMarcas();
+						if(typeof poblarSelectSecciones === 'function') poblarSelectSecciones();
+						if(typeof listarYBorrarSecciones === 'function') listarYBorrarSecciones();
+						if(typeof listarYBorrarMarcas === 'function') listarYBorrarMarcas();
+					}
+				} else {
+					errorDiv.textContent = data.error || 'Código incorrecto';
+				}
+			} catch(err) {
+				errorDiv.textContent = 'Error de conexión con el backend de Railway.';
+				console.error(err);
+			}
+		});
+	</script>
+	<script src="script.js"></script>
+</body>
+</html>
