@@ -58,7 +58,7 @@
 			</div>
 			<button type="submit" class="btn">Agregar Sección</button>
 		</form>
-		<div id="lista-secciones-admin" style="margin-top: 15px;"></div>
+		<div id="lista-secciones-admin"></div>
 		<hr style="border:0; height:1px; background:#eee; margin:30px 0;">
 
 		<div class="form-title" style="font-size: 1.4rem; border-bottom: 2px solid #f3e8ff; padding-bottom: 6px;">Agregar Producto al Catálogo</div>
@@ -101,8 +101,8 @@
 	<div id="banners-list" style="width:100%; max-width:900px; margin:18px auto 80px auto;"></div>
 
 	<script>
-		// URL Unificada para la API
-		window.API_BASE = "https://marcascol-backend-production.up.railway.app";
+		// CORRECCIÓN DE LA URL: Sincronizada con el subdominio real de tu backend (marcasscol)
+		window.API_BASE = "https://marcasscol-backend-production.up.railway.app";
 
 		document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
 			e.preventDefault();
@@ -111,38 +111,7 @@
 			if(errorDiv) errorDiv.textContent = 'Conectando...';
 
 			try {
-				// Eliminamos restrictor de credenciales rígidas para evitar bloqueos CORS
 				const res = await fetch(`${window.API_BASE}/owner-login`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ code })
-				});
-
-				const data = await res.json();
-
-				if (res.ok) {
-					document.getElementById('login-container').style.display = 'none';
-					document.getElementById('admin-dyn-container').style.display = 'block';
-					document.getElementById('admin-controls').style.display = 'flex';
-					
-					// Disparamos la carga inicial de datos desde script.js de forma asíncrona segura
-					if (typeof setupAdminControls === 'function') {
-						setupAdminControls();
-					} else {
-						if(typeof poblarSelectMarcas === 'function') poblarSelectMarcas();
-						if(typeof poblarSelectSecciones === 'function') poblarSelectSecciones();
-						if(typeof listarYBorrarSecciones === 'function') listarYBorrarSecciones();
-						if(typeof listarYBorrarMarcas === 'function') listarYBorrarMarcas();
-					}
-				} else {
-					errorDiv.textContent = data.error || 'Código incorrecto';
-				}
-			} catch(err) {
-				errorDiv.textContent = 'Error de conexión con el backend de Railway.';
-				console.error(err);
-			}
-		});
-	</script>
-	<script src="script.js"></script>
-</body>
-</html>
+					body: JSON.stringify({ code
