@@ -24,7 +24,7 @@
 	<div class="container" id="admin-dyn-container" style="margin-top:32px; display:none; max-width: 600px;">
 		<div class="form-title">Añadir Mensaje</div>
 		<form id="mensaje-form">
-			<textarea id="mensaje-texto" rows="2" placeholder="Anuncio..." required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px;"></textarea>
+			<textarea id="mensaje-texto" rows="2" placeholder="Anuncio..." required style="width:100%; padding:10px; border:1px solid #e0e0e0; border-radius:8px Papyrus;"></textarea>
 			<button type="submit" class="btn">Guardar Mensaje</button>
 		</form>
 		<hr style="border:0; height:1px; background:#eee; margin:20px 0;">
@@ -80,7 +80,51 @@
 	<div id="products-list"></div>
 	<div id="banners-list"></div>
 
-	<script src="admin-login.js"></script>
+	<script>
+		window.API_BASE = "https://marcasscol-backend-production.up.railway.app";
+
+		document.getElementById('owner-login-form').addEventListener('submit', async function(e) {
+			e.preventDefault();
+			const code = document.getElementById('owner-code').value;
+			const errorDiv = document.getElementById('login-error');
+			if(errorDiv) errorDiv.textContent = 'Conectando...';
+
+			try {
+				// El bypass del nocache obliga a refrescar la conexión directa
+				const res = await fetch(`${window.API_BASE}/owner-login?v=${Date.now()}`, {
+					method: 'POST',
+					mode: 'cors', 
+					headers: { 
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ code: code })
+				});
+
+				const data = await res.json();
+
+				if (res.ok) {
+					if(errorDiv) errorDiv.textContent = '';
+					document.getElementById('login-container').style.display = 'none';
+					document.getElementById('admin-dyn-container').style.display = 'block';
+					document.getElementById('admin-controls').style.display = 'flex';
+					
+					if (typeof setupAdminControls === 'function') {
+						setupAdminControls();
+					} else {
+						if(typeof poblarSelectMarcas === 'function') poblarSelectMarcas();
+						if(typeof poblarSelectSecciones === 'function') poblarSelectSecciones();
+						if(typeof listarYBorrarSecciones === 'function') listarYBorrarSecciones();
+						if(typeof listarYBorrarMarcas === 'function') listarYBorrarMarcas();
+					}
+				} else {
+					if(errorDiv) errorDiv.textContent = data.error || 'Código incorrecto';
+				}
+			} catch(err) {
+				if(errorDiv) errorDiv.textContent = 'Error de conexión con el backend de Railway.';
+				console.error(err);
+			}
+		});
+	</script>
 	<script src="script.js"></script>
 </body>
 </html>
